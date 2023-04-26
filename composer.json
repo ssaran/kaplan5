@@ -14,7 +14,9 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "php": "^8.1"
+    },
     "scripts": {
         "copyFrontendRequirements": [
             "cp fontend/ public/static/assets/"
