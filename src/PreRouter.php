@@ -10,41 +10,43 @@ namespace K5;
 
 use \K5\U as u;
 use phpDocumentor\Reflection\Types\Self_;
+use \Phalcon\Support\Helper\Str;
 
 class PreRouter
 {
-	private static $appDir;
+	private static string $appDir;
 	private static $appConfig;
-	private static $moduleDir;
-	private static $controllersDir;
-	private static $domain;
-	private static $subDomain;
-	private static $sessionDomain;
-	private static $app  = "front";
-	private static $module = "index";
-	private static $controller = "index";
-	private static $action = "index";
-	private static $_module;
-	private static $_controller;
-	private static $_action;
-	private static $namespace = "Web\\Front";
-	private static $params = [];
-	private static $i18n = "tr";
+	private static string $moduleDir;
+	private static string $controllersDir;
+	private static string $domain;
+	private static string $subDomain;
+	private static string $sessionDomain;
+	private static string $app  = "front";
+	private static string $module = "index";
+	private static string $controller = "index";
+	private static string $action = "index";
+	private static string $_module;
+	private static string $_controller;
+	private static string $_action;
+	private static string $namespace = "Web\\Front";
+	private static array $params = [];
+	private static string $i18n = "tr";
 	private static $config;
 	private static $paramModule;
 	private static $paramController;
 	private static $paramAction;
 	private static $requestedDomainConfig;
 	private static $requestMethod;
-	private static $specialRouter = false;
+	private static $specialRouter = null;
 	private static $isApi = false;
 	private static $versionApi;
 
     private static $_server;
     private static $_u;
+    private static $_log;
 
-    public static function SetInstance($config,$server,$u){
-
+    public static function SetInstance($config,$server,$u)
+    {
         if(is_null(self::$_server)){
             self::$_server = $server;
             self::$_u = $u;
@@ -53,9 +55,18 @@ class PreRouter
             self::$requestedDomainConfig = self::$config->domain->default;
             self::parseDomain();
 
-            if(isset(self::$config->domain{self::$sessionDomain})) {
-                self::$requestedDomainConfig = self::$config->domain{self::$sessionDomain};
+            if(isset(self::$config->domain[self::$sessionDomain])) {
+                self::$requestedDomainConfig = self::$config->domain[self::$sessionDomain];
             }
+            $_path = str_replace(".","_",self::$sessionDomain);
+
+            self::$_log = new \Phalcon\Logger\Logger('messages',[
+                'main'=>new \Phalcon\Logger\Adapter\Stream(LOG_DIR.'error-'.$_path.'.log')
+            ]);
+
+
+            /*self::$_log->debug(print_r(self::$config,true));
+            self::$_log->debug(self::$sessionDomain);*/
 
             self::$app = self::$requestedDomainConfig->default->app;
             self::$module = self::$requestedDomainConfig->default->module;
@@ -156,7 +167,12 @@ class PreRouter
         return self::$isApi;
     }
 
-	private static function parseDomain()
+    public static function CreateEmployer() : string
+    {
+        return str_replace(".","_",self::GetSessionDomain());
+    }
+
+	private static function parseDomain() : void
 	{
         if(isset(self::$_server['HTTP_X_ORIGINAL_HOST'])) {
             self::$domain = self::$_server['HTTP_X_ORIGINAL_HOST'];
@@ -164,31 +180,33 @@ class PreRouter
         } else {
             $host = explode(".",self::$_server['HTTP_HOST']);
             if(sizeof($host) < 3) {
-               self::$domain = self::$_server['HTTP_HOST'];
+                self::$domain = self::$_server['HTTP_HOST'];
                 self::$sessionDomain = self::$domain;
             } else {
                 $top = array_pop($host);
+                if($top == 'tr') {
+                    $top.=".".array_pop($host);
+                }
                 $dom = array_pop($host);
                 $sub = array_pop($host);
                 self::$domain = $dom.".".$top;
                 self::$subDomain = $sub;
-                self::$sessionDomain = $sub.".".$dom.".".$top;
+                self::$sessionDomain = self::$_server['HTTP_HOST'];
             }
         }
 	}
 
-	private static function parseRoute()
+	private static function parseRoute() : void
 	{
 		self::$appConfig = self::checkAppConfig(self::$app);
 		if(!self::$appConfig) {
-            self::$_u::lerr("Default app conf not found. Check Config");
+            self::$_log->error("Default app conf not found. Check Config : ".self::$app." - ".self::$_server['REQUEST_URI']);
             die();
 		}
 
-		$parsedUrl = parse_url(self::$_server['REQUEST_URI']);
+		$parsedUrl = parse_url(str_replace("//","/",self::$_server['REQUEST_URI']));
 
 		$tmp = explode("/",trim($parsedUrl['path'],"/"));
-
 		if(sizeof($tmp) < 1) {
 			return;
 		}
@@ -220,8 +238,8 @@ class PreRouter
         }
 
         if($current !== null) {
-            self::$_u::lerr("Api module Not Found ");
-            self::$_u::lerr($tmp);
+            self::$_log->error("Api module Not Found ");
+            self::$_log->error($tmp);
             return false;
         }
 
@@ -248,12 +266,13 @@ class PreRouter
         self::$module = str_replace("-","",ucwords(self::$module, "-"));
         self::$namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$versionApi);
 
-        $nameSpaceSpecial = self::$namespace."\\".ucfirst(\Phalcon\Text::camelize(self::$controller));
+        $cm = new \Phalcon\Support\Helper\Str\PascalCase();
+        $nameSpaceSpecial = self::$namespace."\\".ucfirst($cm(self::$controller));
 
         if(isset(self::$appConfig['route_special']) && isset(self::$appConfig['route_special'][$nameSpaceSpecial])) {
             self::$specialRouter = self::$appConfig['route_special'][$nameSpaceSpecial]['router'];
         } else {
-            self::$specialRouter = false;
+            self::$specialRouter = null;
         }
     }
 
@@ -290,8 +309,8 @@ class PreRouter
         self::$app = self::$appConfig['directory'];
 
         if(self::$app == 'front') {
-            if(isset(self::$config->translate->public{self::$module})) {
-                self::$_u::lerr('die public dir as module');
+            if(isset(self::$config->translate->public->{self::$module})) {
+                self::$_log->error('die public dir as module');
                 die();
             }
         }
@@ -308,11 +327,12 @@ class PreRouter
             self::$namespace = self::$appConfig['namespace'];
         }
 
-        $nameSpaceSpecial = self::$namespace."\\".ucfirst(\Phalcon\Text::camelize(self::$controller));
+        $cm = new \Phalcon\Support\Helper\Str\PascalCase();
+        $nameSpaceSpecial = self::$namespace."\\".ucfirst($cm(self::$controller));
         if(isset(self::$appConfig['route_special']) && isset(self::$appConfig['route_special'][$nameSpaceSpecial])) {
             self::$specialRouter = self::$appConfig['route_special'][$nameSpaceSpecial]['router'];
         } else {
-            self::$specialRouter = false;
+            self::$specialRouter = null;
         }
     }
 
@@ -352,8 +372,7 @@ class PreRouter
 
 	private static function checkAppConfig($app)
 	{
-	    \K5\U::ldbg("Requested domain config"." : -".$app."-");
-        \K5\U::ldbg(self::$requestedDomainConfig);
+
 		if(isset(self::$requestedDomainConfig->app->{$app})) {
 			return self::$requestedDomainConfig->app->{$app};
 		}
@@ -372,29 +391,43 @@ class PreRouter
 		echo "---------------<br><br>";
 	}
 
-	public static function Ldbg()
+	public static function Ldbg($is_error = false)
 	{
-        self::$_u::linfo(self::$requestedDomainConfig);
-		self::$_u::linfo("-LDBG----------");
-		self::$_u::linfo("SESSION DOMAIN :".self::$sessionDomain."");
-		self::$_u::linfo("SUBDOMAIN :".self::$subDomain."");
-		self::$_u::linfo("LANG :".self::$i18n."");
-		self::$_u::linfo("APP :".self::$app."");
-		self::$_u::linfo("MODULE :".self::$module."");
-		self::$_u::linfo("CONTROLLER :".self::$controller." PARAM-CONTROLLER :".self::$paramController."");
-		self::$_u::linfo("ACTION :".self::$action."");
-		self::$_u::linfo("NAMESPACE :".self::$namespace."");
-		self::$_u::linfo("/LDBG----------");
+        $_config = '';
+        if(IS_DEVEL) {
+            //$_config = self::$requestedDomainConfig;
+        }
+        $_msg = [
+            'CONFIG'=>$_config,
+            'SESSION_DOMAIN'=>self::$sessionDomain,
+            'SUBDOMAIN'=>self::$subDomain,
+            'LANG'=>self::$i18n,
+            'APP'=>self::$app,
+            'MODULE'=>self::$module,
+            'CONTROLLER'=>self::$controller,
+            'PARAM-CONTROLLER'=>self::$paramController,
+            'ACTION'=>self::$action,
+            'NAMESPACE'=>self::$namespace
+        ];
+
+        if(!$is_error) {
+            self::$_log->debug(print_r($_msg,true));
+        } else {
+            self::$_log->error(print_r($_msg,true));
+        }
 	}
 
     public static function Lerr()
     {
-        self::Ldbg();
+        self::Ldbg(true);
     }
 
     public static function GetInfo()
     {
-        $r['DOMAIN-CONFIG'] = self::$requestedDomainConfig;
+        if(IS_DEVEL) {
+            //$r['DOMAIN-CONFIg'] = self::$requestedDomainConfig;
+        }
+
         $r['LANG'] = self::$i18n;
         $r['APP'] = self::$app;
         $r['MODULE'] = self::$module;
@@ -405,4 +438,21 @@ class PreRouter
         return $r;
     }
 
+    public static function ParseDefault($routes,$prefix=false)
+    {
+        $obj = new $routes();
+        $vars = get_object_vars($obj);
+
+        $_prefix = ($prefix !== false ) ? $prefix.'/' : '/';
+
+        foreach($vars as $key => $v) {
+            $arr = explode("_",$key);
+            $val = $_prefix;
+            foreach ($arr as $path) {
+                $val.= mb_strtolower(u::FromCamelCase($path,"-"))."/";
+            }
+            $obj->{$key} = $val;
+        }
+        return $obj;
+    }
 }

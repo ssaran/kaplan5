@@ -1,0 +1,29 @@
+{
+    "name": "ssaran/kaplan5",
+    "description": "Custom toolkit for hybrid web sites",
+    "type": "library",
+    "license": "GPL3",
+    "autoload": {
+        "psr-4": {
+            "K5\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sancar Saran"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "scripts": {
+        "copyFrontendRequirements": [
+            "cp fontend/ public/static/assets/"
+        ],
+        "post-update-cmd": [
+            "@copyFrontendRequirements"
+        ],
+        "post-install-cmd": [
+            "@copyFrontendRequirements"
+        ]
+    }
+}
