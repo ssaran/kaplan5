@@ -2,7 +2,7 @@
     "name": "ssaran/kaplan5",
     "description": "Custom toolkit for hybrid web sites",
     "type": "library",
-    "license": "GPL3",
+    "license": "GPL-3.0-or-later",
     "autoload": {
         "psr-4": {
             "K5\\": "src/"
