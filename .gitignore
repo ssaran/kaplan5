@@ -1,0 +1,8 @@
+README.html
+*.tgz
+.idea
+
+# composer related
+composer.lock
+composer.phar
+vendor

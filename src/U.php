@@ -11,6 +11,12 @@ namespace K5;
 
 class U
 {
+    /**
+     * @param $str
+     * @param $startPos
+     * @param $maxLength
+     * @return mixed|string
+     */
     public static function GetExcerpt($str, $startPos=0, $maxLength=100) {
         if(strlen($str) > $maxLength) {
             $excerpt   = substr($str, $startPos, $maxLength-3);
@@ -117,11 +123,9 @@ class U
      */
     public static function ldbg($message,$mark=false)
     {
-        if($mark) {
-            file_put_contents(R_DIR.'log.txt', "-".microtime(true)."-".$mark."|".date('d.m.Y H:i:s',time())."\n".print_r($message,true)."\n--END--\n", FILE_APPEND);
-        } else {
-            file_put_contents(R_DIR.'log.txt', print_r($message,true)."\n", FILE_APPEND);
-        }
+        openlog('php', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
+        syslog(LOG_INFO, print_r($message,true)."\n");
+        closelog();
     }
 
     /**
@@ -131,7 +135,10 @@ class U
     public static function lerr($message,$type='debug')
     {
         //syslog(LOG_WARNING,print_r($message,true));
-        file_put_contents(R_DIR.'log.txt', print_r($message,true)."\n", FILE_APPEND);
+        //file_put_contents(R_DIR.'log.txt', print_r($message,true)."\n", FILE_APPEND);
+        openlog('php', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
+        syslog(LOG_ERR, print_r($message,true)."\n");
+        closelog();
     }
 
     /**
@@ -141,7 +148,10 @@ class U
     public static function linfo($message,$type='debug')
     {
         //syslog(LOG_WARNING,print_r($message,true));
-        file_put_contents(R_DIR.'log.txt', print_r($message,true)."\n", FILE_APPEND);
+        //file_put_contents(R_DIR.'log.txt', print_r($message,true)."\n", FILE_APPEND);
+        openlog('php', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
+        syslog(LOG_WARNING, print_r($message,true)."\n");
+        closelog();
     }
 
     /**
@@ -190,6 +200,10 @@ class U
         return $_SERVER['REMOTE_ADDR'];
     }
 
+    /**
+     * @param $ip
+     * @return bool
+     */
     public static function validateIp($ip)
     {
         if (filter_var($ip, FILTER_VALIDATE_IP,
@@ -1036,28 +1050,4 @@ class U
 
         $def = $config->getHTMLDefinition(true);
         $purifier = new \HTMLPurifier($def);
-        $purified = $purifier->purify($text);
-        return $purified;
-    }
-
-    /**
-     * @param $record
-     * @return mixed
-     * @throws \Exception
-     */
-    public static function WriteToDb($record) {
-        try {
-            if(!$record->save()) {
-                $m = [];
-                $_msgs = $record->getMessages();
-                foreach($_msgs as $_m) {
-                    $m[] = $_m->getMessage();
-                }
-                throw new \Exception(implode("\n",$m));
-            }
-            return $record;
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-}
+      
