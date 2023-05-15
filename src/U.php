@@ -123,6 +123,7 @@ class U
      */
     public static function ldbg($message,$mark=false)
     {
+
         openlog('php', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
         syslog(LOG_INFO, print_r($message,true)."\n");
         closelog();
@@ -1050,4 +1051,28 @@ class U
 
         $def = $config->getHTMLDefinition(true);
         $purifier = new \HTMLPurifier($def);
-      
+        $purified = $purifier->purify($text);
+        return $purified;
+    }
+
+    /**
+     * @param $record
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function WriteToDb($record) {
+        try {
+            if(!$record->save()) {
+                $m = [];
+                $_msgs = $record->getMessages();
+                foreach($_msgs as $_m) {
+                    $m[] = $_m->getMessage();
+                }
+                throw new \Exception(implode("\n",$m));
+            }
+            return $record;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+}
