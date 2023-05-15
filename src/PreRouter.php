@@ -60,10 +60,6 @@ class PreRouter
             }
             $_path = str_replace(".","_",self::$sessionDomain);
 
-            self::$_log = new \Phalcon\Logger\Logger('messages',[
-                'main'=>new \Phalcon\Logger\Adapter\Stream(LOG_DIR.'error-'.$_path.'.log')
-            ]);
-
 
             /*self::$_log->debug(print_r(self::$config,true));
             self::$_log->debug(self::$sessionDomain);*/
@@ -411,9 +407,9 @@ class PreRouter
         ];
 
         if(!$is_error) {
-            self::$_log->debug(print_r($_msg,true));
+            \K5\U::ldb($_msg);
         } else {
-            self::$_log->error(print_r($_msg,true));
+            \K5\U::lerr($_msg);
         }
 	}
 
