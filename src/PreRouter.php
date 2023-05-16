@@ -407,7 +407,7 @@ class PreRouter
         ];
 
         if(!$is_error) {
-            \K5\U::ldb($_msg);
+            \K5\U::ldbg($_msg);
         } else {
             \K5\U::lerr($_msg);
         }
