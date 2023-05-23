@@ -196,7 +196,7 @@ class PreRouter
 	{
 		self::$appConfig = self::checkAppConfig(self::$app);
 		if(!self::$appConfig) {
-            self::$_log->error("Default app conf not found. Check Config : ".self::$app." - ".self::$_server['REQUEST_URI']);
+            self::$_u::lerr("Default app conf not found. Check Config : ".self::$app." - ".self::$_server['REQUEST_URI']);
             die();
 		}
 
@@ -234,8 +234,8 @@ class PreRouter
         }
 
         if($current !== null) {
-            self::$_log->error("Api module Not Found ");
-            self::$_log->error($tmp);
+            self::$_u::lerr("Api module Not Found ");
+            self::$_u::lerr($tmp);
             return false;
         }
 
@@ -306,7 +306,7 @@ class PreRouter
 
         if(self::$app == 'front') {
             if(isset(self::$config->translate->public->{self::$module})) {
-                self::$_log->error('die public dir as module');
+                self::$_u::lerr('die public dir as module');
                 die();
             }
         }

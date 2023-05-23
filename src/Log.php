@@ -27,7 +27,7 @@ class Log
     {
         if(self::$_path === ''){
             try {
-                self::$_path = str_replace(".","_",\K5\PreRouter::GetSessionDomain());
+                self::$_path = str_replace(".","_",$sessionDomain);
 
                 self::$_dbg = new Logger('messages',[
                     'main'=>new Stream(LOG_DIR.'dbg-'.self::$_path.'.log')
