@@ -19,7 +19,7 @@ class PreRouter
 	private static string $moduleDir;
 	private static string $controllersDir;
 	private static string $domain;
-	private static string $subDomain;
+	private static ?string $subDomain = null;
 	private static string $sessionDomain;
 	private static string $app  = "front";
 	private static string $module = "index";
