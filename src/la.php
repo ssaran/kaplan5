@@ -14,10 +14,10 @@ class la
 
     private static $lang;
 
-    public static function Setup($lang='Tr')
+    public static function Setup($keys,$values,$lang='Tr') : void
     {
-        self::$keys = new \Common\Lang\Keys();
-        self::$values = new \stdClass();
+        self::$keys = $keys; //new \Common\Lang\Keys();
+        self::$values = $values; //new \stdClass();
         self::$lang = $lang;
         self::LoadValues($lang);
     }
