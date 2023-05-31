@@ -396,7 +396,7 @@ class PreRouter
         $_msg = [
             'CONFIG'=>$_config,
             'SESSION_DOMAIN'=>self::$sessionDomain,
-            'SUBDOMAIN'=>self::$subDomain,
+            'SUBDOMAIN'=>!is_null(self::$subDomain) ? self::$subDomain : '',
             'LANG'=>self::$i18n,
             'APP'=>self::$app,
             'MODULE'=>self::$module,
