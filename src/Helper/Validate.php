@@ -46,7 +46,7 @@ class Validate extends \K5\Helper\Form\Prepare
             }
 
             if($debug) {
-                \K5\Log::Info($validators);
+                \K5\U::linfo($validators);
             }
 
             $messages = $validate->validate($post);
@@ -61,9 +61,8 @@ class Validate extends \K5\Helper\Form\Prepare
 
             return true;
         } catch (\Exception $e) {
-            \K5\Log::Error($e->getMessage());
+            \K5\U::lerr($e->getMessage());
             throw $e;
         }
-
     }
 }

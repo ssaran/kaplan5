@@ -61,7 +61,7 @@ glb.date.obj = new Date();
 glb.date.obj.toLocaleString("tr-TR", {timeZone: "Europe/Istanbul"});
 
 //--- Put Landing State
-history.pushState({call:'landing',url:window.location.href,data:{},type:'GET',urlHistory:'2',callback:null,dataType:null}, null, window.location.href);
+history.pushState({call:'landing',url:window.location.href,data:{},type:'GET',requestHistory:null,callback:null,dataType:null}, null, window.location.href);
 
 var Main = function () { return {
     BufferBlocked : {},
@@ -152,6 +152,67 @@ var Main = function () { return {
             }
         );
         return def.promise();
+    },
+    xCall: function(url,type,data,requestHistory=null,callBack=null){
+        if(typeof url === "undefined") {
+            console.error("xhr url",url,type,data,requestHistory,callBack);
+            return;
+        }
+
+        $(".xhr-remove").remove();
+
+        let _rHeaders = Util.CloneObj(glb.env.xHeaders);
+        if(glb.env.hasOwnProperty('tmpHeaders') && glb.env.tmpHeaders !== null) {
+            _rHeaders = Util.CloneObj(glb.env.tmpHeaders);
+            glb.env.tmpHeaders = null;
+        }
+
+        $.ajax({
+            headers: _rHeaders,
+            type: type, method: type, url: url, dataType: 'json', data: data,
+        }).done(function(resp) {
+            if(!resp) {
+                console.error("Empty Ajax Request");
+                return false;
+            }
+            if(typeof resp !== "object") {
+                Util.JSAlert("response_error","Hatalı Cevap");
+                console.log(resp);
+                return false;
+            }
+            if(requestHistory !== null) {
+                history.pushState(
+                    {
+                        'call':'xCall',
+                        'url':url,
+                        'data':data,
+                        'type':type,
+                        'requestHistory':requestHistory,
+                        'callback':callBack,
+                        'dataType':'json'
+                    },
+                    '',
+                    url
+                );
+            }
+            if(resp[Object.keys(resp)[0]] !== null && resp[Object.keys(resp)[0]].hasOwnProperty('DomID') && resp[Object.keys(resp)[0]].hasOwnProperty('Type') ) {
+                Ui.process(resp,callBack);
+            } else {
+                if (typeof callBack === "function") {
+                    callBack(resp);
+                } else {
+                    console.info("xhrCall_callback",typeof callBack,callBack);
+                }
+            }
+        })
+        .fail(function(resp) {
+            console.log("xhrcall Fail",url,type,dataType, data,"response",resp);
+            let _resp = JSON.stringify(resp);
+            Util.JSAlert("response_error","Hatalı Cevap","<pre>"+_resp+"</pre>",false,'full');
+        })
+        .always(function() {
+            setTimeout(function () { $(".alert-dismissible").hide(); $('.navbar-ajax-indicator').css('color', 'black');},50);
+        });
     },
     submitForm: function (oForm,formID) {
         if(glb.state.hasOwnProperty(formID)) {
@@ -381,58 +442,19 @@ $(document).off('click','.xhref').on('click','.xhref', function(ev) {
 
         _req.url = (_elm.tagName === 'BUTTON') ? _elm.dataset.href : _elm.href;
         _req.url = (_elm.dataset.hasOwnProperty('url')) ? _elm.dataset.url : _req.url; // Override for tabs etc
-        _req.type = (_elm.dataset.hasOwnProperty('type')) ? _elm.dataset.type : "POST";
-        _req.history = (_elm.dataset.hasOwnProperty('nohistory')) ? _elm.dataset.nohistory : 2;
+        _req.type = (_elm.dataset.hasOwnProperty('type')) ? _elm.dataset.type : "GET";
+        _req.history = (_elm.dataset.hasOwnProperty('nohistory')) ? null : 'yes';
         _req.callback = (_elm.dataset.hasOwnProperty('backhandler')) ? window[_elm.dataset.backhandler]() : null;
-
-        if(glb.env.hasOwnProperty('is_tabbed') && glb.env.is_tabbed !== null && glb.env.is_tabbed === 1 && _req.data.hasOwnProperty('is_modal') && _req.data.is_modal === "1" ) {
-            glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders,_req.data,'employer');
-        }
-        if(glb.env.hasOwnProperty('is_tabbed') && glb.env.is_tabbed !== null && glb.env.is_tabbed === 1 && _elm.dataset.hasOwnProperty("employer")) {
-            glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders);
-            glb.env.tmpHeaders['employer'] = _elm.dataset.employer;
-        }
-        if(glb.env.hasOwnProperty('is_tabbed') && glb.env.is_tabbed !== null && glb.env.is_tabbed === 1 && _req.data.hasOwnProperty('is_modal') && _req.data.is_modal === "1" ) {
-            glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders,_req.data,'employer');
-        }
 
         if(_elm.dataset.hasOwnProperty('is_data')) {
             glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders,1,'is_data');
         }
 
-        Main.xhrCall(_req.url,_req.type,'json',_req.data,_req.history,_req.callback);
+        Main.xCall(_req.url,_req.type,_req.data,_req.history,_req.callback);
     } catch (e) {
         console.error("Xhref Error",e);
     }
 
-});
-
-$(document).off('click','.xrp-event');
-$(document).on('click','.xrp-event', function(ev) {
-    ev.preventDefault();
-    glb.util.OverlayIframeClose();
-    let _elm = ev.currentTarget;
-    if(!_elm.dataset.hasOwnProperty("event")) {
-        console.info("Missing event key");
-        return;
-    }
-    let _arr = _elm.dataset.event.split("::");
-
-    if(typeof _arr[0] === "undefined") {
-        console.info("Missing event issuer");
-        return;
-    }
-    let issuer = _arr[0];
-
-    if(typeof _arr[1] === "undefined") {
-        console.info("Missing event key");
-        return;
-    }
-    let eventKey = _arr[1];
-
-    let eventListener = (typeof _arr[2] === "undefined") ? false : _arr[2];
-
-    (eventListener === false) ? EVM.ExecuteAll(issuer,eventKey,_elm.dataset) : EVM.Execute(issuer,eventKey,eventListener,_elm.dataset);
 });
 
 $(document).off("submit",".xhr-form");
@@ -555,185 +577,6 @@ glb.util.ToggleSidebar = function () {
     }
 };
 
-
-glb.Ncn.Vici.UnlinkAgent = function (dialerAgentKey,link_id,agentId,agentName,dialers,domDialerIframe,randomChars,routeBreak,endCallback=null) {
-    let arr = dialerAgentKey.split(":");
-    let vicidialId = arr[1];
-    var dialerId = arr[0];
-    var vUrl = false;
-    var dName = "/dialers_";
-    var dUrl = "";
-
-
-    if(dialers.hasOwnProperty(dialerId)) {
-        let dialer = dialers[dialerId];
-        dName = dName+dialer.dialer_name;
-        dName = dName.toLowerCase();
-        if(dialer.dialer_name === "MAFO") {
-            dUrl = "http://"+dialer.dialer_ip;
-        } else {
-            dUrl = "https://"+dialer.dialer_name;
-        }
-        dUrl = dUrl.toLowerCase();
-        vUrl = "https://panel.nettocontact.com"+dName;
-    }
-
-    if(vUrl == false) {
-        alert("vicidial sunucu adresi tanımsız");
-        return false;
-    }
-    vUrl = vUrl+'/vicidial/admin.php?ADD=3&user='+vicidialId;
-
-    var vParams = {
-        'agent_id' : agentId,
-        'dialer_agent_key': dialerAgentKey,
-        'vicidial_id': vicidialId,
-        'dialer_id': dialerId,
-        'dialer_url': vUrl,
-        'post_url': dName+"/vicidial/admin.php",
-        'agent_code': "1"+vicidialId.substr(vicidialId.length - 2),
-        'vici_code': vicidialId.substr(vicidialId.length - 3),
-        'agent_name': agentName,
-        'agent_city': "",
-        'password': '',
-        'link_id': link_id
-    }
-
-    //glb.util.MinimizeLayout();
-    //let aHeight = glb.util.AvailableHeight();
-    let aHeight = 0;
-    glb.util.OverlayIframeOpen(domDialerIframe,vUrl,aHeight,function () {
-        setTimeout(function () {
-            var iframe = document.getElementById(domDialerIframe);
-
-            var vPostData = {
-                'full_name': new Date().toISOString().slice(0, 10)+" "+vParams.agent_name,
-                'pass': randomChars,
-                'phone_pass': randomChars
-            };
-
-            iframe.contentWindow.document.querySelector('[name=full_name]').value = vPostData.full_name;
-            iframe.contentWindow.document.querySelector('[name=pass]').value = vPostData.pass;
-            iframe.contentWindow.document.querySelector('[name=phone_pass]').value = vPostData.phone_pass;
-            iframe.contentWindow.document.getElementsByTagName("form")[0].action = vParams.post_url;
-            iframe.contentWindow.document.getElementsByTagName("form")[0].submit();
-            setTimeout(function () {
-                if(iframe.contentWindow.document.querySelector('[name=full_name]').value !== vPostData.full_name) {
-                    alert("Vicidial Agent adı güncellenmedi");
-                    return false;
-                }
-
-                if(iframe.contentWindow.document.querySelector('[name=pass]').value !== vPostData.pass)  {
-                    alert("Vicidial Agent parolası güncellenmedi");
-                    return false;
-                }
-
-                if(iframe.contentWindow.document.querySelector('[name=phone_pass]').value !== vPostData.phone_pass) {
-                    alert("Vicidial telefon login güncellenmedi");
-                    return false;
-                }
-
-                vParams.password = randomChars;
-                Main.xhrCall(routeBreak,"post","json",{'id':vParams.link_id,'key':vParams.dialer_agent_key,'agent_code':vParams.agent_code},2,function (resp) {
-                    endCallback();
-                });
-            },1000)
-        },1000);
-    });
-};
-
-glb.Ncn.Vici.LinkAgent = function (dialerAgentKey,link_id,agentId,agentName,agentCity,dialers,domDialerIframe,randomChars,routeUpdate,endCallback=null) {
-
-    let arr = dialerAgentKey.split(":");
-    let vicidialId = arr[1];
-    var dialerId = arr[0];
-    var vUrl = false;
-    var dName = "/dialers_";
-    var dUrl = "";
-
-    if(dialers.hasOwnProperty(dialerId)) {
-        let dialer = dialers[dialerId];
-        dName = dName+dialer.dialer_name;
-        dName = dName.toLowerCase();
-        if(dialer.dialer_name === "MAFO") {
-            dUrl = "http://"+dialer.dialer_ip;
-        } else {
-            dUrl = "https://"+dialer.dialer_name+".nettocontact.com";
-        }
-        dUrl = dUrl.toLowerCase();
-        vUrl = "https://panel.nettocontact.com"+dName;
-    }
-    if(vUrl === false) {
-        alert("vicidial sunucu adresi tanımsız");
-        return false;
-    }
-    vUrl = vUrl+'/vicidial/admin.php?ADD=3&user='+vicidialId;
-
-    var vParams = {
-        'agent_id' : agentId,
-        'dialer_agent_key': dialerAgentKey,
-        'vicidial_id': vicidialId,
-        'dialer_id': dialerId,
-        'dialer_url': vUrl,
-        'post_url': dName+"/vicidial/admin.php",
-        'agent_code': "1"+vicidialId.substr(vicidialId.length - 2),
-        'vici_code': vicidialId.substr(vicidialId.length - 3),
-        'agent_name': agentName,
-        'agent_city': agentCity,
-        'password': '',
-        'info': ''
-    }
-
-    //glb.util.MinimizeLayout();
-    //let aHeight = glb.util.AvailableHeight();
-    let aHeight = 0;
-    glb.util.OverlayIframeOpen(domDialerIframe,vUrl,aHeight,function () {
-        setTimeout(function () {
-            var vPostData = {
-                'full_name': vParams.agent_city.toUpperCase()+" "+vParams.agent_name,
-                'pass': "MafCa"+vParams.agent_code,
-                'phone_login': "MAF"+vParams.agent_code,
-                'phone_pass': vParams.agent_code+"MAf"
-            };
-
-
-            var iframe = document.getElementById(domDialerIframe);
-            iframe.contentWindow.document.querySelector('[name=full_name]').value = vPostData.full_name;
-            iframe.contentWindow.document.querySelector('[name=pass]').value = vPostData.pass;
-            iframe.contentWindow.document.querySelector('[name=phone_login]').value = vPostData.phone_login;
-            iframe.contentWindow.document.querySelector('[name=phone_pass]').value = vPostData.phone_pass;
-            iframe.contentWindow.document.getElementsByTagName("form")[0].action = vParams.post_url;
-            iframe.contentWindow.document.getElementsByTagName("form")[0].submit();
-            setTimeout(function () {
-                if(iframe.contentWindow.document.querySelector('[name=full_name]').value !== vPostData.full_name) {
-                    alert("Vicidial Agent adı güncellenmedi");
-                    return false;
-                }
-
-                if(iframe.contentWindow.document.querySelector('[name=pass]').value !== vPostData.pass)  {
-                    alert("Vicidial Agent parolası güncellenmedi");
-                    return false;
-                }
-
-                if(iframe.contentWindow.document.querySelector('[name=phone_login]').value !== vPostData.phone_login) {
-                    alert("Vicidial telefon login güncellenmedi");
-                    return false;
-                }
-
-                if(iframe.contentWindow.document.querySelector('[name=phone_pass]').value !== vPostData.phone_pass) {
-                    alert("Vicidial telefon login güncellenmedi");
-                    return false;
-                }
-
-                vParams.password = dUrl+"/agc/vicidial.php?relogin=YES&session_epoch=1475745421&session_id=8600051&session_name=1475745413_MAF"+vParams.agent_code+"16153192&VD_login=agent"+vParams.vici_code+"&VD_campaign=40000&phone_login=MAF"+vParams.agent_code+"a&phone_pass="+vParams.agent_code+"MAf&VD_pass=MafCa"+vParams.agent_code;
-                Main.xhrCall(routeUpdate,"post","json",vParams,2,function () {
-                    endCallback();
-                });
-            },1000)
-        },1000);
-    });
-}
-
 window.addEventListener('popstate', function(e) {
     if(history.state != null && history.state.hasOwnProperty('call')) {
         switch (history.state.call) {
@@ -742,6 +585,9 @@ window.addEventListener('popstate', function(e) {
                 break;
             case "xhrCall":
                 Main.xhrCall(history.state.url,history.state.type,'json',history.state.data,"2",history.state.callback);
+                break;
+            case "xCall":
+                Main.xCall(history.state.url,history.state.type,history.state.data,history.state.requestHistory,history.state.callback);
                 break;
             case "landing":
                 Util.loadUrl(history.state.url);

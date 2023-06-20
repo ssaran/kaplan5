@@ -14,32 +14,32 @@ use \Phalcon\Support\Helper\Str;
 
 class PreRouter
 {
-	private static string $appDir;
-	private static $appConfig;
-	private static string $moduleDir;
-	private static string $controllersDir;
-	private static string $domain;
-	private static ?string $subDomain = null;
-	private static string $sessionDomain;
-	private static string $app  = "front";
-	private static string $module = "index";
-	private static string $controller = "index";
-	private static string $action = "index";
-	private static string $_module;
-	private static string $_controller;
-	private static string $_action;
-	private static string $namespace = "Web\\Front";
-	private static array $params = [];
-	private static string $i18n = "tr";
-	private static $config;
-	private static $paramModule;
-	private static $paramController;
-	private static $paramAction;
-	private static $requestedDomainConfig;
-	private static $requestMethod;
-	private static $specialRouter = null;
-	private static $isApi = false;
-	private static $versionApi;
+    private static string $appDir;
+    private static $appConfig;
+    private static string $moduleDir;
+    private static string $controllersDir;
+    private static string $domain;
+    private static ?string $subDomain = null;
+    private static string $sessionDomain;
+    private static string $app  = "front";
+    private static string $module = "index";
+    private static string $controller = "index";
+    private static string $action = "index";
+    private static string $_module;
+    private static string $_controller;
+    private static string $_action;
+    private static string $namespace = "Web\\Front";
+    private static array $params = [];
+    private static string $i18n = "tr";
+    private static $config;
+    private static $paramModule;
+    private static $paramController;
+    private static $paramAction;
+    private static $requestedDomainConfig;
+    private static $requestMethod;
+    private static $specialRouter = null;
+    private static $isApi = false;
+    private static $versionApi;
 
     private static $_server;
     private static $_u;
@@ -78,70 +78,70 @@ class PreRouter
         return true;
     }
 
-	public static function GetDomain()
-	{
-		return self::$domain;
-	}
+    public static function GetDomain()
+    {
+        return self::$domain;
+    }
 
-	public static function GetSubDomain()
-	{
-		return self::$subDomain;
-	}
+    public static function GetSubDomain()
+    {
+        return self::$subDomain;
+    }
 
     public static function GetSessionDomain()
     {
         return self::$sessionDomain;
     }
 
-	public static function GetNameSpace()
-	{
-		return self::$namespace;
-	}
+    public static function GetNameSpace()
+    {
+        return self::$namespace;
+    }
 
     public static function GetApp()
     {
         return self::$app;
     }
 
-	public static function GetModule($real=false)
-	{
+    public static function GetModule($real=false)
+    {
         return (!$real) ? self::$module : self::$_module;
-	}
+    }
 
-	public static function GetParamModule()
-	{
-		return self::$paramModule;
-	}
+    public static function GetParamModule()
+    {
+        return self::$paramModule;
+    }
 
-	public static function GetController($real=false)
-	{
+    public static function GetController($real=false)
+    {
         return (!$real) ? self::$controller : self::$_controller;
-	}
+    }
 
-	public static function GetParamController()
-	{
-		return self::$paramController;
-	}
+    public static function GetParamController()
+    {
+        return self::$paramController;
+    }
 
-	public static function GetAction($real=false)
-	{
+    public static function GetAction($real=false)
+    {
         return (!$real) ? self::$action : self::$_action;
-	}
+    }
 
-	public static function GetParamAction()
-	{
-		return self::$paramAction;
-	}
+    public static function GetParamAction()
+    {
+        return self::$paramAction;
+    }
 
     public static function GetParams()
     {
         return self::$params;
     }
 
-	public static function GetI18n()
-	{
-		return self::$i18n;
-	}
+    public static function GetI18n()
+    {
+        return self::$i18n;
+    }
 
     public static function GetRequestMethod()
     {
@@ -168,8 +168,8 @@ class PreRouter
         return str_replace(".","_",self::GetSessionDomain());
     }
 
-	private static function parseDomain() : void
-	{
+    private static function parseDomain() : void
+    {
         if(isset(self::$_server['HTTP_X_ORIGINAL_HOST'])) {
             self::$domain = self::$_server['HTTP_X_ORIGINAL_HOST'];
             self::$sessionDomain = self::$domain;
@@ -190,36 +190,36 @@ class PreRouter
                 self::$sessionDomain = self::$_server['HTTP_HOST'];
             }
         }
-	}
+    }
 
-	private static function parseRoute() : void
-	{
-		self::$appConfig = self::checkAppConfig(self::$app);
-		if(!self::$appConfig) {
+    private static function parseRoute() : void
+    {
+        self::$appConfig = self::checkAppConfig(self::$app);
+        if(!self::$appConfig) {
             self::$_u::lerr("Default app conf not found. Check Config : ".self::$app." - ".self::$_server['REQUEST_URI']);
             die();
-		}
+        }
 
-		$parsedUrl = parse_url(str_replace("//","/",self::$_server['REQUEST_URI']));
+        $parsedUrl = parse_url(str_replace("//","/",self::$_server['REQUEST_URI']));
 
-		$tmp = explode("/",trim($parsedUrl['path'],"/"));
-		if(sizeof($tmp) < 1) {
-			return;
-		}
+        $tmp = explode("/",trim($parsedUrl['path'],"/"));
+        if(sizeof($tmp) < 1) {
+            return;
+        }
 
-		$current = array_shift($tmp);
-		$cLang = self::checkLanguageConfig($current);
-		if($cLang != false) {
-			self::$i18n = $cLang;
-			$current = array_shift($tmp);
-		}
+        $current = array_shift($tmp);
+        $cLang = self::checkLanguageConfig($current);
+        if($cLang != false) {
+            self::$i18n = $cLang;
+            $current = array_shift($tmp);
+        }
 
         if($current !== 'api') {
             self::routeWeb($tmp,$current);
         } else {
             self::routeApi($tmp);
         }
-	}
+    }
 
     private static function routeApi($tmp)
     {
@@ -272,7 +272,7 @@ class PreRouter
         }
     }
 
-	private static function routeWeb($tmp,$current)
+    private static function routeWeb($tmp,$current)
     {
         $cConfig = self::checkAppConfig($current);
         if($cConfig) {
@@ -289,8 +289,21 @@ class PreRouter
         }
         self::$_module = self::$module;
 
+        /** Check forced index */
+        $_fController = null;
+        if(isset(self::$appConfig['forceModuleController'])) {
+            if(isset(self::$appConfig['forceModuleController'][self::$module])) {
+                $_fController = self::$appConfig['forceModuleController'][self::$module];
+            }
+        }
+
         if(sizeof($tmp) > 0) {
             self::$controller = array_shift($tmp);
+        }
+
+        if(!is_null($_fController)) {
+            self::$params['forced_controller'] = self::$controller;
+            self::$controller = $_fController;
         }
 
         self::$_controller = self::$controller;
@@ -332,63 +345,63 @@ class PreRouter
         }
     }
 
-	private static function parseControllerTranslate()
-	{
-		if(!isset(self::$config->translate->{self::$app})) {
-			return;
-		}
-		$tData = self::$config->translate->{self::$app};
+    private static function parseControllerTranslate()
+    {
+        if(!isset(self::$config->translate->{self::$app})) {
+            return;
+        }
+        $tData = self::$config->translate->{self::$app};
 
-		if(!isset($tData->{self::$controller})) {
-			return;
-		}
-		self::$paramController = self::$controller;
-		self::$controller = $tData->{self::$controller};
-	}
+        if(!isset($tData->{self::$controller})) {
+            return;
+        }
+        self::$paramController = self::$controller;
+        self::$controller = $tData->{self::$controller};
+    }
 
-	private static function parseActionForce()
-	{
-		if(!isset(self::$config->force->{self::$controller})) {
-			return;
-		}
+    private static function parseActionForce()
+    {
+        if(!isset(self::$config->force->{self::$controller})) {
+            return;
+        }
 
-		$tData = self::$config->force->{self::$controller};
+        $tData = self::$config->force->{self::$controller};
 
-		self::$paramAction = self::$action;
-		self::$action = $tData->{self::$action};
-	}
+        self::$paramAction = self::$action;
+        self::$action = $tData->{self::$action};
+    }
 
-	private static function checkLanguageConfig($lang)
-	{
-		if(isset(self::$config->language->{$lang})) {
-			return $lang;
-		}
-		return false;
-	}
+    private static function checkLanguageConfig($lang)
+    {
+        if(isset(self::$config->language->{$lang})) {
+            return $lang;
+        }
+        return false;
+    }
 
-	private static function checkAppConfig($app)
-	{
+    private static function checkAppConfig($app)
+    {
 
-		if(isset(self::$requestedDomainConfig->app->{$app})) {
-			return self::$requestedDomainConfig->app->{$app};
-		}
-		return false;
-	}
+        if(isset(self::$requestedDomainConfig->app->{$app})) {
+            return self::$requestedDomainConfig->app->{$app};
+        }
+        return false;
+    }
 
-	private static function printTest()
-	{
-		echo "---------------<br>";
-		echo "LANG :".self::$i18n."<br>";
-		echo "APP :".self::$app."<br>";
-		echo "MODULE :".self::$module."<br>";
-		echo "CONTROLLER :".self::$controller." PARAM-CONTROLLER :".self::$paramController."<br>";
-		echo "ACTION :".self::$action."<br>";
-		echo "NAMESPACE :".self::$namespace."<br>";
-		echo "---------------<br><br>";
-	}
+    private static function printTest()
+    {
+        echo "---------------<br>";
+        echo "LANG :".self::$i18n."<br>";
+        echo "APP :".self::$app."<br>";
+        echo "MODULE :".self::$module."<br>";
+        echo "CONTROLLER :".self::$controller." PARAM-CONTROLLER :".self::$paramController."<br>";
+        echo "ACTION :".self::$action."<br>";
+        echo "NAMESPACE :".self::$namespace."<br>";
+        echo "---------------<br><br>";
+    }
 
-	public static function Ldbg($is_error = false)
-	{
+    public static function Ldbg($is_error = false)
+    {
         $_config = '';
         if(IS_DEVEL) {
             //$_config = self::$requestedDomainConfig;
@@ -403,7 +416,8 @@ class PreRouter
             'CONTROLLER'=>self::$controller,
             'PARAM-CONTROLLER'=>self::$paramController,
             'ACTION'=>self::$action,
-            'NAMESPACE'=>self::$namespace
+            'NAMESPACE'=>self::$namespace,
+            'APP-CONFIG'=>self::$appConfig,
         ];
 
         if(!$is_error) {
@@ -411,7 +425,7 @@ class PreRouter
         } else {
             \K5\U::lerr($_msg);
         }
-	}
+    }
 
     public static function Lerr()
     {

@@ -40,6 +40,7 @@ class Setup
     public $Post = [];
     public $Get = [];
     public $Decoded = [];
+    public $RequestParams = [];
 
     /** @var \Common\Entity\Auth\FrontUser */
     public $Frontuser;
