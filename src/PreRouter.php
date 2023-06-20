@@ -418,6 +418,7 @@ class PreRouter
             'ACTION'=>self::$action,
             'NAMESPACE'=>self::$namespace,
             'APP-CONFIG'=>self::$appConfig,
+            'PARAMS'=>self::$params,
         ];
 
         if(!$is_error) {
