@@ -301,13 +301,6 @@ class PreRouter
             self::$controller = array_shift($tmp);
         }
 
-        if(!is_null($_fController)) {
-            self::$params['forced_controller'] = self::$controller;
-            self::$controller = $_fController;
-        }
-
-        self::$_controller = self::$controller;
-
         if(sizeof($tmp) > 0) {
             self::$action = array_shift($tmp);
         }
@@ -325,6 +318,13 @@ class PreRouter
         }
 
         self::$module = str_replace("-","",ucwords(self::$module, "-"));
+
+        //--- Refit Forced controller to structure.
+        if(!is_null($_fController)) {
+            self::$params['forced_controller'] = self::$controller;
+            self::$controller = $_fController;
+        }
+        self::$_controller = self::$controller;
 
         if(self::$appConfig['route'] == 'complex') {
             self::$namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$module);
