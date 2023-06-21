@@ -202,7 +202,6 @@ class PreRouter
         }
 
         self::$tmp['parsedUrl'] = parse_url(str_replace("//","/",self::$_server['REQUEST_URI']));
-
         self::$tmp['aParsedUrl'] = explode("/",trim(self::$tmp['parsedUrl']['path'],"/"));
         $tmp = self::$tmp['aParsedUrl'];
         if(sizeof($tmp) < 1) {
@@ -297,6 +296,7 @@ class PreRouter
             $_fController = self::$appConfig['forceModuleController'][self::$module];
         }
 
+
         if(sizeof($tmp) > 0) {
             self::$controller = array_shift($tmp);
         }
@@ -388,39 +388,9 @@ class PreRouter
         return false;
     }
 
-    private static function printTest()
+    public static function Ldbg($is_error = false) : void
     {
-        echo "---------------<br>";
-        echo "LANG :".self::$i18n."<br>";
-        echo "APP :".self::$app."<br>";
-        echo "MODULE :".self::$module."<br>";
-        echo "CONTROLLER :".self::$controller." PARAM-CONTROLLER :".self::$paramController."<br>";
-        echo "ACTION :".self::$action."<br>";
-        echo "NAMESPACE :".self::$namespace."<br>";
-        echo "---------------<br><br>";
-    }
-
-    public static function Ldbg($is_error = false)
-    {
-        $_config = '';
-        if(IS_DEVEL) {
-            //$_config = self::$requestedDomainConfig;
-        }
-        $_msg = [
-            'CONFIG'=>$_config,
-            'SESSION_DOMAIN'=>self::$sessionDomain,
-            'SUBDOMAIN'=>!is_null(self::$subDomain) ? self::$subDomain : '',
-            'LANG'=>self::$i18n,
-            'APP'=>self::$app,
-            'MODULE'=>self::$module,
-            'CONTROLLER'=>self::$controller,
-            'PARAM-CONTROLLER'=>self::$paramController,
-            'ACTION'=>self::$action,
-            'NAMESPACE'=>self::$namespace,
-            'APP-CONFIG'=>self::$appConfig,
-            'PARAMS'=>self::$params,
-            'TMP'=>self::$tmp,
-        ];
+        $_msg = self::GetInfo();
 
         if(!$is_error) {
             \K5\U::ldbg($_msg);
@@ -436,18 +406,26 @@ class PreRouter
 
     public static function GetInfo()
     {
+        $_config = [];
         if(IS_DEVEL) {
-            //$r['DOMAIN-CONFIg'] = self::$requestedDomainConfig;
+            //$_config = self::$requestedDomainConfig;
         }
 
-        $r['LANG'] = self::$i18n;
-        $r['APP'] = self::$app;
-        $r['MODULE'] = self::$module;
-        $r['CONTROLLER'] = self::$controller;
-        $r['ACTION'] = "ACTION :".self::$action;
-        $r['PARAM-CONTROLLER'] = self::$paramController;
-        $r['NAMESPACE'] = self::$namespace;
-        return $r;
+        return [
+            'CONFIG'=>$_config,
+            'SESSION_DOMAIN'=>self::$sessionDomain,
+            'SUBDOMAIN'=>!is_null(self::$subDomain) ? self::$subDomain : '',
+            'LANG'=>self::$i18n,
+            'APP'=>self::$app,
+            'MODULE'=>self::$module,
+            'CONTROLLER'=>self::$controller,
+            'PARAM-CONTROLLER'=>self::$paramController,
+            'ACTION'=>self::$action,
+            'NAMESPACE'=>self::$namespace,
+            'APP-CONFIG'=>self::$appConfig,
+            'PARAMS'=>self::$params,
+            'TMP'=>self::$tmp,
+        ];
     }
 
     public static function ParseDefault($routes,$prefix=false)
