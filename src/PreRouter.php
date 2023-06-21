@@ -30,6 +30,7 @@ class PreRouter
     private static string $_action;
     private static string $namespace = "Web\\Front";
     private static array $params = [];
+    private static array $tmp = [];
     private static string $i18n = "tr";
     private static $config;
     private static $paramModule;
@@ -200,9 +201,10 @@ class PreRouter
             die();
         }
 
-        $parsedUrl = parse_url(str_replace("//","/",self::$_server['REQUEST_URI']));
+        self::$tmp['parsedUrl'] = parse_url(str_replace("//","/",self::$_server['REQUEST_URI']));
 
-        $tmp = explode("/",trim($parsedUrl['path'],"/"));
+        self::$tmp['aParsedUrl'] = explode("/",trim(self::$tmp['parsedUrl']['path'],"/"));
+        $tmp = self::$tmp['aParsedUrl'];
         if(sizeof($tmp) < 1) {
             return;
         }
@@ -291,10 +293,8 @@ class PreRouter
 
         /** Check forced index */
         $_fController = null;
-        if(isset(self::$appConfig['forceModuleController'])) {
-            if(isset(self::$appConfig['forceModuleController'][self::$module])) {
-                $_fController = self::$appConfig['forceModuleController'][self::$module];
-            }
+        if(isset(self::$appConfig['forceModuleController']) && isset(self::$appConfig['forceModuleController'][self::$module])) {
+            $_fController = self::$appConfig['forceModuleController'][self::$module];
         }
 
         if(sizeof($tmp) > 0) {
@@ -419,6 +419,7 @@ class PreRouter
             'NAMESPACE'=>self::$namespace,
             'APP-CONFIG'=>self::$appConfig,
             'PARAMS'=>self::$params,
+            'TMP'=>self::$tmp,
         ];
 
         if(!$is_error) {
