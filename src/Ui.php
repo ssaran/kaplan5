@@ -21,9 +21,10 @@ class Ui
 
     private static array $_pageMeta = [];
     private static array $_pageVars = [];
-    private static array $_output;
+    private static array $_output = [];
     private static $_layout = '';
     private static bool $_isAjax = false;
+    private static bool $_isCMS = false;
     private static int $_bootstrapVersion = 4;
     private static string $_documentType = 'application/json';
 
@@ -45,6 +46,16 @@ class Ui
     public static function GetIsAjax()
     {
         return self::$_isAjax;
+    }
+
+    public static function SetCms(bool $isCms) : void
+    {
+        self::$_isCMS = $isCms;
+    }
+
+    public static function SetIsCms() : bool
+    {
+        return self::$_isCMS;
     }
 
     public static function SetBootstrapVersion(int $ver = 4) : void
@@ -255,12 +266,12 @@ class Ui
                 switch ($o->K5Type) {
                     case "link":
                     case "lib":
-                            $r['js']['link'][] = '<script src="'.$o->Content.'"></script>';
-                            if(!$o->Embed) {
-                                $r['js']['forced'][] = '<script src="'.$o->Content.'"></script>';
-                            } else {
-                                $r['js']['embed'][] = $o->Content;
-                            }
+                        $r['js']['link'][] = '<script src="'.$o->Content.'"></script>';
+                        if(!$o->Embed) {
+                            $r['js']['forced'][] = '<script src="'.$o->Content.'"></script>';
+                        } else {
+                            $r['js']['embed'][] = $o->Content;
+                        }
                         break;
 
                     case "head":
