@@ -10,10 +10,10 @@ namespace K5;
 
 class PreRouter
 {
-    private static string $appDir;
+    private static $config;
     private static $appConfig;
-    private static string $moduleDir;
-    private static string $controllersDir;
+    private static $requestedDomainConfig;
+    private static $requestMethod;
     private static string $domain;
     private static ?string $subDomain = null;
     private static string $sessionDomain;
@@ -28,17 +28,10 @@ class PreRouter
     private static array $params = [];
     private static array $tmp = [];
     private static string $i18n = "tr";
-    private static $config;
-    private static $paramModule;
-    private static $paramController;
-    private static $paramAction;
-    private static $requestedDomainConfig;
-    private static $requestMethod;
-    private static $specialRouter = null;
-    private static $isApi = false;
-    private static $versionApi;
+    private static bool $isApi = false;
+    private static ?int $versionApi = null;
 
-    private static $_server;
+    private static ?array $_server = null;
 
     public static function SetInstance($config,$server)
     {
@@ -61,8 +54,6 @@ class PreRouter
             self::$i18n = self::$requestedDomainConfig->default->i18n;
 
             self::parseRoute();
-            self::parseControllerTranslate();
-            self::parseActionForce();
         }
         return true;
     }
@@ -97,29 +88,14 @@ class PreRouter
         return (!$real) ? self::$module : self::$_module;
     }
 
-    public static function GetParamModule()
-    {
-        return self::$paramModule;
-    }
-
     public static function GetController($real=false)
     {
         return (!$real) ? self::$controller : self::$_controller;
     }
 
-    public static function GetParamController()
-    {
-        return self::$paramController;
-    }
-
     public static function GetAction($real=false)
     {
         return (!$real) ? self::$action : self::$_action;
-    }
-
-    public static function GetParamAction()
-    {
-        return self::$paramAction;
     }
 
     public static function GetParams()
@@ -135,11 +111,6 @@ class PreRouter
     public static function GetRequestMethod()
     {
         return self::$requestMethod;
-    }
-
-    public static function GetSpecialRouter()
-    {
-        return self::$specialRouter;
     }
 
     public static function GetAppConfig()
@@ -251,15 +222,6 @@ class PreRouter
         self::$module = str_replace("-","",ucwords(self::$module, "-"));
         self::$namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$versionApi);
 
-        /*$cm = new \Phalcon\Support\Helper\Str\PascalCase();
-        $nameSpaceSpecial = self::$namespace."\\".ucfirst($cm(self::$controller));*/
-        $nameSpaceSpecial = self::$namespace."\\".self::ToCamelCase(self::$controller);
-
-        if(isset(self::$appConfig['route_special']) && isset(self::$appConfig['route_special'][$nameSpaceSpecial])) {
-            self::$specialRouter = self::$appConfig['route_special'][$nameSpaceSpecial]['router'];
-        } else {
-            self::$specialRouter = null;
-        }
         return true;
     }
 
@@ -315,51 +277,7 @@ class PreRouter
             self::$controller = $_fController;
         }
         self::$_controller = self::$controller;
-
-        if(self::$appConfig['route'] == 'complex') {
-            self::$namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$module);
-        } else {
-            self::$action = self::$controller;
-            self::$controller = self::$module;
-            self::$moduleDir = self::$appDir;
-            self::$controllersDir = self::$moduleDir;
-            self::$namespace = self::$appConfig['namespace'];
-        }
-
-        /*$cm = new \Phalcon\Support\Helper\Str\PascalCase();
-        $nameSpaceSpecial = self::$namespace."\\".ucfirst($cm(self::$controller));*/
-        $nameSpaceSpecial = self::$namespace."\\".self::ToCamelCase(self::$controller);
-        if(isset(self::$appConfig['route_special']) && isset(self::$appConfig['route_special'][$nameSpaceSpecial])) {
-            self::$specialRouter = self::$appConfig['route_special'][$nameSpaceSpecial]['router'];
-        } else {
-            self::$specialRouter = null;
-        }
-    }
-
-    private static function parseControllerTranslate()
-    {
-        if(!isset(self::$config->translate->{self::$app})) {
-            return;
-        }
-        $tData = self::$config->translate->{self::$app};
-
-        if(!isset($tData->{self::$controller})) {
-            return;
-        }
-        self::$paramController = self::$controller;
-        self::$controller = $tData->{self::$controller};
-    }
-
-    private static function parseActionForce()
-    {
-        if(!isset(self::$config->force->{self::$controller})) {
-            return;
-        }
-
-        $tData = self::$config->force->{self::$controller};
-
-        self::$paramAction = self::$action;
-        self::$action = $tData->{self::$action};
+        self::$namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$module);
     }
 
     private static function checkLanguageConfig($lang)
