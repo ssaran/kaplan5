@@ -406,25 +406,19 @@ class PreRouter
 
     public static function GetInfo()
     {
-        $_config = [];
-        if(IS_DEVEL) {
-            //$_config = self::$requestedDomainConfig;
-        }
-
         return [
-            'CONFIG'=>$_config,
             'SESSION_DOMAIN'=>self::$sessionDomain,
             'SUBDOMAIN'=>!is_null(self::$subDomain) ? self::$subDomain : '',
             'LANG'=>self::$i18n,
             'APP'=>self::$app,
             'MODULE'=>self::$module,
             'CONTROLLER'=>self::$controller,
-            'PARAM-CONTROLLER'=>self::$paramController,
             'ACTION'=>self::$action,
+            'PARAMS'=>self::$params,
             'NAMESPACE'=>self::$namespace,
             'APP-CONFIG'=>self::$appConfig,
-            'PARAMS'=>self::$params,
             'TMP'=>self::$tmp,
+            'PARAM-CONTROLLER'=>self::$paramController,
         ];
     }
 

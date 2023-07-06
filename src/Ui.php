@@ -53,7 +53,7 @@ class Ui
         self::$_isCMS = $isCms;
     }
 
-    public static function SetIsCms() : bool
+    public static function GetIsCms() : bool
     {
         return self::$_isCMS;
     }
@@ -68,22 +68,22 @@ class Ui
         return self::$_bootstrapVersion;
     }
 
-    public static function SetLayout($layout)
+    public static function SetLayout($layout) : void
     {
         self::$_layout = $layout;
     }
 
-    public static function SetCanvas($layout)
+    public static function SetCanvas($layout) : void
     {
         self::$_layout = $layout;
     }
 
-    public static function ClearOutput()
+    public static function ClearOutput() : void
     {
         Ui::$_output = [];
     }
 
-    public static function Append($element)
+    public static function Append($element) : void
     {
         if(isset($element->DomID)) {
             Ui::$_output[$element->DomID] = $element;
@@ -96,12 +96,12 @@ class Ui
         }
     }
 
-    public static function AppendStd($element)
+    public static function AppendStd($element) : void
     {
         Ui::$_output = (array) $element;
     }
 
-    public static function GetOutput($isAjax=false)
+    public static function GetOutput($isAjax=false) : array
     {
         $ret = Ui::$_output;
         Ui::ClearOutput();

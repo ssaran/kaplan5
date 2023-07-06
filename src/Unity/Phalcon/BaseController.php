@@ -84,7 +84,7 @@ class BaseController extends  \Phalcon\Mvc\Controller
     }
 
     public function GetModal5Packet(string $content,string $domId,string $title='',string $footer='',
-                                    string $size='medium',string $sidebar= '',string $width='',string $callback='')
+                                    string $size='medium',string $close= 'right', ?string $callback=null)
     {
         $e = new \K5\Entity\View\BsModal5();
         $e->DomID = $domId;
@@ -93,8 +93,9 @@ class BaseController extends  \Phalcon\Mvc\Controller
         $e->Modal_Title = $title;
         $e->Modal_Footer = $footer;
         $e->Modal_Size = $size;
-        $e->Modal_Sidebar = $sidebar;
-        $e->Modal_Width = $width;
+        $e->Modal_Sidebar = '';
+        $e->Modal_Width = '';
+        $e->Modal_Callback = $close;
         $e->Modal_Callback = $callback;
 
         return $e;

@@ -22,5 +22,6 @@ class BsModal5 extends DomElement
     public string $Modal_Width = '';
     public string $Modal_Sidebar = '';
     public string $Modal_Callback = '';
+    public string $Modal_Close = 'right';
     public int $Modal_Force = 0;
 }
