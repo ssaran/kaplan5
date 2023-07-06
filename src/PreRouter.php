@@ -326,8 +326,7 @@ class PreRouter
             'PARAMS'=>self::$params,
             'NAMESPACE'=>self::$namespace,
             'APP-CONFIG'=>self::$appConfig,
-            'TMP'=>self::$tmp,
-            'PARAM-CONTROLLER'=>self::$paramController,
+            'TMP'=>self::$tmp
         ];
     }
 
