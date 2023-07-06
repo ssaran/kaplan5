@@ -8,10 +8,6 @@
 
 namespace K5;
 
-use \K5\U as u;
-use phpDocumentor\Reflection\Types\Self_;
-use \Phalcon\Support\Helper\Str;
-
 class PreRouter
 {
     private static string $appDir;
@@ -28,7 +24,7 @@ class PreRouter
     private static string $_module;
     private static string $_controller;
     private static string $_action;
-    private static string $namespace = "Web\\Front";
+    private static ?string $namespace = null;
     private static array $params = [];
     private static array $tmp = [];
     private static string $i18n = "tr";
@@ -43,14 +39,11 @@ class PreRouter
     private static $versionApi;
 
     private static $_server;
-    private static $_u;
-    private static $_log;
 
-    public static function SetInstance($config,$server,$u)
+    public static function SetInstance($config,$server)
     {
         if(is_null(self::$_server)){
             self::$_server = $server;
-            self::$_u = $u;
             self::$requestMethod = self::$_server['REQUEST_METHOD'];
             self::$config = $config;
             self::$requestedDomainConfig = self::$config->domain->default;
@@ -59,11 +52,6 @@ class PreRouter
             if(isset(self::$config->domain[self::$sessionDomain])) {
                 self::$requestedDomainConfig = self::$config->domain[self::$sessionDomain];
             }
-            $_path = str_replace(".","_",self::$sessionDomain);
-
-
-            /*self::$_log->debug(print_r(self::$config,true));
-            self::$_log->debug(self::$sessionDomain);*/
 
             self::$app = self::$requestedDomainConfig->default->app;
             self::$module = self::$requestedDomainConfig->default->module;
@@ -197,7 +185,7 @@ class PreRouter
     {
         self::$appConfig = self::checkAppConfig(self::$app);
         if(!self::$appConfig) {
-            self::$_u::lerr("Default app conf not found. Check Config : ".self::$app." - ".self::$_server['REQUEST_URI']);
+            self::logErr("Default app conf not found. Check Config : ".self::$app." - ".self::$_server['REQUEST_URI']);
             die();
         }
 
@@ -222,7 +210,7 @@ class PreRouter
         }
     }
 
-    private static function routeApi($tmp)
+    private static function routeApi($tmp) : bool
     {
         self::$isApi = true;
 
@@ -235,8 +223,8 @@ class PreRouter
         }
 
         if($current !== null) {
-            self::$_u::lerr("Api module Not Found ");
-            self::$_u::lerr($tmp);
+            self::logErr("Api module Not Found ");
+            self::logErr($tmp);
             return false;
         }
 
@@ -263,14 +251,16 @@ class PreRouter
         self::$module = str_replace("-","",ucwords(self::$module, "-"));
         self::$namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$versionApi);
 
-        $cm = new \Phalcon\Support\Helper\Str\PascalCase();
-        $nameSpaceSpecial = self::$namespace."\\".ucfirst($cm(self::$controller));
+        /*$cm = new \Phalcon\Support\Helper\Str\PascalCase();
+        $nameSpaceSpecial = self::$namespace."\\".ucfirst($cm(self::$controller));*/
+        $nameSpaceSpecial = self::$namespace."\\".self::ToCamelCase(self::$controller);
 
         if(isset(self::$appConfig['route_special']) && isset(self::$appConfig['route_special'][$nameSpaceSpecial])) {
             self::$specialRouter = self::$appConfig['route_special'][$nameSpaceSpecial]['router'];
         } else {
             self::$specialRouter = null;
         }
+        return true;
     }
 
     private static function routeWeb($tmp,$current)
@@ -312,7 +302,7 @@ class PreRouter
 
         if(self::$app == 'front') {
             if(isset(self::$config->translate->public->{self::$module})) {
-                self::$_u::lerr('die public dir as module');
+                self::logErr('die public dir as module');
                 die();
             }
         }
@@ -336,8 +326,9 @@ class PreRouter
             self::$namespace = self::$appConfig['namespace'];
         }
 
-        $cm = new \Phalcon\Support\Helper\Str\PascalCase();
-        $nameSpaceSpecial = self::$namespace."\\".ucfirst($cm(self::$controller));
+        /*$cm = new \Phalcon\Support\Helper\Str\PascalCase();
+        $nameSpaceSpecial = self::$namespace."\\".ucfirst($cm(self::$controller));*/
+        $nameSpaceSpecial = self::$namespace."\\".self::ToCamelCase(self::$controller);
         if(isset(self::$appConfig['route_special']) && isset(self::$appConfig['route_special'][$nameSpaceSpecial])) {
             self::$specialRouter = self::$appConfig['route_special'][$nameSpaceSpecial]['router'];
         } else {
@@ -393,9 +384,9 @@ class PreRouter
         $_msg = self::GetInfo();
 
         if(!$is_error) {
-            \K5\U::ldbg($_msg);
+            self::logDbg($_msg);
         } else {
-            \K5\U::lerr($_msg);
+            self::logErr($_msg);
         }
     }
 
@@ -433,10 +424,41 @@ class PreRouter
             $arr = explode("_",$key);
             $val = $_prefix;
             foreach ($arr as $path) {
-                $val.= mb_strtolower(u::FromCamelCase($path,"-"))."/";
+                $val.= mb_strtolower(self::FromCamelCase($path,"-"))."/";
             }
             $obj->{$key} = $val;
         }
         return $obj;
+    }
+
+    protected static function log($message,$type='debug')
+    {
+        openlog('php', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
+        if($type == 'error') {
+            syslog(LOG_ERR, 'PreRouter -'.$type.'- '.print_r($message,true));
+        } else {
+            syslog(LOG_INFO, 'PreRouter -'.$type.'- '.print_r($message,true));
+        }
+        closelog();
+    }
+
+    protected static function logErr($message)
+    {
+        self::log($message,'error');
+    }
+
+    protected static function logDbg($message)
+    {
+        self::log($message,'debug');
+    }
+
+    public static function FromCamelCase($camelCaseString,string $seperator=" ") {
+        $re = '/(?<=[a-z])(?=[A-Z])/x';
+        $a = preg_split($re, $camelCaseString);
+        return join($seperator, $a );
+    }
+
+    public static function ToCamelCase(string $str,string $seperator="-") {
+        return str_replace($seperator, '', ucwords($str, $seperator));
     }
 }

@@ -9,18 +9,18 @@
 namespace K5\Entity\View;
 
 
-class BsModal extends Element
+class BsModal extends DomElement
 {
-    public string $Type = 'modal';
-    public string $Mode = 'add';
     public bool $Refresh = false;
-    public ?string $Modal_DomID;
-    public ?string $Modal_Title;
-    public ?string $Modal_Body = '';
-    public ?string $Modal_Footer;
+    public int $Modal_Force = 0;
+    public string $Type = 'modal5';
+    public string $Mode = 'add';
+    public string $Modal_DomID;
+    public string $Modal_Title = '';
+    public string $Modal_Body = '';
+    public string $Modal_Footer = '';
     public string $Modal_Size = 'medium';
-    public ?string $Modal_Width = null;
-    public ?string $Modal_Sidebar = null;
+    public string $Modal_Close = 'right';
     public ?string $Modal_Callback = null;
-    public ?string  $Modal_Force = '0';
+
 }
