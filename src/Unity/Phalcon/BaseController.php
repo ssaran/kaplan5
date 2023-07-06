@@ -95,7 +95,7 @@ class BaseController extends  \Phalcon\Mvc\Controller
         $e->Modal_Size = $size;
         $e->Modal_Sidebar = '';
         $e->Modal_Width = '';
-        $e->Modal_Callback = $close;
+        $e->Modal_Close = $close;
         $e->Modal_Callback = $callback;
 
         return $e;
