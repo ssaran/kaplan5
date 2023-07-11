@@ -164,17 +164,17 @@ class Ui
         self::PrepareJavascriptContent($content, 'js_alert_'.$key,'add','','documentReady');
     }
 
-    public static function JSError($message,$title='',$footer='',$modalSize='medium')
+    public static function JSError($message,$title='',$footer='',$modalSize='lg')
     {
         $message = addslashes(str_replace( "\n", '<br>', $message));
         $title = str_replace( "\n", '<br>', $title);
         if(!empty($footer)) {
-            $footer = str_replace( "\n", '<br>', $footer);
+            $message.="<br>".str_replace( "\n", '<br>', $footer);
         }
 
         $key = U::randomChars(8,true);
         $content = '
-            Util.JSAlert("mid_'.$key.'","'.$title.'","'.$message.'","'.$footer.'","'.$modalSize.'");
+            Util.JSAlert("'.$message.'","'.$title.'","danger","'.$modalSize.'","OK",0);
 ';
         self::PrepareJavascriptContent($content, 'js_alert_'.$key,'add','','documentReady');
     }
