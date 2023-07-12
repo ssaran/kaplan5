@@ -68,7 +68,7 @@ class BaseController extends  \Phalcon\Mvc\Controller
     }
 
     public function GetModalPacket(string $content,string $domId,?string $title=null,?string $footer=null,
-                                    string $size='medium',string $close= 'right', ?string $callback=null)
+                                   string $size='medium',string $close= 'right', ?string $callback=null)
     {
         $e = new \K5\Entity\View\BsModal();
         $e->DomID = $domId;
@@ -99,6 +99,31 @@ class BaseController extends  \Phalcon\Mvc\Controller
         $html->DomID = $domID;
         $html->Type = 'data';
         return $html;
+    }
+
+    public function CurlFetch(string $url,array $fields=[],array $headers=[],string $method='post')
+    {
+        try {
+            $raw = \K5\Http\Curl::Exec([
+                'url'=> $url,
+                'method'=> $method,
+                'headers'=> $headers,
+                'fields'=>$fields
+            ]);
+
+            if(empty($raw)) {
+                throw new \Exception("Empty Service Response \n");
+            }
+            $resp = json_decode($raw);
+            if(!isset($resp->payload) ||!isset($resp->payload->record)) {
+                \K5\U::lerr("Bad Response ".print_r($resp,true));
+                throw new \Exception("Bad Response \n".print_r($resp,true));
+            }
+            return $resp->payload->record;
+        } catch (\Throwable $e) {
+            \K5\U::lerr($e->getMessage());
+            throw $e;
+        }
     }
 
     /**
