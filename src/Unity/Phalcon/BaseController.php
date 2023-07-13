@@ -107,27 +107,23 @@ class BaseController extends  \Phalcon\Mvc\Controller
 
     public function CurlFetch(string $url,array $fields=[],array $headers=[],string $method='post')
     {
-        try {
-            $raw = \K5\Http\Curl::Exec([
-                'url'=> $url,
-                'method'=> $method,
-                'headers'=> $headers,
-                'fields'=>$fields
-            ]);
+        $raw = \K5\Http\Curl::Exec([
+            'url'=> $url,
+            'method'=> $method,
+            'headers'=> $headers,
+            'fields'=>$fields
+        ]);
 
-            if(empty($raw)) {
-                throw new \Exception("Empty Service Response \n");
-            }
-            $resp = json_decode($raw);
-            if(!isset($resp->payload) ||!isset($resp->payload->record)) {
-                \K5\U::lerr("Bad Response ".print_r($resp,true));
-                throw new \Exception("Bad Response \n".print_r($resp,true));
-            }
-            return $resp->payload->record;
-        } catch (\Throwable $e) {
-            \K5\U::lerr($e->getMessage());
-            throw $e;
+        if(empty($raw)) {
+            throw new \Exception("Empty Curl Response \n");
         }
+
+        $resp = json_decode($raw);
+        if(!isset($resp->payload) || !isset($resp->state)) {
+            \K5\U::lerr("Bad Response ".print_r($resp,true));
+            throw new \Exception("Bad Response \n".print_r($resp,true));
+        }
+        return $resp->payload;
     }
 
     /**
