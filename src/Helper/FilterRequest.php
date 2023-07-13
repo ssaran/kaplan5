@@ -25,8 +25,10 @@ class FilterRequest
             $_fields = \K5\U::Entity2Array(new $field($setup),$_fields);
         }
 
-        $setup = \Common\Helper\RequestSanitizer::Exec($setup,$_f,$_REQUEST,$_fields);
-        $post = $setup->Post;
+        $setup = self::_requestSanitizer($setup,$_f,$_REQUEST,$_fields);
+
+        /*
+        $post = $_POST;
 
         $san = [];
         foreach($post as $k => $v) {
@@ -34,18 +36,42 @@ class FilterRequest
                 $san[$k] = $setup->Sanitized[$k];
             }
         }
-        $setup->Post = $san;
+        //$setup->Post = $san;
 
 
-        $get = $setup->Get;
+        $get = $_GET;
         $san = [];
         foreach($get as $k => $v) {
             if(isset($setup->Sanitized[$k])) {
                 $san[$k] = $setup->Sanitized[$k];
             }
         }
-        $setup->Get = $san;
+        //$setup->Get = $san;
+        */
 
+        return $setup;
+    }
+
+    private static function _requestSanitizer (\K5\Entity\Request\Setup $setup,\Phalcon\Filter\FilterFactory $filter,$request,$fields) : \K5\Entity\Request\Setup
+    {
+        /**
+         * @var  $f
+         * @var  $field \K5\Http\Field
+         */
+        foreach ($fields as $f => $field) {
+            $_s = false;
+            if(isset($request[$f])) {
+                $_l = $filter->newInstance();
+                $_s = $_l->sanitize($request[$f],$field->filter);
+            } else {
+                if(isset($field->default_value)) {
+                    $_s = $field->default_value;
+                } else {
+                    //\K5\U::linfo("".$f." |-------------------------------");
+                }
+            }
+            $setup->Sanitized[$f] = $_s;
+        }
         return $setup;
     }
 }
