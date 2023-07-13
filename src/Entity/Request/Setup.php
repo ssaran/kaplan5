@@ -32,22 +32,6 @@ class Setup
     public \K5\Component\RequestFields $Fields;
     public int $Page = 1;
     public string $BaseUrl;
-    public array $Post = [];
-    public array $Get = [];
     public array $Decoded = [];
     public array $RequestParams = [];
-
-
-
-
-    public function __construct(array $options=[])
-    {
-        foreach ($options as $k =>$v) {
-            if(isset($this->{$k})) {
-                $this->{$k} = $v;
-            } else {
-                \K5\U::lerr("Setup Parameter Not Found ".$k);
-            }
-        }
-    }
 }
