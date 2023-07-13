@@ -1,10 +1,10 @@
 <?php
 
 
-namespace K5\Component\Route;
+namespace K5\Component;
 
 
-class Base
+class Route
 {
     public function __construct(array $routes=[])
     {

@@ -3,45 +3,38 @@
 
 namespace K5\Entity\Request;
 
-use K5\U as u;
-
 class Setup
 {
-    public string $SessionDomain;
+
     public $Config = false;
-    public $ApiPrefix = false;
-    public $IsApi = false;
-    public $Employer = false;
-    public $TemplatesDir = false;
-    public $DomDestination = false;
-    public $IsModal = false;
-    public $IsTab = false;
-    public $IsAjax = false;
-    public $IsMobile = false;
-    public $IsIframe = false;
-    public ?string $IsData = null;
-    public ?string $IsCommon = null;
-    public $Controller = '';
-    public $Action = '';
-    public $Permission = 0;
+    public ?string $ApiPrefix;
+    public bool $IsApi = false;
+    public ?string $Employer;
+    public ?string $DomDestination;
+    public ?string $IsModal;
+    public ?string $IsTab;
+    public bool $IsAjax = false;
+    public bool $IsIframe = false;
+    public ?string $IsData;
+    public ?string $IsCommon;
+    public ?string $Controller;
+    public ?string $Action;
+    public ?string $Permission;
     public $Fields;
     public $Sanitized = [];
     public $Locale = 'tr_TR';
     public $i18n = 'tr';
 
-    public $Dom = '';
-    public $Css = '';
-    public $Routes = '';
-    public $Page = 1;
-    public $BaseUrl = '';
-    public $DateStart = '';
-    public $DateEnd = '';
-    public $TimeStart = '';
-    public $TimeEnd = '';
-    public $Post = [];
-    public $Get = [];
-    public $Decoded = [];
-    public $RequestParams = [];
+    public string $SessionDomain;
+    public \K5\Entity\View\Dom\Keys $Dom;
+    public \K5\Entity\View\Dom\ClassKeys $Css;
+    public \K5\Component\Route $Routes;
+    public int $Page = 1;
+    public string $BaseUrl;
+    public array $Post = [];
+    public array $Get = [];
+    public array $Decoded = [];
+    public array $RequestParams = [];
 
 
     public $Frontuser;

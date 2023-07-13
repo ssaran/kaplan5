@@ -10,7 +10,7 @@ namespace K5;
 
 class View5
 {
-    public \K5\Component\Route\Base $Routes;
+    public Component\Route $Routes;
     public \K5\Entity\View\Dom\Keys $Dom;
     public \K5\Entity\View\Dom\ClassKeys $Css;
 
