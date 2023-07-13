@@ -20,6 +20,10 @@ class BaseController extends  \Phalcon\Mvc\Controller
 {
 
     public string $issuer_key = '';
+    public string $SessionDomain = '';
+    public ?string $SubDomain;
+    public string $App;
+    public string $Module;
 
     public function initialize()
     {
@@ -279,6 +283,52 @@ class BaseController extends  \Phalcon\Mvc\Controller
         if($perm < 10) {return false;}
 
         return $perm;
+    }
+
+    /**
+     * @param $content
+     * @param $httpCode
+     */
+    public function SendResponse($content,$httpCode)
+    {
+        /*
+        $trace = debug_backtrace();
+        $caller = $trace[1];
+
+        \K5\U::linfo($this->request->getHeaders());
+        \K5\U::linfo("Called by {$caller['function']}");
+        if (isset($caller['class'])) {
+            \K5\U::linfo(" in {$caller['class']}");
+        }*/
+
+        $httpStatus = '501';
+        switch ($httpCode) {
+            case "200": $httpStatus = 'OK'; break;
+            case "201": $httpStatus = 'Created'; break;
+            case "202": $httpStatus = 'Accepted'; break;
+            case "204": $httpStatus = 'No Content'; break;
+            case "400": $httpStatus = 'Bad Request'; break;
+            case "401": $httpStatus = 'Unauthorized'; break;
+            case "403": $httpStatus = 'Forbidden'; break;
+            case "404": $httpStatus = 'Not Found'; break;
+            case "405": $httpStatus = 'Method Not Allowed'; break;
+            case "406": $httpStatus = 'Not Acceptable'; break;
+            case "412": $httpStatus = 'Precondition Failed'; break;
+            case "415": $httpStatus = 'Unsupported Media Type'; break;
+            case "500": $httpStatus = 'Internal Server Error'; break;
+            case "501": $httpStatus = 'Not Implemented'; break;
+        }
+
+        $intCode = (integer) $httpCode;
+        if($intCode > 205) {
+            \K5\U::lerr($_REQUEST);
+        }
+
+        $this->response->setStatusCode($httpCode, $httpStatus)->sendHeaders();
+        $this->response->setContentType('application/json', 'UTF-8');
+        //$this->response->setJsonContent($content, JSON_NUMERIC_CHECK)->send();
+        $this->response->setJsonContent($content)->send();
+        die();
     }
 
 }
