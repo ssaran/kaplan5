@@ -5,8 +5,9 @@ namespace K5\Entity\Request;
 
 class Setup
 {
+    public $Frontuser;
+    public $Config;
 
-    public Object $Config;
     public ?string $ApiPrefix;
     public bool $IsApi = false;
     public ?string $Employer;
@@ -37,7 +38,7 @@ class Setup
     public array $RequestParams = [];
 
 
-    public $Frontuser;
+
 
     public function __construct(array $options=[])
     {
