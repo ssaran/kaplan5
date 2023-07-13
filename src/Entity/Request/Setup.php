@@ -6,7 +6,7 @@ namespace K5\Entity\Request;
 class Setup
 {
 
-    public $Config = false;
+    public \Phalcon\Config\Config $Config;
     public ?string $ApiPrefix;
     public bool $IsApi = false;
     public ?string $Employer;
@@ -20,15 +20,16 @@ class Setup
     public ?string $Controller;
     public ?string $Action;
     public ?string $Permission;
-    public $Fields;
-    public $Sanitized = [];
-    public $Locale = 'tr_TR';
-    public $i18n = 'tr';
+
+    public array $Sanitized = [];
+    public string $Locale = 'tr_TR';
+    public string $i18n = 'tr';
 
     public string $SessionDomain;
     public \K5\Entity\View\Dom\Keys $Dom;
     public \K5\Entity\View\Dom\ClassKeys $Css;
     public \K5\Component\Route $Routes;
+    public \K5\Component\RequestFields $Fields;
     public int $Page = 1;
     public string $BaseUrl;
     public array $Post = [];
