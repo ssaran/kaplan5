@@ -46,15 +46,15 @@ class View
         $this->_skinName = 'default';
 
 
-        if($this->setup->Dom != null) {
+        if(!is_null($this->setup->Dom)) {
             $this->Dom = $this->setup->Dom;
         }
 
-        if($this->setup->Css != null) {
+        if(!is_null($this->setup->Css)) {
             $this->Css = $this->setup->Css;
         }
 
-        if($this->setup->Routes != null) {
+        if(!is_null($this->setup->Routes)) {
             $this->Routes = $this->setup->Routes;
         }
     }
