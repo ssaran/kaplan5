@@ -6,7 +6,7 @@ namespace K5\Entity\Request;
 class Setup
 {
     public $Frontuser;
-    public $Config;
+    public \Phalcon\Config\Config $Config;
 
     public ?string $ApiPrefix;
     public bool $IsApi = false;
