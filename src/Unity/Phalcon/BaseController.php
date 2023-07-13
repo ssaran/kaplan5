@@ -123,7 +123,7 @@ class BaseController extends  \Phalcon\Mvc\Controller
             \K5\U::lerr("Bad Response ".print_r($resp,true));
             throw new \Exception("Bad Response \n".print_r($resp,true));
         }
-        return $resp->payload;
+        return $resp;
     }
 
     /**

@@ -19,7 +19,8 @@ class Setup
     public $IsAjax = false;
     public $IsMobile = false;
     public $IsIframe = false;
-    public bool $IsData = false;
+    public ?string $IsData = null;
+    public ?string $IsCommon = null;
     public $Controller = '';
     public $Action = '';
     public $Permission = 0;
@@ -42,7 +43,7 @@ class Setup
     public $Decoded = [];
     public $RequestParams = [];
 
-    /** @var \Common\Entity\Auth\FrontUser */
+
     public $Frontuser;
 
     public function __construct(array $options=[])
@@ -51,7 +52,7 @@ class Setup
             if(isset($this->{$k})) {
                 $this->{$k} = $v;
             } else {
-                \K5\Log::Error("Setup Parameter Not Found ".$k);
+                \K5\U::lerr("Setup Parameter Not Found ".$k);
             }
         }
     }
