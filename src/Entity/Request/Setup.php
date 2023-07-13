@@ -12,9 +12,8 @@ class Setup
     public ?string $Employer;
     public ?string $DomDestination;
     public ?string $IsModal;
-    public ?string $IsTab;
     public bool $IsAjax = false;
-    public bool $IsIframe = false;
+    public ?string $IsIframe;
     public ?string $IsData;
     public ?string $IsCommon;
     public ?string $Controller;
