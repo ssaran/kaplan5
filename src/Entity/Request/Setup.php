@@ -6,7 +6,7 @@ namespace K5\Entity\Request;
 class Setup
 {
 
-    public \Phalcon\Config\Config $Config;
+    public Object $Config;
     public ?string $ApiPrefix;
     public bool $IsApi = false;
     public ?string $Employer;
