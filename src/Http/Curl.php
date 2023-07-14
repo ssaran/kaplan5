@@ -13,8 +13,7 @@ class Curl
     {
         try {
             $cHeaders = [
-                "User-Agent : Chrome/49.0.2587.3",
-                'Accept-Encoding : gzip',
+                "User-Agent: Chrome/49.0.2587.3",
             ];
             $ch = curl_init();
 

@@ -59,8 +59,8 @@ class BaseModule
 
             return $model;
         } catch (\Exception $e) {
-            \K5\Log::Error("Create Record Error");
-            \K5\Log::Error($e->getMessage());
+            \K5\U::lerr("Create Record Error");
+            \K5\U::lerr($e->getMessage());
             throw $e;
         }
     }
@@ -86,7 +86,7 @@ class BaseModule
 
             return $model;
         } catch (\Exception $e) {
-            \K5\Log::Error($e->getMessage());
+            \K5\U::lerr($e->getMessage());
             throw $e;
         }
     }
