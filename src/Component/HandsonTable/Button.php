@@ -13,7 +13,7 @@ class Button extends \K5\Entity\Config\Button
 {
     CONST CLASS_EDIT = 'btn btn-raised btn-info btn-sm btn-square xjhref ';
     CONST CLASS_DELETE = 'btn btn-danger btn-sm btn-square xjhref';
-    CONST CLASS_ADD = 'btn btn-success btn-sm btn-square xjhref';
+    CONST CLASS_ADD = 'btn btn-success xjhref';
     CONST ICON_EDIT = 'fa fa-pencil';
     CONST ICON_DELETE = 'fa fa-trash';
     CONST ICON_ADD = 'fas fa-plus-square';
