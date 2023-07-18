@@ -11,9 +11,9 @@ namespace K5\Component\HandsonTable;
 
 class Button extends \K5\Entity\Config\Button
 {
-    CONST CLASS_EDIT = 'btn btn-hs btn-raised btn-info xhref ';
-    CONST CLASS_DELETE = 'btn btn-hs btn-raised btn-danger xhref';
-    CONST CLASS_ADD = 'btn btn-xs btn-raised btn-success xhref';
+    CONST CLASS_EDIT = 'btn btn-raised btn-info btn-sm btn-square xjhref ';
+    CONST CLASS_DELETE = 'btn btn-danger btn-sm btn-square xjhref';
+    CONST CLASS_ADD = 'btn btn-success btn-sm btn-square xjhref';
     CONST ICON_EDIT = 'fa fa-pencil';
     CONST ICON_DELETE = 'fa fa-trash';
     CONST ICON_ADD = 'fas fa-plus-square';

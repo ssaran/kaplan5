@@ -45,7 +45,6 @@ class View
         $this->vars['data'] = $data;
         $this->_skinName = 'default';
 
-
         if(!is_null($this->setup->Dom)) {
             $this->Dom = $this->setup->Dom;
         }

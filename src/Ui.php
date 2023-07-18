@@ -193,7 +193,8 @@ class Ui
     {
         $key = U::randomChars(8,true);
         $content = '
-                $("#'.$modalID.'").modal("hide");
+                var _modal = bootstrap.Modal.getInstance(document.getElementById("'.$modalID.'"));
+                _modal.hide();
 ';
         self::PrepareJavascriptContent($content, 'js_closemodal_'.$key,'add','','documentReady');
     }
@@ -224,13 +225,18 @@ class Ui
 
     public static function AjaxCall($url,$type,$data,$ext='',$isNoHistory=false)
     {
+        $_data = is_null($data) ? '{}' : json_encode($data);
         if(!$isNoHistory) {
             $content = "
-                Main.xhrCall('".$url."','".$type."','json',".json_encode($data).");
+                Main.xjCall('".$url."','".$type."',".$_data.",{});
 ";
         } else {
             $content = "
-                Main.xhrCall('".$url."','".$type."','json',".json_encode($data).",false);
+                Main.jxCall('".$url."','".$type."',".$_data.",
+                {
+                    'nohistory':'yes
+                }
+                );
 ";
         }
 
