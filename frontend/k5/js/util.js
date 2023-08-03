@@ -237,65 +237,24 @@ var Util = function () {
         JSNotify: function (message,type,position,timer) {
             Util.JSToastr(message,type,position,timer);
         },
-        JSToastr: function (message,type,position,timer,title=null,icon=null,subtitle=null) {
-            type = typeof type !== 'undefined' ? type : 'success';
-            position = typeof position !== 'undefined' ? position : 'top-right';
-            timer = typeof timer !== 'undefined' ? timer : 3000;
-
-            if(glb.env.bsv < 5) {
-                toastr.options = {
-                    "closeButton": false,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": false,
-                    "positionClass": "toast-"+position,
-                    "preventDuplicates": true,
-                    "onclick": null,
-                    "showDuration": "400",
-                    "hideDuration": "1000",
-                    "timeOut": timer,
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                };
-                toastr[type](message);
-            } else {
-                $("html, body").animate({ scrollTop: 0 }, "slow");
-                setTimeout(function (){
-                    var _tst = Tpl.Dom("div",{
-                        "class":"toast",
-                        "role":"alert",
-                        "aria-live":"assertive",
-                        "aria-atomic":"true"
-                    },[
-                        Tpl.Dom("div",{"class":"widget-box transparent"},[
-                            Tpl.Dom("div",{"class":"toast-header"},[
-                                Tpl.Dom("strong",{"class":"text-muted"},title),
-                                Tpl.Dom("small",{"class":"text-muted"},''),
-                                Tpl.Dom("button",{"type":"button","class":"btn-close","data-bs-dismiss":"toast","aria-label":"Close"}),
-                            ]),
-                            Tpl.Dom("div",{"class":"toast-body"},message)
-                        ])
-                    ]);
-
-                    $("#toast_container").append(_tst);
-                    var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-                    var toastList = toastElList.map(function(toastEl) {
-                        // Creates an array of toasts (it only initializes them)
-                        return new bootstrap.Toast(toastEl); // No need for options; use the default options
-                    });
-                    toastList.forEach(toast => toast.show()); // This show them
-                    setTimeout(function (){
-                        $("#toast_container").html('');
-                    },2000);
-                },200);
-
-
-
-
-            }
+        JSToastr: function (message, options) {
+            // Set default options
+            let defaultOptions = {
+                title: "Bilgilendirme",
+                subtitle: "",
+                position: "center",
+                type: "success",
+                closeBtn: false,
+                icon: "",
+                iconClass: "",
+                iconStyle: "",
+                timeout: 3000,
+                onShow: function () {},
+                onShown: function () {},
+                onHidden: function () {}
+            };
+            options = { ...defaultOptions, ...options };
+            bs5dialog.toast(message, options);
         },
         TCVerify: function(tcNo) {
             tcNo = tcNo.toString();

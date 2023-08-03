@@ -289,7 +289,7 @@ class Generator
         $field = new \K5\Http\Field();
         $field->key = $name;
         $field->default_value = false;
-        $field->filter[] = \K5\Http\Field::FILTER_FLOAT_CAST;
+        $field->filter[] = \K5\Http\Field::FILTER_FLOAT;
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_DOUBLE;

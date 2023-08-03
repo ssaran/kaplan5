@@ -7,10 +7,11 @@ namespace K5\Http;
 class Field
 {
     const FILTER_ABSINT     = "absint";
-    const FILTER_ALPHANUM   = "alphanum";
+    const FILTER_ALNUM      = "alnum";
+    const FILTER_ALPHA      = "alpha";
+    const FILTER_BOOL       = "bool";
     const FILTER_EMAIL      = "email";
     const FILTER_FLOAT      = "float";
-    const FILTER_FLOAT_CAST = "float!";
     const FILTER_INT        = "int";
     const FILTER_INT_CAST   = "int!";
     const FILTER_LOWER      = "lower";
