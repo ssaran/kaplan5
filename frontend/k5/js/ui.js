@@ -19,18 +19,8 @@ const Ui = function () { return {
                 case "js_lib": Ui.loadJsLib(_r); break;
                 case "css": Ui.processCss(_r); break;
                 case "modal":
-                    if(glb.env.hasOwnProperty('is_tabbed') && glb.env.is_tabbed === 1 && _r.Modal_Force === 0) {
-                        Tabs.Modal2Tab(_r);
-                    } else {
-                        Ui.processModal(_r);
-                    }
-                    break;
                 case "modal5":
-                    if(glb.env.hasOwnProperty('is_tabbed') && glb.env.is_tabbed === 1 && _r.Modal_Force === 0) {
-                        Tabs.Modal2Tab(_r);
-                    } else {
-                        Ui.processModal5(_r);
-                    }
+                    Ui.processModal5(_r);
                     break;
                 case "tabs": Ui.processTab(_r); break;
                 case "tab_title": Ui.processTabTitle(_r); break;
@@ -217,7 +207,7 @@ const Ui = function () { return {
             }
         }
         if(_state === "new") {
-            Modal.Get(_r.Modal_DomID,_r.Modal_Title,_r.Modal_Body,_r.Modal_Footer,_r.Modal_Size,_r.Modal_Width,_r.Modal_Sidebar);
+            Dialog.GetModal(_r.Modal_DomID,_r.Modal_Title,_r.Modal_Body,_r.Modal_Footer,_r.Modal_Size,_r.Modal_Width,_r.Modal_Sidebar);
         } else {
             let _modalBody = document.getElementById(_r.DomID+"_body");
             if(_modalBody) {
@@ -239,8 +229,11 @@ const Ui = function () { return {
             if(_r.Modal_Callback === '') {
                 _r.Modal_Callback = null;
             }
+            if(!_r.hasOwnProperty('Modal_Close') || _r.Modal_Close === '') {
+                _r.Modal_Close = 'right';
+            }
         }
-        Modal5.Get(_r.Modal_DomID,_r.Modal_Title,_r.Modal_Body,_r.Modal_Footer,_r.Modal_Size,_r.Modal_Callback);
+        Dialog.GetModal(_r.Modal_DomID,_r.Modal_Title,_r.Modal_Body,_r.Modal_Footer,_r.Modal_Size,_r.Modal_Close,_r.Modal_Callback);
     },
     processTab:function(_r) {
         if(!_r.hasOwnProperty("Mode") || _r.Mode === false) {
@@ -300,47 +293,24 @@ const Ui = function () { return {
         _el.className = className;
         return _el;
     },
-    xhrCallFromDomElement: function (domId,callback=null) {
+    xhrCallFromDomElement: function (domId) {
         let _elm = document.getElementById(domId);
         if(!_elm) {
             console.error("Dom element not found : ",domId);
             return false;
         }
-        let data = _elm.dataset;
-        if(data.hasOwnProperty("question")) {
-            let _check = false;
-            if(confirm(data.dataset.question)){
-                _check = true;
-            }
-            if(!_check) { return false;}
-        }
+        if(!XHref.isConfirmed(_elm)) { return false; }
 
-        let dataType = 'json';
-        let _req = {};
-        _req.data = XHref.appendData(_elm,{});
-        _req.data.dom_destination = domId;
+        let _req = XHref.initRequest(_elm);
         _req.type = "GET";
-        _req.callback = null;
 
-        for(let i in data ) {
-            if(i === 'href') {
-                _req.url = _elm.dataset.href;
-            } else if(i === 'issuerprefix') {
-                _req.data.issuer_prefix = _elm.dataset.issuerprefix;
-            } else if(i === 'type') {
-                _req.type = _elm.dataset.type;
-            } else if(i === 'backhandler') {
-                _req.callback = window[_elm.dataset.backhandler]();
-            } else if(i === 'datatype') {
-                dataType = data[i];
-            } else if(i === 'domdestination') {
-                _req.data.dom_destination = _elm.dataset.domdestination;
-            } else if(i === 'params') {
+        for(let i in _elm.dataset ) {
+            if(i === 'params') {
                 try {
                     let _params = JSON.parse(_elm.dataset.params);
                     for (let p in _params) {
                         if(_params.hasOwnProperty(p)) {
-                            _req.data[p] = _params[p];
+                            _req.fields[p] = _params[p];
                         }
                     }
                 } catch (e) {
@@ -391,16 +361,11 @@ const Ui = function () { return {
                         $('#'+domId).DataTable().clear().destroy();
                     }
                     $('#'+domId).DataTable(_dtConf);
-                }
-            } else {
-                _req.data[i] = _elm.dataset[i];
+                };
             }
         }
-        if(callback != null) {
-            _req.callback = callback;
-        }
-
-        Main.xhrCall(_req.url,_req.type,dataType,_req.data,2,_req.callback);
+        console.log("xhr req",_req);
+        Main.xjCall(_req.url,_req.type,_req.fields,_req.options);
     }
 };
 }();
