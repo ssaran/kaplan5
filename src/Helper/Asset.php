@@ -40,6 +40,11 @@ class Asset
         $js->DomID = "JsLib_k5_modal5";
         $collection->Append($js);
 
+        $js = new \K5\Entity\View\JavascriptLib();
+        $js->Content = $prefix."/k5/js/dialog.js";
+        $js->DomID = "JsLib_k5_dialog";
+        $collection->Append($js);
+
         /*$js = new \K5\Entity\View\JavascriptLib();
         $js->Content = $prefix."/k5/js/tabs.js";
         $js->DomID = "JsLib_k5_tabs";
