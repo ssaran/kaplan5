@@ -14,6 +14,7 @@ class JavascriptLib extends Element
     public string $Type = 'js_lib';
     public string $Mode = 'add';
     public string $K5Type = 'js_lib';
+    public ?string $JsType = null;
     public bool $Refresh = false;
     public bool $IsHashed = false;
     public bool $Embed = true;

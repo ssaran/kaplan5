@@ -313,9 +313,9 @@ class Ui
             }
 
             if(is_a($o,'K5\Entity\View\JavascriptLib')) {
-                $r['js']['link'][] = '<script src="'.$o->Content.'"></script>';
+                $r['js']['link'][] = '<script src="'.$o->Content.'" '.$o->JsType.'></script>';
                 if(!$o->Embed) {
-                    $r['js']['forced'][] = '<script src="'.$o->Content.'"></script>';
+                    $r['js']['forced'][] = '<script src="'.$o->Content.'" '.$o->JsType.'></script>';
                 } else {
                     $r['js']['embed'][] = $o->Content;
                 }
