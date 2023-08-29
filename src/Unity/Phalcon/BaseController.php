@@ -129,12 +129,8 @@ class BaseController extends  \Phalcon\Mvc\Controller
         if(!isset($resp->payload) || !isset($resp->state)) {
             $_eMsg = "Bad Response \n";
             $_eMsg.= $url."\n";
-            $_eMsg.= print_r($headers,true)."\n";
-            $_eMsg.= print_r($fields,true)."\n";
             $_eMsg.= "/---\n";
             $_eMsg.= print_r($raw,true)."\n";
-            $_eMsg.= "<-->\n";
-            $_eMsg.= print_r($resp,true)."\n";
             $_eMsg.= "/---\n";
             \K5\U::lerr($_eMsg);
 
