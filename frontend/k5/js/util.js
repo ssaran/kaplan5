@@ -168,9 +168,6 @@ var Util = function () {
         isInArray: function(value, array) {
             return array.indexOf(value) > -1;
         },
-        showMsg: function (msg,type) {
-            alert(msg);
-        },
         resetSelect: function(idSelect)
         {
             var selectbox = document.getElementById(idSelect);
@@ -215,45 +212,50 @@ var Util = function () {
             }
             return JSON.stringify(obj) === JSON.stringify({});
         },
-        JSAlert: function (modalID,title,body,footer,modalSize) {
-            body += typeof footer !== 'undefined' ? '<br><br>'+footer : '&nbsp';
-            modalSize = typeof modalSize !== 'undefined' ? modalSize : 'medium';
-
-            if(glb.env.bsv < 5) {
-                Modal.Get(modalID,'Hata',body,false,modalSize,'','error');
-            } else {
-                Modal5.Get(modalID,'Hata',body,false,modalSize);
+        JSAlert: function (content,title=null,type='warning',size='md',btnOkTxt='Tamam',timeout=5000,callBack=null) {
+            let _con = content;
+            console.log(typeof content);
+            if(typeof content === "object") {
+                _con = "<pre>"+JSON.stringify(content)+"</pre>";
             }
+            bs5dialog.alert(_con, {
+                title: title,
+                type: type,
+                size: size,
+                btnOkText: btnOkTxt,
+                onOk: () => {
+                    if (typeof callBack === "function") {
+                        callBack();
+                    }
+                },
+                timeout: timeout
+            });
         },
-        SweetAlert: function (title,body,footer,type) {
-            //swal({ type: type, title: title,  text: body, footer: footer})
-            if(glb.env.bsv < 5) {
-                Util.JSAlert("SweetAlert",title,body,footer);
-            } else {
-                Modal5.Get("SweetAlert",'title',body,footer,'small');
-            }
-
-        },
-        JSNotify: function (message,type,position,timer) {
-            Util.JSToastr(message,type,position,timer);
+        JSNotify: function (message,type="success",position="bottom-right",timeout= 2000) {
+            bs5dialog.message(message, {
+                position: position,
+                type: type,
+                closeBtn: true,
+                background: "#28a745",
+                textColor: "#fff",
+                fontsize: "1rem",
+                icon: "check-circle",
+                iconClass: "bi",
+                iconStyle: "font-size: 1.5rem;",
+                timeout: timeout
+            });
         },
         JSToastr: function (message, options) {
             // Set default options
             let defaultOptions = {
                 title: "Bilgilendirme",
                 subtitle: "",
-                position: "center",
+                position: "bottom-right",
                 type: "success",
-                closeBtn: false,
-                icon: "",
-                iconClass: "",
-                iconStyle: "",
-                timeout: 3000,
-                onShow: function () {},
-                onShown: function () {},
-                onHidden: function () {}
+                timeout: 3000
             };
             options = { ...defaultOptions, ...options };
+            console.log("BsToast",defaultOptions,options);
             bs5dialog.toast(message, options);
         },
         TCVerify: function(tcNo) {
@@ -440,11 +442,11 @@ var Util = function () {
             return new Date(d.getFullYear(), d.getMonth(), d.getDate() + (day == 0?0:7)-day );
         },
         getAvailableHeight: function (topBarId) {
-                var top_nav_height = $("#"+topBarId).height();
-                var window_height = $(window).height();
+            var top_nav_height = $("#"+topBarId).height();
+            var window_height = $(window).height();
 
-                var height_of_open_space = window_height - (top_nav_height);
-                return height_of_open_space;
+            var height_of_open_space = window_height - (top_nav_height);
+            return height_of_open_space;
         },
         getWeekNumber: function (d) {
             // Copy date so don't modify original
@@ -550,11 +552,11 @@ var Util = function () {
             }
             if(resp.state === 'failure') {
                 console.error("Response_Failure")
-                Util.JSAlert("Response_Failure","Cevap hatası",resp.message);
+                Util.JSAlert(resp.message,"Cevap hatası");
                 return false;
             }
             if(resp.state !== 'success') {
-                Util.JSAlert("Response_Failure","Bilinmeyen cevap",resp.message);
+                Util.JSAlert(resp.message,"Bilinmeyen cevap");
                 return false;
             }
             if(!resp.hasOwnProperty('payload')) {

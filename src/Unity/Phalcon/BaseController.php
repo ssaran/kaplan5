@@ -115,11 +115,21 @@ class BaseController extends  \Phalcon\Mvc\Controller
         ]);
 
         if(empty($raw)) {
+            \K5\U::lerr("---Empty Response");
+            \K5\U::lerr($url);
+            \K5\U::lerr($headers);
+            \K5\U::lerr($fields);
+            \K5\U::lerr("/--Empty Response");
             throw new \Exception("Empty Curl Response \n");
         }
 
         $resp = json_decode($raw);
         if(!isset($resp->payload) || !isset($resp->state)) {
+            \K5\U::lerr("---Bad Response");
+            \K5\U::lerr($url);
+            \K5\U::lerr($headers);
+            \K5\U::lerr($fields);
+            \K5\U::lerr("/--Bad Response");
             \K5\U::lerr("Bad Response ".print_r($resp,true));
             throw new \Exception("Bad Response \n".print_r($resp,true));
         }
