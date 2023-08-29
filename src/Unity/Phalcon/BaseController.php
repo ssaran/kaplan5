@@ -115,23 +115,26 @@ class BaseController extends  \Phalcon\Mvc\Controller
         ]);
 
         if(empty($raw)) {
-            \K5\U::lerr("---Empty Response");
-            \K5\U::lerr($url);
-            \K5\U::lerr($headers);
-            \K5\U::lerr($fields);
-            \K5\U::lerr("/--Empty Response");
-            throw new \Exception("Empty Curl Response \n");
+            $_eMsg = "Empty Curl Response \n";
+            $_eMsg.= $url;
+            $_eMsg.= print_r($headers,true)."\n";
+            $_eMsg.= print_r($fields,true)."\n";
+            $_eMsg.= "/---\n";
+            \K5\U::lerr($_eMsg);
+
+            throw new \Exception($_eMsg);
         }
 
         $resp = json_decode($raw);
         if(!isset($resp->payload) || !isset($resp->state)) {
-            \K5\U::lerr("---Bad Response");
-            \K5\U::lerr($url);
-            \K5\U::lerr($headers);
-            \K5\U::lerr($fields);
-            \K5\U::lerr("/--Bad Response");
-            \K5\U::lerr("Bad Response ".print_r($resp,true));
-            throw new \Exception("Bad Response \n".print_r($resp,true));
+            $_eMsg = "Bad Response \n";
+            $_eMsg.= $url;
+            $_eMsg.= print_r($headers,true)."\n";
+            $_eMsg.= print_r($fields,true)."\n";
+            $_eMsg.= "/---\n";
+            \K5\U::lerr($_eMsg);
+
+            throw new \Exception($_eMsg);
         }
         return $resp;
     }
