@@ -369,13 +369,32 @@ class PreRouter
         self::log($message,'debug');
     }
 
-    public static function FromCamelCase($camelCaseString,string $seperator=" ") {
+    public static function FromCamelCase($camelCaseString,string $seperator=" ")
+    {
         $re = '/(?<=[a-z])(?=[A-Z])/x';
         $a = preg_split($re, $camelCaseString);
         return join($seperator, $a );
     }
 
-    public static function ToCamelCase(string $str,string $seperator="-") {
+    public static function ToCamelCase(string $str,string $seperator="-")
+    {
         return str_replace($seperator, '', ucwords($str, $seperator));
+    }
+
+    /**
+     * @param string $namespace
+     * @param string $controller
+     * @param string $action
+     * @param array $params
+     * @return void
+     */
+    public static function ForceRoute(string $namespace,string $controller,string $action = 'index',?array $params = []):void
+    {
+        self::$namespace = $namespace;
+        self::$controller = $controller;
+        self::$action = $action;
+        if(!is_null($params)) {
+            self::$params = $params;
+        }
     }
 }
