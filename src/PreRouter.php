@@ -388,8 +388,10 @@ class PreRouter
      * @param array $params
      * @return void
      */
-    public static function ForceRoute(string $namespace,string $controller,string $action = 'index',?array $params = []):void
+    public static function ForceRoute(string $app, string $module, string $namespace,string $controller,string $action = 'index',?array $params = []):void
     {
+        self::$app = $app;
+        self::$module = $module;
         self::$namespace = $namespace;
         self::$controller = $controller;
         self::$action = $action;
