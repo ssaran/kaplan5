@@ -134,10 +134,8 @@ class U
      */
     public static function lerr($message,$type='debug')
     {
-        //syslog(LOG_WARNING,print_r($message,true));
-        //file_put_contents(R_DIR.'log.txt', print_r($message,true)."\n", FILE_APPEND);
         openlog('php', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
-        syslog(LOG_ERR, print_r($message,true));
+        syslog(LOG_WARNING, "ERR:".print_r($message,true));
         closelog();
     }
 
@@ -150,7 +148,7 @@ class U
         //syslog(LOG_WARNING,print_r($message,true));
         //file_put_contents(R_DIR.'log.txt', print_r($message,true)."\n", FILE_APPEND);
         openlog('php', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
-        syslog(LOG_WARNING, print_r($message,true));
+        syslog(LOG_WARNING,"WAR:".print_r($message,true));
         closelog();
     }
 
