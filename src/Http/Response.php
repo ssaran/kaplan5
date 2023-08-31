@@ -40,7 +40,7 @@ class Response
 
     public function GetErrorMessage(\Exception $e,$isDevel,$extra='')
     {
-        self::$Message = $extra." ".str_replace(PHP_EOL, "<br>", $e->getMessage()); ;
+        self::$Message = $extra." ".nl2br($e->getMessage()); ;
         self::$Footer = ($isDevel) ?  $e->getFile()."<br>".$e->getLine() : '';
         self::$Type = $e->getCode();
         return $this;
