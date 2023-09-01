@@ -50,4 +50,46 @@ class Curl
             throw $e;
         }
     }
+
+    /**
+     * @param string $url
+     * @param array $fields
+     * @param array $headers
+     * @param string $method
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function Fetch(string $url,array $fields=[],array $headers=[],string $method='post')
+    {
+        $raw = self::Exec([
+            'url'=> $url,
+            'method'=> $method,
+            'headers'=> $headers,
+            'fields'=>$fields
+        ]);
+
+        if(empty($raw)) {
+            $_eMsg = "Empty Curl Response \n";
+            $_eMsg.= $url;
+            $_eMsg.= print_r($headers,true)."\n";
+            $_eMsg.= print_r($fields,true)."\n";
+            $_eMsg.= "/---\n";
+            \K5\U::lerr($_eMsg);
+
+            throw new \Exception($_eMsg);
+        }
+
+        $resp = json_decode($raw);
+        if(!isset($resp->payload) || !isset($resp->state)) {
+            $_eMsg = "Bad Response \n";
+            $_eMsg.= $url."\n";
+            $_eMsg.= "/---\n";
+            $_eMsg.= print_r($raw,true)."\n";
+            $_eMsg.= "/---\n";
+            \K5\U::lerr($_eMsg);
+
+            throw new \Exception($_eMsg);
+        }
+        return $resp;
+    }
 }
