@@ -70,7 +70,7 @@ class Curl
 
         if(empty($raw)) {
             $_eMsg = "Empty Curl Response \n";
-            $_eMsg.= $url;
+            $_eMsg.= $url."\n";
             $_eMsg.= print_r($headers,true)."\n";
             $_eMsg.= print_r($fields,true)."\n";
             $_eMsg.= "/---\n";
