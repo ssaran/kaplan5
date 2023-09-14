@@ -37,23 +37,33 @@ class PreRouter
     {
         if(is_null(self::$_server)){
             self::$_server = $server;
-            self::$requestMethod = self::$_server['REQUEST_METHOD'];
             self::$config = $config;
             self::$requestedDomainConfig = self::$config->domain->default;
-            self::parseDomain();
 
-            if(isset(self::$config->domain[self::$sessionDomain])) {
-                self::$requestedDomainConfig = self::$config->domain[self::$sessionDomain];
+            if(!isset(self::$_server['SHELL'])) {
+                self::$requestMethod = self::$_server['REQUEST_METHOD'];
+                self::parseDomain();
+
+                if(isset(self::$config->domain[self::$sessionDomain])) {
+                    self::$requestedDomainConfig = self::$config->domain[self::$sessionDomain];
+                }
+
+                self::$app = self::$requestedDomainConfig->default->app;
+                self::$module = self::$requestedDomainConfig->default->module;
+                self::$controller = self::$requestedDomainConfig->default->controller;
+                self::$action = self::$requestedDomainConfig->default->action;
+                self::$namespace = self::$requestedDomainConfig->default->namespace;
+                self::$i18n = self::$requestedDomainConfig->default->i18n;
+
+                self::parseRoute();
+            } else {
+                self::$app = self::$requestedDomainConfig->default->app;
+                self::$module = self::$requestedDomainConfig->default->module;
+                self::$controller = self::$requestedDomainConfig->default->controller;
+                self::$action = self::$requestedDomainConfig->default->action;
+                self::$namespace = self::$requestedDomainConfig->default->namespace;
+                self::$i18n = self::$requestedDomainConfig->default->i18n;
             }
-
-            self::$app = self::$requestedDomainConfig->default->app;
-            self::$module = self::$requestedDomainConfig->default->module;
-            self::$controller = self::$requestedDomainConfig->default->controller;
-            self::$action = self::$requestedDomainConfig->default->action;
-            self::$namespace = self::$requestedDomainConfig->default->namespace;
-            self::$i18n = self::$requestedDomainConfig->default->i18n;
-
-            self::parseRoute();
         }
         return true;
     }
