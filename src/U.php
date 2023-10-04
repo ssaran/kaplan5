@@ -964,6 +964,11 @@ class U
         return join($seperator, $a );
     }
 
+    public static function ToCamelCase($str) : string
+    {
+        return str_replace('_', '', ucwords($str, '_'));
+    }
+
     public static function GetUuid($low=false,$mid=false,$hi=false,$clock=false,$node=false)
     {
         $random = new \Phalcon\Encryption\Security\Random();
