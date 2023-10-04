@@ -134,6 +134,11 @@ class PreRouter
         return self::$isApi;
     }
 
+    public static function GetRouteObject() : \K5\Entity\Request\Route
+    {
+        return self::$_route;
+    }
+
     public static function CreateEmployer() : string
     {
         return str_replace(".","_",self::GetSessionDomain());
