@@ -16,7 +16,6 @@ class PreRouter
     private static $requestMethod;
     private static string $domain;
     private static ?string $subDomain = null;
-    private static string $sessionDomain;
     private static string $app  = "front";
     private static string $module = "index";
     private static string $controller = "index";
@@ -32,10 +31,12 @@ class PreRouter
     private static ?int $versionApi = null;
 
     private static ?array $_server = null;
+    private static \K5\Entity\Request\Route $_route;
 
-    public static function SetInstance($config,$server)
+    public static function SetInstance($config,$server) : bool
     {
         if(is_null(self::$_server)){
+            self::$_route = new \K5\Entity\Request\Route();
             self::$_server = $server;
             self::$config = $config;
             self::$requestedDomainConfig = self::$config->domain->default;
@@ -44,25 +45,25 @@ class PreRouter
                 self::$requestMethod = self::$_server['REQUEST_METHOD'];
                 self::parseDomain();
 
-                if(isset(self::$config->domain[self::$sessionDomain])) {
-                    self::$requestedDomainConfig = self::$config->domain[self::$sessionDomain];
+                if(isset(self::$config->domain[self::$_route->sessionDomain])) {
+                    self::$requestedDomainConfig = self::$config->domain[self::$_route->sessionDomain];
                 }
 
-                self::$app = self::$requestedDomainConfig->default->app;
-                self::$module = self::$requestedDomainConfig->default->module;
-                self::$controller = self::$requestedDomainConfig->default->controller;
-                self::$action = self::$requestedDomainConfig->default->action;
-                self::$namespace = self::$requestedDomainConfig->default->namespace;
-                self::$i18n = self::$requestedDomainConfig->default->i18n;
+                self::$_route->app = self::$requestedDomainConfig->default->app;
+                self::$_route->module = self::$requestedDomainConfig->default->module;
+                self::$_route->controller = self::$requestedDomainConfig->default->controller;
+                self::$_route->action = self::$requestedDomainConfig->default->action;
+                self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
+                self::$_route->i18n = self::$requestedDomainConfig->default->i18n;
 
                 self::parseRoute();
             } else {
-                self::$app = self::$requestedDomainConfig->default->app;
-                self::$module = self::$requestedDomainConfig->default->module;
-                self::$controller = self::$requestedDomainConfig->default->controller;
-                self::$action = self::$requestedDomainConfig->default->action;
-                self::$namespace = self::$requestedDomainConfig->default->namespace;
-                self::$i18n = self::$requestedDomainConfig->default->i18n;
+                self::$_route->app = self::$requestedDomainConfig->default->app;
+                self::$_route->module = self::$requestedDomainConfig->default->module;
+                self::$_route->controller = self::$requestedDomainConfig->default->controller;
+                self::$_route->action = self::$requestedDomainConfig->default->action;
+                self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
+                self::$_route->i18n = self::$requestedDomainConfig->default->i18n;
             }
         }
         return true;
@@ -70,42 +71,42 @@ class PreRouter
 
     public static function GetDomain()
     {
-        return self::$domain;
+        return self::$_route->domain;
     }
 
     public static function GetSubDomain()
     {
-        return self::$subDomain;
+        return self::$_route->subDomain;
     }
 
     public static function GetSessionDomain()
     {
-        return self::$sessionDomain;
+        return self::$_route->sessionDomain;
     }
 
     public static function GetNameSpace()
     {
-        return self::$namespace;
+        return self::$_route->namespace;
     }
 
     public static function GetApp()
     {
-        return self::$app;
+        return self::$_route->app;
     }
 
     public static function GetModule($real=false)
     {
-        return (!$real) ? self::$module : self::$_module;
+        return (!$real) ? self::$_route->module : self::$_module;
     }
 
     public static function GetController($real=false)
     {
-        return (!$real) ? self::$controller : self::$_controller;
+        return (!$real) ? self::$_route->controller : self::$_controller;
     }
 
     public static function GetAction($real=false)
     {
-        return (!$real) ? self::$action : self::$_action;
+        return (!$real) ? self::$_route->action : self::$_action;
     }
 
     public static function GetParams()
@@ -115,7 +116,7 @@ class PreRouter
 
     public static function GetI18n()
     {
-        return self::$i18n;
+        return self::$_route->i18n;
     }
 
     public static function GetRequestMethod()
@@ -141,13 +142,13 @@ class PreRouter
     private static function parseDomain() : void
     {
         if(isset(self::$_server['HTTP_X_ORIGINAL_HOST'])) {
-            self::$domain = self::$_server['HTTP_X_ORIGINAL_HOST'];
-            self::$sessionDomain = self::$domain;
+            self::$_route->domain = self::$_server['HTTP_X_ORIGINAL_HOST'];
+            self::$_route->sessionDomain = self::$_route->domain;
         } else {
             $host = explode(".",self::$_server['HTTP_HOST']);
             if(sizeof($host) < 3) {
-                self::$domain = self::$_server['HTTP_HOST'];
-                self::$sessionDomain = self::$domain;
+                self::$_route->domain = self::$_server['HTTP_HOST'];
+                self::$_route->sessionDomain = self::$_route->domain;
             } else {
                 $top = array_pop($host);
                 if($top == 'tr') {
@@ -155,9 +156,9 @@ class PreRouter
                 }
                 $dom = array_pop($host);
                 $sub = array_pop($host);
-                self::$domain = $dom.".".$top;
-                self::$subDomain = $sub;
-                self::$sessionDomain = self::$_server['HTTP_HOST'];
+                self::$_route->domain = $dom.".".$top;
+                self::$_route->subDomain = $sub;
+                self::$_route->sessionDomain = self::$_server['HTTP_HOST'];
             }
         }
     }
@@ -166,7 +167,7 @@ class PreRouter
     {
         self::$appConfig = self::checkAppConfig(self::$app);
         if(!self::$appConfig) {
-            self::logErr("Default app conf not found. Check Config : ".self::$app." - ".self::$_server['REQUEST_URI']);
+            self::logErr("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI']);
             die();
         }
 
@@ -180,14 +181,16 @@ class PreRouter
         $current = array_shift($tmp);
         $cLang = self::checkLanguageConfig($current);
         if($cLang != false) {
-            self::$i18n = $cLang;
+            self::$_route->i18n = $cLang;
             $current = array_shift($tmp);
         }
 
         if($current !== 'api') {
             self::routeWeb($tmp,$current);
+            self::$_route->isApi = false;
         } else {
             self::routeApi($tmp);
+            self::$_route->isApi = true;
         }
     }
 
@@ -199,7 +202,7 @@ class PreRouter
         $cConfig = self::checkAppConfig($current);
         if($cConfig) {
             self::$appConfig = $cConfig;
-            self::$module = $current;
+            self::$_route->module = $current;
             $current = null;
         }
 
@@ -209,28 +212,28 @@ class PreRouter
             return false;
         }
 
-        self::$_module = self::$module;
+        self::$_module = self::$_route->module;
         self::$versionApi = array_shift($tmp);
         if(sizeof($tmp) > 0) {
-            self::$controller = array_shift($tmp);
+            self::$_route->controller = array_shift($tmp);
         }
 
-        self::$_controller = self::$controller;
-        if(strpos(self::$controller,"-")) {
-            self::$controller = str_replace(" ","",ucwords(str_replace("-"," ",self::$controller)));
+        self::$_controller = self::$_route->controller;
+        if(strpos(self::$_route->controller,"-")) {
+            self::$_route->controller = str_replace(" ","",ucwords(str_replace("-"," ",self::$_route->controller)));
         }
 
         if(sizeof($tmp) > 0) {
-            self::$action = array_shift($tmp);
+            self::$_route->action = array_shift($tmp);
         }
-        self::$_action = self::$action;
+        self::$_action = self::$_route->action;
 
-        self::$params = $tmp;
+        self::$_route->params = $tmp;
 
-        self::$app = self::$appConfig['directory'];
+        self::$_route->app = self::$appConfig['directory'];
 
-        self::$module = str_replace("-","",ucwords(self::$module, "-"));
-        self::$namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$versionApi);
+        self::$_route->module = str_replace("-","",ucwords(self::$_route->module, "-"));
+        self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$versionApi);
 
         return true;
     }
@@ -244,50 +247,50 @@ class PreRouter
         }
 
         if($current != '') {
-            self::$module = $current;
+            self::$_route->module = $current;
         } else {
             if(sizeof($tmp) > 0) {
-                self::$module = array_shift($tmp);
+                self::$_route->module = array_shift($tmp);
             }
         }
-        self::$_module = self::$module;
+        self::$_module = self::$_route->module;
 
         /** Check forced index */
         $_fController = null;
-        if(isset(self::$appConfig['forceModuleController']) && isset(self::$appConfig['forceModuleController'][self::$module])) {
-            $_fController = self::$appConfig['forceModuleController'][self::$module];
+        if(isset(self::$appConfig['forceModuleController']) && isset(self::$appConfig['forceModuleController'][self::$_route->module])) {
+            $_fController = self::$appConfig['forceModuleController'][self::$_route->module];
         }
 
 
         if(sizeof($tmp) > 0) {
-            self::$controller = array_shift($tmp);
+            self::$_route->controller = array_shift($tmp);
         }
 
         if(sizeof($tmp) > 0) {
-            self::$action = array_shift($tmp);
+            self::$_route->action = array_shift($tmp);
         }
-        self::$_action = self::$action;
+        self::$_action = self::$_route->action;
 
-        self::$params = $tmp;
+        self::$_route->params = $tmp;
 
-        self::$app = self::$appConfig['directory'];
+        self::$_route->app = self::$appConfig['directory'];
 
-        if(self::$app == 'front') {
-            if(isset(self::$config->translate->public->{self::$module})) {
+        if(self::$_route->app == 'front') {
+            if(isset(self::$config->translate->public->{self::$_route->module})) {
                 self::logErr('die public dir as module');
                 die();
             }
         }
 
-        self::$module = str_replace("-","",ucwords(self::$module, "-"));
+        self::$_route->module = str_replace("-","",ucwords(self::$_route->module, "-"));
 
         //--- Refit Forced controller to structure.
         if(!is_null($_fController)) {
-            self::$params['forced_controller'] = self::$controller;
-            self::$controller = $_fController;
+            self::$_route->params['forced_controller'] = self::$_route->controller;
+            self::$_route->controller = $_fController;
         }
-        self::$_controller = self::$controller;
-        self::$namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$module);
+        self::$_controller = self::$_route->controller;
+        self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module);
     }
 
     private static function checkLanguageConfig($lang)
@@ -326,15 +329,15 @@ class PreRouter
     public static function GetInfo()
     {
         return [
-            'SESSION_DOMAIN'=>self::$sessionDomain,
-            'SUBDOMAIN'=>!is_null(self::$subDomain) ? self::$subDomain : '',
-            'LANG'=>self::$i18n,
-            'APP'=>self::$app,
-            'MODULE'=>self::$module,
-            'CONTROLLER'=>self::$controller,
-            'ACTION'=>self::$action,
-            'PARAMS'=>self::$params,
-            'NAMESPACE'=>self::$namespace,
+            'SESSION_DOMAIN'=>self::$_route->sessionDomain,
+            'SUBDOMAIN'=>!is_null(self::$_route->subDomain) ? self::$_route->subDomain : '',
+            'LANG'=>self::$_route->i18n,
+            'APP'=>self::$_route->app,
+            'MODULE'=>self::$_route->module,
+            'CONTROLLER'=>self::$_route->controller,
+            'ACTION'=>self::$_route->action,
+            'PARAMS'=>self::$_route->params,
+            'NAMESPACE'=>self::$_route->namespace,
             'APP-CONFIG'=>self::$appConfig,
             'TMP'=>self::$tmp
         ];
@@ -400,13 +403,13 @@ class PreRouter
      */
     public static function ForceRoute(string $app, string $module, string $namespace,string $controller,string $action = 'index',?array $params = []):void
     {
-        self::$app = $app;
-        self::$module = $module;
-        self::$namespace = $namespace;
-        self::$controller = $controller;
-        self::$action = $action;
+        self::$_route->app = $app;
+        self::$_route->module = $module;
+        self::$_route->namespace = $namespace;
+        self::$_route->controller = $controller;
+        self::$_route->action = $action;
         if(!is_null($params)) {
-            self::$params = $params;
+            self::$_route->params = $params;
         }
     }
 }
