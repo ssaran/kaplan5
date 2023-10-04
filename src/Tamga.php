@@ -21,10 +21,10 @@ class Tamga
     private static string $TimeZone = 'Europe/Istanbul';
 
     /**
-     * @param \Common\Entity\Auth\Tamga $tamga
+     * @param Entity\Auth\Tamga $tamga
      * @return array
      */
-    public static  function BuildTokenData(\Common\Entity\Auth\Tamga $tamga)
+    public static  function BuildTokenData(\K5\Entity\Auth\Tamga $tamga) : array
     {
         // issue at time and expires (token)
         $issuedAt = time();
