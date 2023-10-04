@@ -110,7 +110,7 @@ class Ui
         }
 
         $parsed = self::_parseForHTTP($ret,$isAjax);
-        $layout = new self::$_layout();
+        $layout = is_object(self::$_layout) ? new self::$_layout() : new \K5\Helper\BaseLayout();
 
         return [
             'content'=> $layout->Render($parsed['html']),
