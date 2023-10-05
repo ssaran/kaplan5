@@ -21,7 +21,6 @@ class PreRouter
     private static string $controller = "index";
     private static string $action = "index";
     private static string $_module;
-    private static ?string $_extension = null;
     private static string $_controller;
     private static string $_action;
     private static ?string $namespace = null;
@@ -29,6 +28,7 @@ class PreRouter
     private static array $tmp = [];
     private static string $i18n = "tr";
     private static bool $isApi = false;
+    private static bool $isService = false;
     private static ?int $versionApi = null;
 
     private static ?array $_server = null;
@@ -52,7 +52,6 @@ class PreRouter
 
                 self::$_route->app = self::$requestedDomainConfig->default->app;
                 self::$_route->module = self::$requestedDomainConfig->default->module;
-                self::$_route->extended = self::$requestedDomainConfig->default->module;
                 self::$_route->controller = self::$requestedDomainConfig->default->controller;
                 self::$_route->action = self::$requestedDomainConfig->default->action;
                 self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
@@ -63,7 +62,6 @@ class PreRouter
                 self::$_route->app = self::$requestedDomainConfig->default->app;
                 self::$_route->module = self::$requestedDomainConfig->default->module;
                 self::$_route->controller = self::$requestedDomainConfig->default->controller;
-                self::$_route->extended = self::$requestedDomainConfig->default->module;
                 self::$_route->action = self::$requestedDomainConfig->default->action;
                 self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
                 self::$_route->i18n = self::$requestedDomainConfig->default->i18n;
@@ -175,7 +173,7 @@ class PreRouter
     {
         self::$appConfig = self::checkAppConfig(self::$_route->app);
         if(!self::$appConfig) {
-            self::logErr("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI']);
+            self::log("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI'],'error');
             die();
         }
 
@@ -188,7 +186,7 @@ class PreRouter
 
         $current = array_shift($tmp);
         $cLang = self::checkLanguageConfig($current);
-        if($cLang != false) {
+        if(!is_null($cLang)) {
             self::$_route->i18n = $cLang;
             $current = array_shift($tmp);
         }
@@ -220,12 +218,6 @@ class PreRouter
             $_fController = self::$appConfig['forceModuleController'][self::$_route->module];
         }
 
-        if(self::$appConfig->route == 'extended') {
-            if(sizeof($tmp) > 0) {
-                self::$_route->extension = array_shift($tmp);
-            }
-        }
-
         if(sizeof($tmp) > 0) {
             self::$_route->controller = array_shift($tmp);
         }
@@ -241,7 +233,7 @@ class PreRouter
 
         if(self::$_route->app == 'front') {
             if(isset(self::$config->translate->public->{self::$_route->module})) {
-                self::logErr('die public dir as module');
+                self::log('die public dir as module','error');
                 die();
             }
         }
@@ -254,11 +246,7 @@ class PreRouter
             self::$_route->controller = $_fController;
         }
         self::$_controller = self::$_route->controller;
-        if(self::$appConfig->route == 'extended') {
-            self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module).'\\' . ucfirst(self::$_route->extension);
-        } else {
-            self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module);
-        }
+        self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module);
         return true;
     }
 
@@ -276,21 +264,15 @@ class PreRouter
         }
 
         if($current !== null) {
-            self::logErr("Api module Not Found ");
-            self::logErr($tmp);
+            self::log("Api module Not Found ",'error');
+            self::log($tmp,'error');
             return false;
         }
 
         self::$_module = self::$_route->module;
-
         self::$versionApi = array_shift($tmp);
         if(sizeof($tmp) > 0) {
             self::$_route->controller = array_shift($tmp);
-        }
-        if(self::$appConfig->route == 'extended') {
-            if(sizeof($tmp) > 0) {
-                self::$_route->extension = array_shift($tmp);
-            }
         }
 
         self::$_controller = self::$_route->controller;
@@ -308,12 +290,7 @@ class PreRouter
         self::$_route->app = self::$appConfig['directory'];
 
         self::$_route->module = str_replace("-","",ucwords(self::$_route->module, "-"));
-
-        if(self::$appConfig->route == 'extended') {
-            self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module).'\\' . ucfirst(self::$_route->extension);
-        } else {
-            self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module);
-        }
+        self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$versionApi);
 
         return true;
     }
@@ -323,49 +300,22 @@ class PreRouter
         if(isset(self::$config->language->{$lang})) {
             return $lang;
         }
-        return false;
+        return null;
     }
 
     private static function checkAppConfig($app)
     {
-
-        if(isset(self::$requestedDomainConfig->app->{$app})) {
-            return self::$requestedDomainConfig->app->{$app};
-        }
-        return false;
-    }
-
-    public static function Ldbg($is_error = false) : void
-    {
-        $_msg = self::GetInfo();
-
-        if(!$is_error) {
-            self::logDbg($_msg);
+        if($app !== 'services') {
+            if(isset(self::$requestedDomainConfig->app->{$app})) {
+                return self::$requestedDomainConfig->app->{$app};
+            }
         } else {
-            self::logErr($_msg);
+            if(isset(self::$requestedDomainConfig->services->{$app})) {
+                return self::$requestedDomainConfig->services->{$app};
+            }
         }
-    }
 
-    public static function Lerr()
-    {
-        self::Ldbg(true);
-    }
-
-    public static function GetInfo()
-    {
-        return [
-            'SESSION_DOMAIN'=>self::$_route->sessionDomain,
-            'SUBDOMAIN'=>!is_null(self::$_route->subDomain) ? self::$_route->subDomain : '',
-            'LANG'=>self::$_route->i18n,
-            'APP'=>self::$_route->app,
-            'MODULE'=>self::$_route->module,
-            'CONTROLLER'=>self::$_route->controller,
-            'ACTION'=>self::$_route->action,
-            'PARAMS'=>self::$_route->params,
-            'NAMESPACE'=>self::$_route->namespace,
-            'APP-CONFIG'=>self::$appConfig,
-            'TMP'=>self::$tmp
-        ];
+        return null;
     }
 
     public static function ParseDefault($routes,$prefix=false)
@@ -386,7 +336,7 @@ class PreRouter
         return $obj;
     }
 
-    protected static function log($message,$type='debug')
+    protected static function log($message,$type='debug') : void
     {
         openlog('php', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
         if($type == 'error') {
@@ -395,16 +345,6 @@ class PreRouter
             syslog(LOG_INFO, 'PreRouter -'.$type.'- '.print_r($message,true));
         }
         closelog();
-    }
-
-    protected static function logErr($message)
-    {
-        self::log($message,'error');
-    }
-
-    protected static function logDbg($message)
-    {
-        self::log($message,'debug');
     }
 
     public static function FromCamelCase($camelCaseString,string $seperator=" ")
@@ -436,5 +376,33 @@ class PreRouter
         if(!is_null($params)) {
             self::$_route->params = $params;
         }
+    }
+
+    public static function Ldbg($is_error = false) : void
+    {
+        $_msg = self::GetInfo();
+        (!$is_error) ? self::log($_msg) : self::log($_msg,'error');
+    }
+
+    public static function Lerr() : void
+    {
+        self::Ldbg(true);
+    }
+
+    public static function GetInfo()
+    {
+        return [
+            'SESSION_DOMAIN'=>self::$_route->sessionDomain,
+            'SUBDOMAIN'=>!is_null(self::$_route->subDomain) ? self::$_route->subDomain : '',
+            'LANG'=>self::$_route->i18n,
+            'APP'=>self::$_route->app,
+            'MODULE'=>self::$_route->module,
+            'CONTROLLER'=>self::$_route->controller,
+            'ACTION'=>self::$_route->action,
+            'PARAMS'=>self::$_route->params,
+            'NAMESPACE'=>self::$_route->namespace,
+            'APP-CONFIG'=>self::$appConfig,
+            'TMP'=>self::$tmp
+        ];
     }
 }

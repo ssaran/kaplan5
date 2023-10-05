@@ -14,7 +14,8 @@ class Route
     public string $action;
     public string $namespace;
     public string $i18n;
-    public bool $isApi;
+    public bool $isApi = false;
+    public bool $isService = false;
     public array $params;
 }
 
