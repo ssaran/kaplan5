@@ -21,6 +21,7 @@ class PreRouter
     private static string $controller = "index";
     private static string $action = "index";
     private static string $_module;
+    private static ?string $_extension = null;
     private static string $_controller;
     private static string $_action;
     private static ?string $namespace = null;
@@ -51,6 +52,7 @@ class PreRouter
 
                 self::$_route->app = self::$requestedDomainConfig->default->app;
                 self::$_route->module = self::$requestedDomainConfig->default->module;
+                self::$_route->extended = self::$requestedDomainConfig->default->module;
                 self::$_route->controller = self::$requestedDomainConfig->default->controller;
                 self::$_route->action = self::$requestedDomainConfig->default->action;
                 self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
@@ -61,6 +63,7 @@ class PreRouter
                 self::$_route->app = self::$requestedDomainConfig->default->app;
                 self::$_route->module = self::$requestedDomainConfig->default->module;
                 self::$_route->controller = self::$requestedDomainConfig->default->controller;
+                self::$_route->extended = self::$requestedDomainConfig->default->module;
                 self::$_route->action = self::$requestedDomainConfig->default->action;
                 self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
                 self::$_route->i18n = self::$requestedDomainConfig->default->i18n;
@@ -170,7 +173,7 @@ class PreRouter
 
     private static function parseRoute() : void
     {
-        self::$appConfig = self::checkAppConfig(self::$app);
+        self::$appConfig = self::checkAppConfig(self::$_route->app);
         if(!self::$appConfig) {
             self::logErr("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI']);
             die();
@@ -190,61 +193,12 @@ class PreRouter
             $current = array_shift($tmp);
         }
 
-        if($current !== 'api') {
-            self::routeWeb($tmp,$current);
-            self::$_route->isApi = false;
-        } else {
-            self::routeApi($tmp);
-            self::$_route->isApi = true;
-        }
+        $rState = ($current !== 'api') ? self::routeWeb($tmp,$current) : self::routeApi($tmp);
     }
 
-    private static function routeApi($tmp) : bool
+    private static function routeWeb($tmp,$current) : bool
     {
-        self::$isApi = true;
-
-        $current = array_shift($tmp);
-        $cConfig = self::checkAppConfig($current);
-        if($cConfig) {
-            self::$appConfig = $cConfig;
-            self::$_route->module = $current;
-            $current = null;
-        }
-
-        if($current !== null) {
-            self::logErr("Api module Not Found ");
-            self::logErr($tmp);
-            return false;
-        }
-
-        self::$_module = self::$_route->module;
-        self::$versionApi = array_shift($tmp);
-        if(sizeof($tmp) > 0) {
-            self::$_route->controller = array_shift($tmp);
-        }
-
-        self::$_controller = self::$_route->controller;
-        if(strpos(self::$_route->controller,"-")) {
-            self::$_route->controller = str_replace(" ","",ucwords(str_replace("-"," ",self::$_route->controller)));
-        }
-
-        if(sizeof($tmp) > 0) {
-            self::$_route->action = array_shift($tmp);
-        }
-        self::$_action = self::$_route->action;
-
-        self::$_route->params = $tmp;
-
-        self::$_route->app = self::$appConfig['directory'];
-
-        self::$_route->module = str_replace("-","",ucwords(self::$_route->module, "-"));
-        self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$versionApi);
-
-        return true;
-    }
-
-    private static function routeWeb($tmp,$current)
-    {
+        self::$_route->isApi = false;
         $cConfig = self::checkAppConfig($current);
         if($cConfig) {
             self::$appConfig = $cConfig;
@@ -266,6 +220,11 @@ class PreRouter
             $_fController = self::$appConfig['forceModuleController'][self::$_route->module];
         }
 
+        if(self::$appConfig->route == 'extended') {
+            if(sizeof($tmp) > 0) {
+                self::$_route->extension = array_shift($tmp);
+            }
+        }
 
         if(sizeof($tmp) > 0) {
             self::$_route->controller = array_shift($tmp);
@@ -295,7 +254,68 @@ class PreRouter
             self::$_route->controller = $_fController;
         }
         self::$_controller = self::$_route->controller;
-        self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module);
+        if(self::$appConfig->route == 'extended') {
+            self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module).'\\' . ucfirst(self::$_route->extension);
+        } else {
+            self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module);
+        }
+        return true;
+    }
+
+    private static function routeApi($tmp) : bool
+    {
+        self::$isApi = true;
+        self::$_route->isApi = true;
+
+        $current = array_shift($tmp);
+        $cConfig = self::checkAppConfig($current);
+        if($cConfig) {
+            self::$appConfig = $cConfig;
+            self::$_route->module = $current;
+            $current = null;
+        }
+
+        if($current !== null) {
+            self::logErr("Api module Not Found ");
+            self::logErr($tmp);
+            return false;
+        }
+
+        self::$_module = self::$_route->module;
+
+        self::$versionApi = array_shift($tmp);
+        if(sizeof($tmp) > 0) {
+            self::$_route->controller = array_shift($tmp);
+        }
+        if(self::$appConfig->route == 'extended') {
+            if(sizeof($tmp) > 0) {
+                self::$_route->extension = array_shift($tmp);
+            }
+        }
+
+        self::$_controller = self::$_route->controller;
+        if(strpos(self::$_route->controller,"-")) {
+            self::$_route->controller = str_replace(" ","",ucwords(str_replace("-"," ",self::$_route->controller)));
+        }
+
+        if(sizeof($tmp) > 0) {
+            self::$_route->action = array_shift($tmp);
+        }
+        self::$_action = self::$_route->action;
+
+        self::$_route->params = $tmp;
+
+        self::$_route->app = self::$appConfig['directory'];
+
+        self::$_route->module = str_replace("-","",ucwords(self::$_route->module, "-"));
+
+        if(self::$appConfig->route == 'extended') {
+            self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module).'\\' . ucfirst(self::$_route->extension);
+        } else {
+            self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module);
+        }
+
+        return true;
     }
 
     private static function checkLanguageConfig($lang)
