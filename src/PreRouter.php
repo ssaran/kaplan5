@@ -171,6 +171,7 @@ class PreRouter
 
     private static function parseRoute() : void
     {
+        /* Default app conf for config detection */
         self::$appConfig = self::checkAppConfig(self::$_route->app);
         if(!self::$appConfig) {
             self::log("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI'],'error');
@@ -197,10 +198,23 @@ class PreRouter
     private static function routeWeb($tmp,$current) : bool
     {
         self::$_route->isApi = false;
-        $cConfig = self::checkAppConfig($current);
-        if($cConfig) {
-            self::$appConfig = $cConfig;
-            $current = null;
+        self::$_route->isService = false;
+
+        if($current !== 'services') {
+            $cConfig = self::checkAppConfig($current);
+            if($cConfig) {
+                self::$appConfig = $cConfig;
+                $current = null;
+            }
+        } else {
+            if(sizeof($tmp) > 0) {
+                $current = array_shift($tmp);
+                $cConfig = self::checkServicesConfig($current);
+                if($cConfig) {
+                    self::$appConfig = $cConfig;
+                    $current = null;
+                }
+            }
         }
 
         if($current != '') {
@@ -305,17 +319,12 @@ class PreRouter
 
     private static function checkAppConfig($app)
     {
-        if($app !== 'services') {
-            if(isset(self::$requestedDomainConfig->app->{$app})) {
-                return self::$requestedDomainConfig->app->{$app};
-            }
-        } else {
-            if(isset(self::$requestedDomainConfig->services->{$app})) {
-                return self::$requestedDomainConfig->services->{$app};
-            }
-        }
+        return (isset(self::$requestedDomainConfig->app->{$app})) ? self::$requestedDomainConfig->app->{$app} : null;
+    }
 
-        return null;
+    private static function checkServicesConfig($app)
+    {
+        return (isset(self::$requestedDomainConfig->services->{$app})) ? self::$requestedDomainConfig->services->{$app} : null;
     }
 
     public static function ParseDefault($routes,$prefix=false)
