@@ -11,14 +11,12 @@ namespace K5\Unity\Phalcon;
 use K5\Ui;
 use K5\U;
 
-
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-class BaseController extends  \Phalcon\Mvc\Controller
+class BaseController extends \Phalcon\Mvc\Controller
 {
-
     public string $issuer_key = '';
     public string $SessionDomain = '';
     public ?string $SubDomain;
@@ -30,7 +28,7 @@ class BaseController extends  \Phalcon\Mvc\Controller
 
     }
 
-    public function GetHtmlPacket($content,$domId,$mode='content-add',$domDestination='layout_content',$k5Destination='layout_content')
+    public function GetHtmlPacket($content,$domId,$mode='content-add',$domDestination='layout_content',$k5Destination='layout_content') : \K5\Entity\View\Html
     {
         $html = new \K5\Entity\View\Html();
         $html->Content = $content;
@@ -41,7 +39,7 @@ class BaseController extends  \Phalcon\Mvc\Controller
         return $html;
     }
 
-    public function GetJavascriptPacket($content,$domId,$refresh=false,$mode='add',$k5Type='documentReady')
+    public function GetJavascriptPacket($content,$domId,$refresh=false,$mode='add',$k5Type='documentReady') : \K5\Entity\View\Javascript
     {
         $js = new \K5\Entity\View\Javascript();
         $js->Content = $content;
@@ -52,7 +50,7 @@ class BaseController extends  \Phalcon\Mvc\Controller
         return $js;
     }
 
-    public function GetJavascriptLibPacket($content,$domId,$refresh=false)
+    public function GetJavascriptLibPacket($content,$domId,$refresh=false) : \K5\Entity\View\JavascriptLib
     {
         $js = new \K5\Entity\View\JavascriptLib();
         $js->Content = $content;
@@ -62,7 +60,7 @@ class BaseController extends  \Phalcon\Mvc\Controller
         return $js;
     }
 
-    public function GetCssPacket($content,$domId,$refresh=false,$mode=false)
+    public function GetCssPacket($content,$domId,$refresh=false,$mode=false) : \K5\Entity\View\Css
     {
         $css = new \K5\Entity\View\Css();
         $css->Content = $content;
@@ -72,7 +70,7 @@ class BaseController extends  \Phalcon\Mvc\Controller
     }
 
     public function GetModalPacket(string $content,string $domId,?string $title=null,?string $footer=null,
-                                   string $size='medium',string $close= 'right', ?string $callback=null)
+                                   string $size='medium',string $close= 'right', ?string $callback=null) : \K5\Entity\View\BsModal
     {
         $e = new \K5\Entity\View\BsModal();
         $e->DomID = $domId;
@@ -137,34 +135,6 @@ class BaseController extends  \Phalcon\Mvc\Controller
             throw new \Exception($_eMsg);
         }
         return $resp;
-    }
-
-    /**
-     * @param $data
-     * @return mixed
-     */
-    public function encodeToken($data)
-    {
-        // Encode token
-        $token_encoded = $this->jwt->encode($data, $this->globalConfig->authentication->secret);
-        //$token_encoded = $this->crypt->encryptBase64($token_encoded);
-        //$token_encoded = $this->crypt->encrypt($token_encoded);
-        //return base64_encode($token_encoded);
-        return $token_encoded;
-    }
-
-    /**
-     * @param $token
-     * @return bool|string
-     */
-    public function decodeToken($token)
-    {
-        // Decode token
-        //$token = base64_decode($token);
-        //$token = $this->crypt->decryptBase64($token);
-        //$token = $this->crypt->decrypt($token);
-        $token = $this->jwt->decode($token, $this->globalConfig->authentication->secret, array('HS256'));
-        return $token;
     }
 
     public function GetErrorResponse(\K5\Http\Response $r)
