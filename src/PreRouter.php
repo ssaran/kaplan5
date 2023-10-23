@@ -15,7 +15,7 @@ class PreRouter
     private static $requestedDomainConfig;
     private static $requestMethod;
     private static string $domain;
-    private static ?string $subDomain;
+    private static ?string $subDomain = null;
     private static string $app  = "front";
     private static string $module = "index";
     private static string $controller = "index";
@@ -149,6 +149,7 @@ class PreRouter
     private static function parseDomain() : void
     {
         self::$subDomain = null;
+        self::$_route->subDomain = null;
         if(isset(self::$_server['HTTP_X_ORIGINAL_HOST'])) {
             self::$_route->domain = self::$_server['HTTP_X_ORIGINAL_HOST'];
             self::$_route->sessionDomain = self::$_route->domain;

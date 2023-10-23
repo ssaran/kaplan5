@@ -5,7 +5,7 @@ namespace K5\Entity\Request;
 class Route
 {
     public string $domain;
-    public string $subDomain;
+    public ?string $subDomain = null;
     public string $sessionDomain;
     public string $app;
     public string $module;
