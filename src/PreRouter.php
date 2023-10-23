@@ -15,7 +15,7 @@ class PreRouter
     private static $requestedDomainConfig;
     private static $requestMethod;
     private static string $domain;
-    private static ?string $subDomain = null;
+    private static ?string $subDomain;
     private static string $app  = "front";
     private static string $module = "index";
     private static string $controller = "index";
@@ -36,6 +36,7 @@ class PreRouter
 
     public static function SetInstance($config,$server) : bool
     {
+        self::$subDomain = null;
         if(is_null(self::$_server)){
             self::$_route = new \K5\Entity\Request\Route();
             self::$_server = $server;
