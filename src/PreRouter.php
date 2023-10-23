@@ -147,6 +147,7 @@ class PreRouter
 
     private static function parseDomain() : void
     {
+        self::$subDomain = null;
         if(isset(self::$_server['HTTP_X_ORIGINAL_HOST'])) {
             self::$_route->domain = self::$_server['HTTP_X_ORIGINAL_HOST'];
             self::$_route->sessionDomain = self::$_route->domain;
