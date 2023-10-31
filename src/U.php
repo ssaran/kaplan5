@@ -448,6 +448,12 @@ class U
         return $randomDate;
     }
 
+
+    public static function Cast2Class($class, $object)
+    {
+        return unserialize(preg_replace('/^O:\d+:"[^"]++"/', 'O:' . strlen($class) . ':"' . $class . '"', serialize($object)));
+    }
+
     public static function Obj2Db($data)
     {
         return base64_encode(serialize($data));

@@ -113,7 +113,7 @@ class PreRouter
 
     public static function GetParams()
     {
-        return self::$params;
+        return self::$_route->params;
     }
 
     public static function GetI18n()
@@ -131,7 +131,7 @@ class PreRouter
         return self::$appConfig;
     }
 
-    public static function IsApi()
+    public static function IsApi() : bool
     {
         return self::$isApi;
     }
