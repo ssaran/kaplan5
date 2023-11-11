@@ -227,6 +227,11 @@ class PreRouter
                 self::$_route->module = array_shift($tmp);
             }
         }
+
+        $_fModule = null;
+        if(isset(self::$appConfig['fixedModule']) && isset(self::$appConfig['fixedModule'][self::$_route->module])) {
+            $_fModule = self::$appConfig['fixedModule'][self::$_route->module];
+        }
         self::$_module = self::$_route->module;
 
         /** Check forced index */
@@ -256,6 +261,13 @@ class PreRouter
         }
 
         self::$_route->module = str_replace("-","",ucwords(self::$_route->module, "-"));
+
+        //---- Refit Fixed Module (route selected modules to single module)
+        if(!is_null($_fModule)) {
+            self::$_route->params['fixed_module'] = self::$_route->module;
+            self::$_route->module = $_fModule;
+            self::$_module = self::$_route->module;
+        }
 
         //--- Refit Forced controller to structure.
         if(!is_null($_fController)) {
