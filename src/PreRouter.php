@@ -269,10 +269,10 @@ class PreRouter
             self::$_module = self::$_route->module;
             if(isset($_fixedModule['staticController'])) {
                 if(!is_null($_fController)) {
-                    self::$_route->params['forced_controller'] = self::$_route->controller;
-                    self::$_route->controller = $_fixedModule['staticController'];
                     $_fController = null;
                 }
+                self::$_route->params['forced_controller'] = self::$_route->controller;
+                self::$_route->controller = $_fixedModule['staticController'];
             }
             if(isset($_fixedModule['actionAsParam'])) {
                 self::$_route->params['action'] = self::$_route->action;
