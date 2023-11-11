@@ -228,9 +228,9 @@ class PreRouter
             }
         }
 
-        $_fModule = null;
+        $_fixedModule = null;
         if(isset(self::$appConfig['fixedModule']) && isset(self::$appConfig['fixedModule'][self::$_route->module])) {
-            $_fModule = self::$appConfig['fixedModule'][self::$_route->module];
+            $_fixedModule = self::$appConfig['fixedModule'][self::$_route->module];
         }
         self::$_module = self::$_route->module;
 
@@ -263,10 +263,22 @@ class PreRouter
         self::$_route->module = str_replace("-","",ucwords(self::$_route->module, "-"));
 
         //---- Refit Fixed Module (route selected modules to single module)
-        if(!is_null($_fModule)) {
+        if(!is_null($_fixedModule)) {
             self::$_route->params['fixed_module'] = self::$_route->module;
-            self::$_route->module = $_fModule;
+            self::$_route->module = $_fixedModule['module'];
             self::$_module = self::$_route->module;
+            if(isset($_fixedModule['staticController'])) {
+                if(!is_null($_fController)) {
+                    self::$_route->params['forced_controller'] = self::$_route->controller;
+                    self::$_route->controller = $_fixedModule['staticController'];
+                    $_fController = null;
+                }
+            }
+            if(isset($_fixedModule['actionAsParam'])) {
+                self::$_route->params['action'] = self::$_route->action;
+                self::$_route->action = 'index';
+                self::$_action = self::$_route->action;
+            }
         }
 
         //--- Refit Forced controller to structure.
