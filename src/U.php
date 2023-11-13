@@ -328,18 +328,17 @@ class U
 
     public static function printMoney($money,$currency='TRY')
     {
-        //$sign = (!$sign) ? "<i class=\"fa fa-try\" aria-hidden=\"true\"></i>" : $sign;
-        //return money_format('%(#10n',$money);
         $locale  = 'tr_TR';
         switch ($currency) {
-            case 'TRY': $locale = 'tr_TR'; break;
             case 'USD': $locale = 'en_US'; break;
-            case 'AZN': $locale = 'az_Latn'; break;
+            case 'AZN': $locale = 'az_Latin'; break;
             case 'GBP': $locale = 'en_GB'; break;
             case 'EUR': $locale = 'en_DE'; break;
         }
-
         $fmt = new \NumberFormatter( $locale, \NumberFormatter::CURRENCY );
+        if($currency === 'CUSTOM') {
+            $fmt->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, '');
+        }
         return $fmt->format($money);
     }
 
