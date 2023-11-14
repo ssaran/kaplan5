@@ -269,7 +269,7 @@ class PreRouter
         self::$_action = self::$_route->action;
 
         if(sizeof($tmp) > 0) {
-            foreach(self::$tmp as $tk => $tv) {
+            foreach($tmp as $tk => $tv) {
                 self::$_route->params[$tk] = $tv;
             }
         }
@@ -352,7 +352,7 @@ class PreRouter
         self::$_action = self::$_route->action;
 
         if(sizeof($tmp) > 0) {
-            foreach(self::$tmp as $tk => $tv) {
+            foreach($tmp as $tk => $tv) {
                 self::$_route->params[$tk] = $tv;
             }
         }
