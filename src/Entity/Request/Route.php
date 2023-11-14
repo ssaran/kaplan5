@@ -9,14 +9,14 @@ class Route
     public string $sessionDomain;
     public string $app;
     public string $module;
-    public string $extension;
+    public ?string $extension null;
     public string $controller;
     public string $action;
     public string $namespace;
-    public string $i18n;
+    public ?string $i18n = null;
     public bool $isApi = false;
     public bool $isService = false;
-    public array $params;
+    public array $params = [];
     public bool $hasCms = false;
     public ?string $cmsDomain = null;
 }
