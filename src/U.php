@@ -974,10 +974,21 @@ class U
         return str_replace('_', '', ucwords($str, '_'));
     }
 
-    public static function GetUuid($low=false,$mid=false,$hi=false,$clock=false,$node=false)
+    public static function GetIMUuid(string $prefix,?string $hi=null,?string $clock=null,?string $node=null) : string
     {
-        $random = new \Phalcon\Encryption\Security\Random();
-        $uuid = $random->uuid();
+        $uuid = \UUID\UUID::uuid7();
+        $arr = explode("-",$uuid);
+        $arr[2] = (!is_null($hi)) ? str_pad($hi,4,"0",STR_PAD_LEFT) : $arr[2];
+        $arr[3] = (!is_null($clock)) ? str_pad($clock,4,"0",STR_PAD_LEFT) : $arr[3];
+        $arr[4] = (!is_null($node)) ? str_pad($node,12,"0",STR_PAD_LEFT) : $arr[4];
+        $arr[5] = str_pad($prefix,13,"0",STR_PAD_RIGHT);
+
+        return implode("-",$arr);
+    }
+
+    public static function GetUuid($low=false,$mid=false,$hi=false,$clock=false,$node=false) : string
+    {
+        $uuid = \UUID\UUID::uuid7();
         $arr = explode("-",$uuid);
         $arr[0] = ($low) ? u::FitStr($low,8) : $arr[0];
         $arr[1] = ($mid) ? u::FitStr($mid,4) : $arr[1];
@@ -988,7 +999,7 @@ class U
         return implode("-",$arr);
     }
 
-    public static function Uuidze($low=false,$mid=false,$hi=false,$clock=false,$node=false,$filler=false)
+    public static function Uuidze($low=false,$mid=false,$hi=false,$clock=false,$node=false,$filler=false) : string
     {
         $arr[0] = ($low) ? u::FitStr($low,8,$filler) : u::FitStr("",8,$filler);
         $arr[1] = ($mid) ? u::FitStr($mid,4,$filler) : u::FitStr("",4,$filler);
@@ -998,7 +1009,7 @@ class U
         return implode("-",$arr);
     }
 
-    public static function FitStr($str,$max,$filler=false)
+    public static function FitStr($str,$max,$filler=false) : string
     {
         if(strlen($str) >= $max) {
             return substr($str, 0, $max);
@@ -1013,7 +1024,7 @@ class U
      * @param $messages
      * @return array
      */
-    public static function ParseFormMessages($messages)
+    public static function ParseFormMessages($messages) : array
     {
         $r = [];
         foreach($messages as $m) {
