@@ -974,14 +974,14 @@ class U
         return str_replace('_', '', ucwords($str, '_'));
     }
 
-    public static function GetIMUuid(string $prefix,?string $hi=null,?string $clock=null,?string $node=null) : string
+    public static function GetIMUuid(string $suffix,?string $hi=null,?string $clock=null,?string $node=null) : string
     {
         $uuid = \UUID\UUID::uuid7();
         $arr = explode("-",$uuid);
         $arr[2] = (!is_null($hi)) ? str_pad($hi,4,"0",STR_PAD_LEFT) : $arr[2];
         $arr[3] = (!is_null($clock)) ? str_pad($clock,4,"0",STR_PAD_LEFT) : $arr[3];
         $arr[4] = (!is_null($node)) ? str_pad($node,12,"0",STR_PAD_LEFT) : $arr[4];
-        $arr[5] = str_pad($prefix,13,"0",STR_PAD_RIGHT);
+        $arr[5] = str_pad($suffix,13,"0",STR_PAD_RIGHT);
 
         return implode("-",$arr);
     }
