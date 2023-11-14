@@ -166,6 +166,11 @@ class PreRouter
         return str_replace(".","_",self::GetSessionDomain());
     }
 
+    public static function GetRequestedDomainConfig()
+    {
+        return self::$requestedDomainConfig;
+    }
+
     private static function parseDomain() : void
     {
         self::$subDomain = null;
