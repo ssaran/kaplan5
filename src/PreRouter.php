@@ -30,8 +30,6 @@ class PreRouter
     private static bool $isApi = false;
     private static bool $isService = false;
     private static ?int $versionApi = null;
-    private static bool $hasCms = false;
-    private static ?string $cmsDomain = null;
 
     private static ?array $_server = null;
     private static \K5\Entity\Request\Route $_route;
@@ -60,12 +58,12 @@ class PreRouter
                 self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
                 self::$_route->i18n = self::$requestedDomainConfig->default->i18n;
 
-                if(isset(self::$requestedDomainConfig->hasCms) && self::$requestedDomainConfig->hasCms === true) {
-                    self::$hasCms = self::$requestedDomainConfig->hasCms;
-                    if(isset(self::$requestedDomainConfig->cmsForceDomain) || !is_null(self::$requestedDomainConfig->cmsForceDomain)) {
-                        self::$cmsDomain = self::$requestedDomainConfig->cmsForceDomain;
+                if(isset(self::$requestedDomainConfig->hasCms) && self::$requestedDomainConfig->hasCms) {
+                    self::$_route->hasCms = self::$requestedDomainConfig->hasCms;
+                    if(isset(self::$requestedDomainConfig->cmsForceDomain) && !is_null(self::$requestedDomainConfig->cmsForceDomain) && !empty(self::$requestedDomainConfig->cmsForceDomain)) {
+                        self::$_route->cmsDomain = self::$requestedDomainConfig->cmsForceDomain;
                     } else {
-                        self::$cmsDomain = self::$_route->sessionDomain;
+                        self::$_route->cmsDomain = self::$_route->sessionDomain;
                     }
                 }
 
@@ -99,11 +97,7 @@ class PreRouter
 
     public static function GetCmsDomain() : ?string
     {
-        if(!self::$hasCms) {
-            return 'nada';
-        } else {
-            return self::$cmsDomain;
-        }
+        return (self::$hasCms) ? self::$cmsDomain : 'nada';
     }
 
     public static function GetNameSpace()

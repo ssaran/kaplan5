@@ -17,6 +17,8 @@ class Route
     public bool $isApi = false;
     public bool $isService = false;
     public array $params;
+    public bool $hasCms = false;
+    public ?string $cmsDomain = null;
 }
 
 
