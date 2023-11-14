@@ -97,10 +97,10 @@ class PreRouter
 
     public static function GetCmsDomain() : ?string
     {
-        return (self::$hasCms) ? self::$cmsDomain : 'nada';
+        return (self::$_route->hasCms) ? self::$_route->cmsDomain : 'nada';
     }
 
-    public static function GetNameSpace()
+    public static function GetNameSpace() : string
     {
         return self::$_route->namespace;
     }
