@@ -160,8 +160,8 @@ class PreRouter
                 self::$_route->sessionDomain = self::$_route->domain;
             } else {
                 $top = array_pop($host);
-                if($top == 'tr') {
-                    $top.=".".array_pop($host);
+                if($top === 'tr' || $top === 'de' || $top === 'az' || $top === 'fr' ) {
+                    $top = array_pop($host).".".$top;
                 }
                 $dom = array_pop($host);
                 $sub = array_pop($host);
