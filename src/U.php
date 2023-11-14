@@ -978,10 +978,10 @@ class U
     {
         $uuid = \UUID\UUID::uuid7();
         $arr = explode("-",$uuid);
-        $arr[2] = (!is_null($hi)) ? str_pad($hi,4,"0",STR_PAD_LEFT) : $arr[2];
-        $arr[3] = (!is_null($clock)) ? str_pad($clock,4,"0",STR_PAD_LEFT) : $arr[3];
-        $arr[4] = (!is_null($node)) ? str_pad($node,12,"0",STR_PAD_LEFT) : $arr[4];
-        $arr[5] = str_pad($suffix,13,"0",STR_PAD_RIGHT);
+        $arr[2] = (!is_null($hi)) ? u::FitStr($hi,4,"0") : $arr[2];
+        $arr[3] = (!is_null($clock)) ? u::FitStr($clock,4,"0") : $arr[3];
+        $arr[4] = (!is_null($node)) ? u::FitStr($node,12,"0") : $arr[4];
+        $arr[5] =  u::FitStr($suffix,13,"0");
 
         return implode("-",$arr);
     }
