@@ -268,7 +268,11 @@ class PreRouter
         }
         self::$_action = self::$_route->action;
 
-        self::$_route->params = $tmp;
+        if(sizeof($tmp) > 0) {
+            foreach(self::$tmp as $tk => $tv) {
+                self::$_route->params[$tk] = $tv;
+            }
+        }
 
         self::$_route->app = self::$appConfig['directory'];
 
@@ -347,7 +351,11 @@ class PreRouter
         }
         self::$_action = self::$_route->action;
 
-        self::$_route->params = $tmp;
+        if(sizeof($tmp) > 0) {
+            foreach(self::$tmp as $tk => $tv) {
+                self::$_route->params[$tk] = $tv;
+            }
+        }
 
         self::$_route->app = self::$appConfig['directory'];
 
