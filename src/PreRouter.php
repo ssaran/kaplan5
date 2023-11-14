@@ -60,7 +60,7 @@ class PreRouter
                 self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
                 self::$_route->i18n = self::$requestedDomainConfig->default->i18n;
 
-                if(isset(self::$requestedDomainConfig->hasCms)) {
+                if(isset(self::$requestedDomainConfig->hasCms) && self::$requestedDomainConfig->hasCms === true) {
                     self::$hasCms = self::$requestedDomainConfig->hasCms;
                     if(isset(self::$requestedDomainConfig->cmsForceDomain) || !is_null(self::$requestedDomainConfig->cmsForceDomain)) {
                         self::$cmsDomain = self::$requestedDomainConfig->cmsForceDomain;
