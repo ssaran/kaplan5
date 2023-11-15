@@ -36,19 +36,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;Q:/ssaran/kaplan5/src/Entity/Auth&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "Q:/ssaran/kaplan5/frontend/k5/js",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="Q:\ssaran\kaplan5\src\Entity\Auth" />
       <recent name="Q:\ssaran\kaplan5\frontend\k5\js" />
+      <recent name="Q:\ssaran\kaplan5\src\Entity\Auth" />
       <recent name="Q:\ssaran\kaplan5\src\Component" />
       <recent name="Q:\ssaran\kaplan5\src\Entity\View" />
     </key>
@@ -110,7 +110,8 @@
       <workItem from="1699948149416" duration="265000" />
       <workItem from="1699949835016" duration="381000" />
       <workItem from="1699950445754" duration="3179000" />
-      <workItem from="1699964597861" duration="751000" />
+      <workItem from="1699964597861" duration="1923000" />
+      <workItem from="1700029187980" duration="656000" />
     </task>
     <servers />
   </component>

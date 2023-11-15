@@ -45,10 +45,10 @@ class Asset
         $js->DomID = "JsLib_k5_dialog";
         $collection->Append($js);
 
-        /*$js = new \K5\Entity\View\JavascriptLib();
-        $js->Content = $prefix."/k5/js/tabs.js";
-        $js->DomID = "JsLib_k5_tabs";
-        $collection->Append($js);*/
+        $js = new \K5\Entity\View\JavascriptLib();
+        $js->Content = $prefix."/k5/js/offCanvas.js";
+        $js->DomID = "JsLib_k5_offCanvas";
+        $collection->Append($js);
 
         $js = new \K5\Entity\View\JavascriptLib();
         $js->Content = $prefix."/k5/js/ui.js";
