@@ -45,20 +45,12 @@ class View
         $this->vars['data'] = $data;
         $this->_skinName = 'default';
 
-        if(!is_null($this->setup->Dom)) {
-            $this->Dom = $this->setup->Dom;
-        }
-
-        if(!is_null($this->setup->Css)) {
-            $this->Css = $this->setup->Css;
-        }
-
-        if(!is_null($this->setup->Routes)) {
-            $this->Routes = $this->setup->Routes;
-        }
+        $this->Dom = $this->setup->Dom;
+        $this->Css = $this->setup->Css;
+        $this->Routes = $this->setup->Routes;
     }
 
-    protected function setTemplate()
+    protected function setTemplate() : void
     {
         if($this->jsCustom && $this->_skinName !== 'default') {
             $jsFile = $this->_skinPath."_js.php";
@@ -75,7 +67,7 @@ class View
         }
     }
 
-    public function Render()
+    public function Render() : void
     {
         try {
             $this->vars['dom'] = $this->Dom;
@@ -108,8 +100,7 @@ class View
         }
     }
 
-
-    private function _getHtml($vars)
+    private function _getHtml($vars) : void
     {
         try {
             extract($this->vars);
@@ -121,7 +112,7 @@ class View
         }
     }
 
-    private function _getJs($vars)
+    private function _getJs($vars) : void
     {
         extract($this->vars);
         ob_start();
@@ -129,25 +120,25 @@ class View
         $this->JsOutput = \K5\V::StripCode(ob_get_clean());
     }
 
-    private function _getCss()
+    private function _getCss() : void
     {
         ob_start();
         include $this->_cssFile;
         $this->CssOutput = ob_get_clean();
     }
 
-    protected function renderHtml($vars)
+    protected function renderHtml($vars) : void
     {
-        $this->HtmlOutput = false;
+        $this->HtmlOutput = '';
     }
 
-    protected function renderJs($vars)
+    protected function renderJs($vars) : void
     {
-        $this->JsOutput = false;
+        $this->JsOutput = '';
     }
 
-    protected function renderCss()
+    protected function renderCss() : void
     {
-        $this->CssOutput = false;
+        $this->CssOutput = '';
     }
 }
