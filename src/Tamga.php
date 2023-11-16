@@ -91,20 +91,20 @@ class Tamga
     {
         try {
             if(!$tamga) {
-                \K5\Log::Error("Tamga not found");
+                \K5\U::lerr("Tamga not found");
                 return false;
             }
             self::$decoded = self::Decode($jwtHandler,$secret,$tamga);
             if(!self::$decoded) {
-                \K5\Log::Error("Cannot decode token");
+                \K5\U::lerr("Cannot decode token");
                 return false;
             }
             if(!isset(self::$decoded->tamga)) {
-                \K5\Log::Error("jwt is not a tamga");
+                \K5\U::lerr("jwt is not a tamga");
             }
             return true;
         } catch (\Exception $e) {
-            \K5\Log::Error($e->getMessage());
+            \K5\U::lerr($e->getMessage());
             return false;
         }
     }
@@ -115,8 +115,8 @@ class Tamga
     public static function GetTamga()
     {
         if(!isset(self::$decoded->tamga)) {
-            \K5\Log::Error("jwt is not a tamga");
-            \K5\Log::Error(self::$decoded);
+            \K5\U::lerr("jwt is not a tamga");
+            \K5\U::lerr(self::$decoded);
             return false;
         }
         /** \Common\Entity\Auth\Tamga */
