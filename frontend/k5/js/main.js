@@ -45,6 +45,7 @@ glb.Ncn.Report = {};
 glb.Ncn.Hcc = {};
 glb.Ncn.Hysana = {};
 glb.Tunca = {};
+glb.Events = {};
 glb.Multitabs = '';
 
 window.mobilecheck = function() {
