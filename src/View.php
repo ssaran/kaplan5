@@ -10,9 +10,9 @@ namespace K5;
 
 class View
 {
-    public $Routes;
-    public $Dom;
-    public $Css;
+    public ?\K5\Component\Route $Routes;
+    public ?\K5\Entity\View\Dom\Keys  $Dom;
+    public ?\K5\Entity\View\Dom\ClassKeys $Css;
 
     public $HtmlOutput;
     public $JsOutput;
@@ -20,7 +20,7 @@ class View
     public $OtherOutput;
 
     /** @var  \K5\Entity\Request\Setup */
-    protected $setup;
+    protected \K5\Entity\Request\Setup $setup;
     protected $vars = [];
 
     protected $jsCustom = false;
