@@ -50,7 +50,7 @@ class View
         $this->Routes = $this->setup->Routes;
     }
 
-    protected function setTemplate() : void
+    protected function setTemplate()
     {
         if($this->jsCustom && $this->_skinName !== 'default') {
             $jsFile = $this->_skinPath."_js.php";
@@ -67,7 +67,7 @@ class View
         }
     }
 
-    public function Render() : void
+    public function Render()
     {
         try {
             $this->vars['dom'] = $this->Dom;
@@ -100,7 +100,8 @@ class View
         }
     }
 
-    private function _getHtml($vars) : void
+
+    private function _getHtml($vars)
     {
         try {
             extract($this->vars);
@@ -112,7 +113,7 @@ class View
         }
     }
 
-    private function _getJs($vars) : void
+    private function _getJs($vars)
     {
         extract($this->vars);
         ob_start();
@@ -120,25 +121,25 @@ class View
         $this->JsOutput = \K5\V::StripCode(ob_get_clean());
     }
 
-    private function _getCss() : void
+    private function _getCss()
     {
         ob_start();
         include $this->_cssFile;
         $this->CssOutput = ob_get_clean();
     }
 
-    protected function renderHtml($vars) : void
+    protected function renderHtml($vars)
     {
-        $this->HtmlOutput = '';
+        $this->HtmlOutput = false;
     }
 
-    protected function renderJs($vars) : void
+    protected function renderJs($vars)
     {
-        $this->JsOutput = '';
+        $this->JsOutput = false;
     }
 
-    protected function renderCss() : void
+    protected function renderCss()
     {
-        $this->CssOutput = '';
+        $this->CssOutput = false;
     }
 }
