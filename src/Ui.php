@@ -275,7 +275,7 @@ class Ui
     {
         $html = new \K5\Entity\View\HeadLine();
         $html->Content = $content;
-        $html->DomID = null;
+        $html->DomID = '-';
         $html->Type = 'head_line';
         return $html;
     }
