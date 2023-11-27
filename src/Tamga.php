@@ -108,15 +108,10 @@ class Tamga
     }
 
     /**
-     * @return Entity\Auth\Tamga|null
+     * @return \stdClass|null
      */
-    public static function GetTamga() : ?\K5\Entity\Auth\Tamga
+    public static function GetDecoded() : ?\stdClass
     {
-        if(!isset(self::$decoded->tamga)) {
-            \K5\U::lerr("jwt is not a tamga");
-            \K5\U::lerr(self::$decoded);
-            return null;
-        }
-        return \K5\U::Record2Entity(self::$decoded->tamga,new \K5\Entity\Auth\Tamga());
+        return self::$decoded;
     }
 }
