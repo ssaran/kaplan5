@@ -117,6 +117,6 @@ class Tamga
             \K5\U::lerr(self::$decoded);
             return null;
         }
-        return self::$decoded->tamga;
+        return \K5\U::Record2Entity(self::$decoded->tamga,new \K5\Entity\Auth\Tamga());
     }
 }
