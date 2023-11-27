@@ -17,7 +17,7 @@ class BaseLayout
         $footer = isset($content['layout_footer']) ? implode("\n",$content['layout_footer']) : '';
 
         return
-            '<div class="page">
+'<div class="page"><!--lbase-->
     <div class="sticky-top d-print-none" id="layout_header">
             '.$header.'                
     </div>
@@ -28,13 +28,13 @@ class BaseLayout
             </subheader>            
         </div>      
         <div class="page-body p-0 m-0">
-            <div class="container-fluid p-0 m-0" id="layout_content">
+            <div class="container p-0 m-0" id="layout_content">
     '.$main.'
             </div>
-            <div class="container-fluid p-0 m-0" id="layout_left">
+            <div class="container p-0 m-0" id="layout_left">
     '.$left.'
             </div>
-            <div class="container-fluid p-0 m-0" id="layout_right">
+            <div class="container p-0 m-0" id="layout_right">
     '.$right.'
             </div>
         </div>

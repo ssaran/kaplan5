@@ -31,15 +31,13 @@ class Tamga
         // jwt valid for 7 days (60 seconds * 60 minutes * 24 hours * 60 days)
         $expirationTime = $issuedAt + (60 * 60 * 24 * 7);
 
-        $token_data = array(
+        return array(
             'iss' => self::$TokenConfig['iss'],
             'aud' => self::$TokenConfig['aud'],
             'iat' => $issuedAt,
             'exp' => $expirationTime,
             'tamga' => $tamga
         );
-
-        return $token_data;
     }
     /**
      * @param $jwtHandler
@@ -87,7 +85,7 @@ class Tamga
      * @param $uKey
      * @return bool
      */
-    public static function IsTamgaMatch($jwtHandler,$secret,$tamga)
+    public static function IsTamgaMatch($jwtHandler,$secret,$tamga) : bool
     {
         try {
             if(!$tamga) {
@@ -110,16 +108,15 @@ class Tamga
     }
 
     /**
-     * @return false
+     * @return Entity\Auth\Tamga|null
      */
-    public static function GetTamga()
+    public static function GetTamga() : ?\K5\Entity\Auth\Tamga
     {
         if(!isset(self::$decoded->tamga)) {
             \K5\U::lerr("jwt is not a tamga");
             \K5\U::lerr(self::$decoded);
-            return false;
+            return null;
         }
-        /** \Common\Entity\Auth\Tamga */
         return self::$decoded->tamga;
     }
 }

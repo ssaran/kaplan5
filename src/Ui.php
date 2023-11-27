@@ -125,6 +125,7 @@ class Ui
             'JSForced'=>$parsed['js']['forced'],
             'JSDocumentReady'=>$parsed['js']['documentReady'],
             'JSInject'=>$parsed['js']['inject'],
+            'PageHead'=>$parsed['page_head'],
         ];
     }
 
@@ -261,6 +262,7 @@ class Ui
         $r['js']['inject'] = [];
         $r['js']['documentReady'] = [];
         $r['html'] = [];
+        $r['page_head'] = [];
 
         if(!is_iterable($_output)) {
             return $r;
@@ -319,6 +321,10 @@ class Ui
                 } else {
                     $r['js']['embed'][] = $o->Content;
                 }
+            }
+
+            if(is_a($o,'K5\Entity\View\HeadLine')) {
+                $r['page_head'][] = $o->Content;
             }
         }
 
