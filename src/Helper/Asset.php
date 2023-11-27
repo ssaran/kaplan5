@@ -41,13 +41,8 @@ class Asset
         $collection->Append($js);
 
         $js = new \K5\Entity\View\JavascriptLib();
-        $js->Content = $prefix."/k5/js/dialog.js";
-        $js->DomID = "JsLib_k5_dialog";
-        $collection->Append($js);
-
-        $js = new \K5\Entity\View\JavascriptLib();
-        $js->Content = $prefix."/k5/js/offCanvas.js";
-        $js->DomID = "JsLib_k5_offCanvas";
+        $js->Content = $prefix."/k5/js/toast.js";
+        $js->DomID = "JsLib_k5_toast";
         $collection->Append($js);
 
         $js = new \K5\Entity\View\JavascriptLib();
