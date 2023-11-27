@@ -143,8 +143,131 @@ class Ui
         self::Append($r);
     }
 
+    /**
+     * @param $content
+     * @param $domId
+     * @param $mode
+     * @param $domDestination
+     * @param $k5Destination
+     * @return Entity\View\Html
+     */
+    public static function GetHtmlPacket($content,$domId,$mode='content-add',$domDestination='layout_content',$k5Destination='layout_content') : \K5\Entity\View\Html
+    {
+        $html = new \K5\Entity\View\Html();
+        $html->Content = $content;
+        $html->DomID = $domId;
+        $html->DomDestination = $domDestination;
+        $html->K5Destination = $k5Destination;
+        $html->Mode = $mode;
+        return $html;
+    }
 
-    public static function JSResetForm($idForm)
+    /**
+     * @param $content
+     * @param $domId
+     * @param $refresh
+     * @param $mode
+     * @param $k5Type
+     * @return Entity\View\Javascript
+     */
+    public static function GetJavascriptPacket($content,$domId,$refresh=false,$mode='add',$k5Type='documentReady') : \K5\Entity\View\Javascript
+    {
+        $js = new \K5\Entity\View\Javascript();
+        $js->Content = $content;
+        $js->DomID = $domId;
+        $js->K5Type = $k5Type;
+        $js->Refresh = ($refresh) ? $refresh : false;
+        $js->Mode = ($mode) ? $mode : '';
+        return $js;
+    }
+
+    /**
+     * @param $content
+     * @param $domId
+     * @param $refresh
+     * @return Entity\View\JavascriptLib
+     */
+    public static function GetJavascriptLibPacket($content,$domId,$refresh=false) : \K5\Entity\View\JavascriptLib
+    {
+        $js = new \K5\Entity\View\JavascriptLib();
+        $js->Content = $content;
+        $js->DomID = $domId;
+        $js->Refresh = ($refresh) ? $refresh : false;
+
+        return $js;
+    }
+
+    /**
+     * @param $content
+     * @param $domId
+     * @param $refresh
+     * @param $mode
+     * @return Entity\View\Css
+     */
+    public static function GetCssPacket($content,$domId,$refresh=false,$mode=false) : \K5\Entity\View\Css
+    {
+        $css = new \K5\Entity\View\Css();
+        $css->Content = $content;
+        $css->DomID = $domId;
+        $css->Refresh = ($refresh) ? $refresh : false;
+        return $css;
+    }
+
+    /**
+     * @param string $content
+     * @param string $domId
+     * @param string|null $title
+     * @param string|null $footer
+     * @param string $size
+     * @param string $close
+     * @param string|null $callback
+     * @return Entity\View\BsModal
+     */
+    public static function GetModalPacket(string $content,string $domId,?string $title=null,?string $footer=null,
+                                   string $size='medium',string $close= 'right', ?string $callback=null) : \K5\Entity\View\BsModal
+    {
+        $e = new \K5\Entity\View\BsModal();
+        $e->DomID = $domId;
+        $e->Modal_DomID = $domId;
+        $e->Modal_Body = $content;
+        $e->Modal_Title = $title;
+        $e->Modal_Footer = $footer;
+        $e->Modal_Size = $size;
+        $e->Modal_Close = $close;
+        $e->Modal_Callback = $callback;
+
+        return $e;
+    }
+
+    /**
+     * @param $title
+     * @param $tabId
+     * @return Entity\View\Element
+     */
+    public static function GetTabTitlePacket($title,$tabId='main') : \K5\Entity\View\Element
+    {
+        $html = new \K5\Entity\View\Element();
+        $html->Content = $title;
+        $html->DomID = $tabId;
+        $html->Type = 'tab_title';
+        return $html;
+    }
+
+    /**
+     * @param $content
+     * @param $domID
+     * @return Entity\View\Element
+     */
+    public static function GetDataPacket($content,$domID = 'data') : \K5\Entity\View\Element
+    {
+        $html = new \K5\Entity\View\Element();
+        $html->Content = json_encode($content);
+        $html->DomID = $domID;
+        $html->Type = 'data';
+        return $html;
+    }
+
+    public static function JSResetForm($idForm) : void
     {
         $key = U::randomChars(8,true);
         $content = "
@@ -165,7 +288,7 @@ class Ui
         self::PrepareJavascriptContent($content, 'js_alert_'.$key,'add','','documentReady');
     }
 
-    public static function JSError($message,$title='',$footer='',$modalSize='lg')
+    public static function JSError($message,$title='',$footer='',$modalSize='lg') : void
     {
         $message = addslashes(str_replace( "\n", '<br>', $message));
         $title = str_replace( "\n", '<br>', $title);
@@ -180,7 +303,7 @@ class Ui
         self::PrepareJavascriptContent($content, 'js_alert_'.$key,'add','','documentReady');
     }
 
-    public static function JSNotify($message,$type='info')
+    public static function JSNotify($message,$type='info') : void
     {
         $message = addslashes(str_replace( "\n", '<br>', $message));
         $key = U::randomChars(8,true);
@@ -190,7 +313,7 @@ class Ui
         self::PrepareJavascriptContent($content, 'js_notify_'.$key,'add','','documentReady');
     }
 
-    public static function JSCloseModal($modalID)
+    public static function JSCloseModal($modalID) : void
     {
         $key = U::randomChars(8,true);
         $content = '
@@ -200,7 +323,7 @@ class Ui
         self::PrepareJavascriptContent($content, 'js_closemodal_'.$key,'add','','documentReady');
     }
 
-    public static function SendWsPackage($package)
+    public static function SendWsPackage($package) : void
     {
         $key = U::randomChars(8,true);
         $content = '
@@ -215,7 +338,7 @@ class Ui
         self::PrepareJavascriptContent($content, 'js_sendWsPackage_'.$key,'add','','documentReady');
     }
 
-    public static function JSReloadFromDomID($modalID)
+    public static function JSReloadFromDomID($modalID) : void
     {
         $key = U::randomChars(8,true);
         $content = '
@@ -224,7 +347,7 @@ class Ui
         self::PrepareJavascriptContent($content, 'js_JSRealodFromDomID_'.$key,'add','','documentReady');
     }
 
-    public static function AjaxCall($url,$type,$data,$ext='',$isNoHistory=false)
+    public static function AjaxCall($url,$type,$data,$ext='',$isNoHistory=false) : void
     {
         $_data = is_null($data) ? '{}' : json_encode($data);
         if(!$isNoHistory) {
@@ -247,7 +370,7 @@ class Ui
         Ui::PrepareJavascriptContent($content, 'ajax_call_'.$key,'add','','documentReady');
     }
 
-    private static function _parseForHTTP($_output,$isAjax=false)
+    private static function _parseForHTTP($_output,$isAjax=false) : array
     {
         $r = [];
         $r['css'] = [];
@@ -335,7 +458,7 @@ class Ui
      * setMeta#
      * assign html data to page layout location
      */
-    public static function setMeta($key = "-", $data = "")
+    public static function setMeta($key = "-", $data = "") : void
     {
         self::$_pageMeta[$key][] = $data;
     }
@@ -344,7 +467,7 @@ class Ui
      * setOMeta#
      * assign html data to page layout location
      */
-    public static function setOMeta($key = "-", $data = "")
+    public static function setOMeta($key = "-", $data = "") : void
     {
         self::$_pageMeta['other'][$key][] = $data;
     }
@@ -353,7 +476,7 @@ class Ui
      * getMeta#
      * get page layout location data
      */
-    public static function getMeta($key = false)
+    public static function getMeta($key = false) : string
     {
         return ($key !== false and isset(self::$_pageMeta[$key])) ? implode(" " ,self::$_pageMeta[$key]) : '';
     }
@@ -362,7 +485,7 @@ class Ui
      * getOMeta#
      * get page layout location data
      */
-    public static function getOMeta()
+    public static function getOMeta() : string
     {
         $r = '';
         if(isset(self::$_pageMeta['other']) && sizeof(self::$_pageMeta['other'] > 0)) {
@@ -375,23 +498,24 @@ class Ui
 
     /**
      * @param string $key
-     * @param string $data
+     * @param $data
+     * @return void
      */
-    public static function setVar($key = "-", $data = "")
+    public static function setVar(string $key = "-", $data = null) : void
     {
         self::$_pageVars[$key] = $data;
     }
 
     /**
-     * @param bool $key
+     * @param string $key
      * @return string
      */
-    public static function getVar($key = false)
+    public static function getVar(string $key) : string
     {
         return ($key !== false && isset(self::$_pageVars[$key])) ? self::$_pageVars[$key] : '';
     }
 
-    public static function getAllVars()
+    public static function getAllVars() : array
     {
         return self::$_pageVars;
     }
