@@ -267,6 +267,19 @@ class Ui
         return $html;
     }
 
+    /**
+     * @param string $content
+     * @return Entity\View\Element
+     */
+    public static function GetHeadLine(string $content) : \K5\Entity\View\Element
+    {
+        $html = new \K5\Entity\View\HeadLine();
+        $html->Content = $content;
+        $html->DomID = null;
+        $html->Type = 'head_line';
+        return $html;
+    }
+
     public static function JSResetForm($idForm) : void
     {
         $key = U::randomChars(8,true);
