@@ -232,31 +232,10 @@ var Util = function () {
             });
         },
         JSNotify: function (message,type="success",position="bottom-right",timeout= 2000) {
-            bs5dialog.message(message, {
-                position: position,
-                type: type,
-                closeBtn: true,
-                background: "#28a745",
-                textColor: "#fff",
-                fontsize: "1rem",
-                icon: "check-circle",
-                iconClass: "bi",
-                iconStyle: "font-size: 1.5rem;",
-                timeout: timeout
-            });
+            document.getElementById("toast_container").append(Toast.Generate(Util.GenerateId(8),null,message))
         },
         JSToastr: function (message, options) {
-            // Set default options
-            let defaultOptions = {
-                title: "Bilgilendirme",
-                subtitle: "",
-                position: "bottom-right",
-                type: "success",
-                timeout: 3000
-            };
-            options = { ...defaultOptions, ...options };
-            console.log("BsToast",defaultOptions,options);
-            bs5dialog.toast(message, options);
+            document.getElementById("toast_container").append(Toast.Generate(Util.GenerateId(8),null,message))
         },
         TCVerify: function(tcNo) {
             tcNo = tcNo.toString();
@@ -283,6 +262,11 @@ var Util = function () {
                 _iFrame.height = "";
                 _iFrame.height = _iFrame.contentWindow.document.body.scrollHeight + "px";
             }
+        },
+        GenerateId : function  (len) {
+            var arr = new Uint8Array((len || 40) / 2)
+            window.crypto.getRandomValues(arr)
+            return Array.from(arr, dec2hex).join('')
         },
         GetFormData: function (formDomID) {
             let data = $('#'+formDomID).serializeArray().reduce(function(obj, item) {
