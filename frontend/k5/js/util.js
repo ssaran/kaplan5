@@ -266,7 +266,10 @@ var Util = function () {
         GenerateId : function  (len) {
             var arr = new Uint8Array((len || 40) / 2)
             window.crypto.getRandomValues(arr)
-            return Array.from(arr, dec2hex).join('')
+            return Array.from(arr, Util.Dec2hex).join('')
+        },
+        Dec2hex: function  (dec) {
+            return dec.toString(16).padStart(2, "0")
         },
         GetFormData: function (formDomID) {
             let data = $('#'+formDomID).serializeArray().reduce(function(obj, item) {

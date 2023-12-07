@@ -13,6 +13,7 @@ class Setup
     public ?string $ApiPrefix;
     public ?string $Employer;
     public ?string $DomDestination;
+    public ?string $ActiveTabId = null;
     public ?string $IsModal;
     public ?string $IsIframe;
     public ?string $IsData;

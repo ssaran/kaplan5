@@ -207,7 +207,7 @@ const Ui = function () { return {
             }
         }
         if(_state === "new") {
-            Dialog.GetModal(_r.Modal_DomID,_r.Modal_Title,_r.Modal_Body,_r.Modal_Footer,_r.Modal_Size,_r.Modal_Width,_r.Modal_Sidebar);
+            Modal.Get(_r.Modal_DomID,_r.Modal_Title,_r.Modal_Body,_r.Modal_Footer,_r.Modal_Size,_r.Modal_Width,_r.Modal_Sidebar);
         } else {
             let _modalBody = document.getElementById(_r.DomID+"_body");
             if(_modalBody) {
@@ -233,7 +233,7 @@ const Ui = function () { return {
                 _r.Modal_Close = 'right';
             }
         }
-        Dialog.GetModal(_r.Modal_DomID,_r.Modal_Title,_r.Modal_Body,_r.Modal_Footer,_r.Modal_Size,_r.Modal_Close,_r.Modal_Callback);
+        Modal5.Get(_r.Modal_DomID,_r.Modal_Title,_r.Modal_Body,_r.Modal_Footer,_r.Modal_Size,_r.Modal_Close,_r.Modal_Callback);
     },
     processTab:function(_r) {
         if(!_r.hasOwnProperty("Mode") || _r.Mode === false) {
