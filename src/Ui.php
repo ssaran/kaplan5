@@ -360,22 +360,22 @@ class Ui
         self::PrepareJavascriptContent($content, 'js_JSRealodFromDomID_'.$key,'add','','documentReady');
     }
 
-    public static function AjaxCall($url,$type,$data,$ext='',$isNoHistory=false) : void
+    public static function AjaxCall($url,$type,$data,$ext='',$isNoHistory=false,$headers=[]) : void
     {
         $_data = is_null($data) ? '{}' : json_encode($data);
         if(!$isNoHistory) {
-            $content = "
-                Main.xjCall('".$url."','".$type."',".$_data.",{});
-";
-        } else {
-            $content = "
-                Main.jxCall('".$url."','".$type."',".$_data.",
-                {
-                    'nohistory':'yes
-                }
-                );
-";
+            $headers[] = "'nohistory':'yes'";
         }
+        $_headers = '{}';
+        if(count($headers) > 0) {
+            $_headers = '{'.implode(",",$headers).'}';
+        }
+
+        $content = "
+            Main.jxCall('".$url."','".$type."',".$_data.",
+            ".$_headers."
+            );
+";
 
         $content.=$ext;
         $key = U::randomChars(8,true);

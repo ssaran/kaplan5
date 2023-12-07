@@ -23,8 +23,9 @@ class Success
     public $IDReload = null;
     public $Data = null;
     public $WsPackage = null;
+    public $Headers = [];
 
-    public function __construct($Message='',$Title='',$Footer='',$ForwardUri='',$Ext='',$Method='GET',$Params=[],$IDForm=null,$Data=null,$IDModal=null,$IDReload=null,$WsPackage=null)
+    public function __construct($Message='',$Title='',$Footer='',$ForwardUri='',$Ext='',$Method='GET',$Params=[],$IDForm=null,$Data=null,$IDModal=null,$IDReload=null,$WsPackage=null,$headers=[])
     {
         $this->Title = $Title;
         $this->Message = $Message;
@@ -38,5 +39,6 @@ class Success
         $this->IDModal = $IDModal;
         $this->IDReload = $IDReload;
         $this->WsPackage = $WsPackage;
+        $this->Headers = $headers;
     }
 }
