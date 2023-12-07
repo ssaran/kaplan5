@@ -165,7 +165,7 @@ class BaseController extends \Phalcon\Mvc\Controller
     private function __handleSuccess(\K5\Http\Response\Success $response)
     {
         if(!is_null($response->ForwardUri)) {
-            Ui::AjaxCall($response->ForwardUri, $response->Method, $response->Params);
+            Ui::AjaxCall($response->ForwardUri, $response->Method, $response->Params,$response->Headers);
         }
 
         if(!is_null($response->IDForm)) {

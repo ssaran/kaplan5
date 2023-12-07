@@ -360,27 +360,12 @@ class Ui
         self::PrepareJavascriptContent($content, 'js_JSRealodFromDomID_'.$key,'add','','documentReady');
     }
 
-    public static function AjaxCall($url,$type,$data,$ext='',$isNoHistory=false,$headers=[]) : void
+    public static function AjaxCall($url,$type,$data,$headers=[]) : void
     {
         $_data = is_null($data) ? '{}' : json_encode($data);
-        if(!$isNoHistory) {
-            $headers[] = "'nohistory':'yes'";
-        }
-        $_headers = '{}';
-        if(count($headers) > 0) {
-            $_headers = '{'.implode(",",$headers).'}';
-        }
-
-        $content = "
-            Main.jxCall('".$url."','".$type."',".$_data.",
-            ".$_headers."
-            );
-";
-
-        $content.=$ext;
-        $key = U::randomChars(8,true);
-
-        Ui::PrepareJavascriptContent($content, 'ajax_call_'.$key,'add','','documentReady');
+        $_headers = (count($headers) < 1) ?  '{}' : '{'.implode(",",$headers).'}';
+        Ui::PrepareJavascriptContent("\nMain.jxCall('".$url."','".$type."',".$_data.",".$_headers.");\n",
+            'ajax_call_'.U::randomChars(8,true),'add','','documentReady');
     }
 
     private static function _parseForHTTP($_output,$isAjax=false) : array

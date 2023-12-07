@@ -23,6 +23,7 @@ class Response
     public static $Type;
     public static $Data;
     public static $WsPackage;
+    public static array $Headers = [];
 
 
     private static $_instance = null;
@@ -57,6 +58,20 @@ class Response
     public function SetMessage($message)
     {
         self::$Message = $message;
+        return $this;
+    }
+
+    public function AddHeader($key,$value)
+    {
+        self::$Headers[$key] = $value;
+        return $this;
+    }
+
+    public function RemoveHeader($key)
+    {
+        if(isset(self::$Headers[$key])) {
+            unset(self::$Headers[$key]);
+        }
         return $this;
     }
 

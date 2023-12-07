@@ -21,8 +21,9 @@ class Error
     public $Ext = '';
     public $IDForm = null;
     public $WsPackage;
+    public $Headers = [];
 
-    public function __construct($Message='',$Title='',$Footer='',$ForwardUri='',$Ext='',$Method='GET',$Params=[],$IDForm=null,$Type=EXCEPTION_TYPE_ERROR,$WsPackage=null)
+    public function __construct($Message='',$Title='',$Footer='',$ForwardUri='',$Ext='',$Method='GET',$Params=[],$IDForm=null,$Type=10,$WsPackage=null,$Headers=[])
     {
         $this->Type = $Type;
         $this->Title = $Title;
@@ -34,5 +35,6 @@ class Error
         $this->Ext = $Ext;
         $this->IDForm = $IDForm;
         $this->WsPackage = $WsPackage;
+        $this->Headers = $Headers;
     }
 }
