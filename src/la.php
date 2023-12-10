@@ -12,22 +12,21 @@ class la
     public static $keys;
     public static $values;
 
-    private static $lang;
+    private static string $lang;
 
     public static function Setup($keys,$values,$lang='Tr') : void
     {
-        self::$keys = $keys; //new \Common\Lang\Keys();
-        self::$values = $values; //new \stdClass();
+        self::$keys = $keys;
+        self::$values = $values;
         self::$lang = $lang;
-        self::LoadValues($lang);
     }
 
-    public static function GetLanguage()
+    public static function GetLanguage() : string
     {
         return self::$lang;
     }
 
-    public static function ng($key)
+    public static function ng($key) : string
     {
         if(!isset(self::$keys->{$key})) {
             return "?".$key;
@@ -43,15 +42,7 @@ class la
         return self::$values->{$key};
     }
 
-    public static function LoadValues($lang='Tr')
-    {
-        $vClass = '\Common\Lang\\'.$lang;
-        if(class_exists($vClass)) {
-            self::$values = new $vClass();
-        }
-    }
-
-    public static function ToJs()
+    public static function ToJs() : array
     {
         $r = [];
         foreach(self::$values as $k => $v)
