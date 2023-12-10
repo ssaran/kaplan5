@@ -28,14 +28,20 @@ class la
 
     public static function ng($key) : string
     {
-        if(!isset(self::$keys->{$key})) {
+        if(!property_exists(self::$keys,$key)) {
+            return "?".$key;
+        }
+        if(!property_exists(self::$values,$key)) {
+            return "!".$key;
+        }
+        /*if(!isset(self::$keys->{$key})) {
             return "?".$key;
         }
 
         if(!isset(self::$values->{$key})) {
             return "!".$key;
         }
-
+        */
         if(empty(self::$values->{$key})) {
             return ":".$key;
         }
