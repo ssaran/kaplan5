@@ -18,6 +18,7 @@ class Setup
     public ?string $IsIframe;
     public ?string $IsData;
     public ?string $IsCommon;
+    public ?string $IsComponent;
     public ?string $Controller;
     public ?string $Action;
     public ?string $Permission;
