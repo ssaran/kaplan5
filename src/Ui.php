@@ -224,7 +224,7 @@ class Ui
      * @return Entity\View\BsModal
      */
     public static function GetModalPacket(string $content,string $domId,?string $title=null,?string $footer=null,
-                                   string $size='medium',string $close= 'right', ?string $callback=null) : \K5\Entity\View\BsModal
+                                   string $size='medium',string $close= 'right', ?string $callback=null,bool $isIframe=false) : \K5\Entity\View\BsModal
     {
         $e = new \K5\Entity\View\BsModal();
         $e->DomID = $domId;
@@ -235,6 +235,7 @@ class Ui
         $e->Modal_Size = $size;
         $e->Modal_Close = $close;
         $e->Modal_Callback = $callback;
+        $e->IsIframe = $isIframe;
 
         return $e;
     }
@@ -289,29 +290,24 @@ class Ui
         self::PrepareJavascriptContent($content, 'reset_form_'.$key,'add','','documentReady');
     }
 
-    public static function JSAlert($message,$title='',$footer='',$type='sucess')
+    public static function JSAlert($message,$title='') : void
     {
         $message = addslashes(str_replace( "\n", '<br>', $message));
         $title = str_replace( "\n", '<br>', $title);
-        $footer = str_replace( "\n", '<br>', $footer);
         $key = U::randomChars(8,true);
         $content = '     
-                Util.JSAlert("'.$title.'","'.$message.'","'.$footer.'","'.strtolower($type).'");
+                Modal5.Alert("'.$message.'","'.$title.'");
 ';
         self::PrepareJavascriptContent($content, 'js_alert_'.$key,'add','','documentReady');
     }
 
-    public static function JSError($message,$title='',$footer='',$modalSize='lg') : void
+    public static function JSError($message,$title='',$size='small') : void
     {
         $message = addslashes(str_replace( "\n", '<br>', $message));
         $title = str_replace( "\n", '<br>', $title);
-        if(!empty($footer)) {
-            $message.="<br>".str_replace( "\n", '<br>', $footer);
-        }
-
         $key = U::randomChars(8,true);
         $content = '
-            Util.JSAlert("'.$message.'","'.$title.'","danger","'.$modalSize.'","OK",0);
+            Modal5.Error("'.$message.'","'.$title.'","'.$size.'");
 ';
         self::PrepareJavascriptContent($content, 'js_alert_'.$key,'add','','documentReady');
     }
@@ -331,7 +327,9 @@ class Ui
         $key = U::randomChars(8,true);
         $content = '
                 var _modal = bootstrap.Modal.getInstance(document.getElementById("'.$modalID.'"));
-                _modal.hide();
+                if(_modal !== null) {
+                    _modal.hide();
+                }
 ';
         self::PrepareJavascriptContent($content, 'js_closemodal_'.$key,'add','','documentReady');
     }

@@ -70,7 +70,7 @@ class BaseController extends \Phalcon\Mvc\Controller
     }
 
     public function GetModalPacket(string $content,string $domId,?string $title=null,?string $footer=null,
-                                   string $size='medium',string $close= 'right', ?string $callback=null) : \K5\Entity\View\BsModal
+                                   string $size='medium',string $close= 'right', ?string $callback=null,bool $isIframe=false) : \K5\Entity\View\BsModal
     {
         $e = new \K5\Entity\View\BsModal();
         $e->DomID = $domId;
@@ -81,6 +81,7 @@ class BaseController extends \Phalcon\Mvc\Controller
         $e->Modal_Size = $size;
         $e->Modal_Close = $close;
         $e->Modal_Callback = $callback;
+        $e->IsIframe = $isIframe;
 
         return $e;
     }
@@ -212,20 +213,7 @@ class BaseController extends \Phalcon\Mvc\Controller
         if(!is_null($response->WsPackage)) {
             Ui::SendWsPackage($response->WsPackage);
         }
-
-        switch ($response->Type) {
-            case EXCEPTION_TYPE_LOGIC:
-                Ui::JSAlert($response->Message,$response->Title, $response->Footer,'error');
-                break;
-
-            case EXCEPTION_TYPE_SQL:
-                Ui::JSError($response->Message,'SQL Hatası', $response->Footer,'large');
-                break;
-            case EXCEPTION_TYPE_ERROR:
-            default:
-                Ui::JSError($response->Message,false, $response->Footer,'large');
-                break;
-        }
+        Ui::JSError($response->Message."\n".$response->Footer,'', 'large');
         return true;
     }
 

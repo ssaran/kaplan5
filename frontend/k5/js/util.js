@@ -212,30 +212,37 @@ var Util = function () {
             }
             return JSON.stringify(obj) === JSON.stringify({});
         },
-        JSAlert: function (content,title=null,type='warning',size='md',btnOkTxt='Tamam',timeout=5000,callBack=null) {
+        JSAlert: function (content,title=null) {
             let _con = content;
-            console.log(typeof content);
+            console.log("jsAlert typeof content",typeof content);
             if(typeof content === "object") {
                 _con = "<pre>"+JSON.stringify(content)+"</pre>";
             }
-            bs5dialog.alert(_con, {
-                title: title,
-                type: type,
-                size: size,
-                btnOkText: btnOkTxt,
-                onOk: () => {
-                    if (typeof callBack === "function") {
-                        callBack();
-                    }
-                },
-                timeout: timeout
-            });
+            Modal5.Get("JSAlert",title,_con,null,'medium','right')
         },
-        JSNotify: function (message,type="success",position="bottom-right",timeout= 2000) {
-            document.getElementById("toast_container").append(Toast.Generate(Util.GenerateId(8),null,message))
+        JSNotify: function (message,type='info',position='top-right',timer=5000) {
+            Util.JSToastr(message,type,position,timer);
         },
-        JSToastr: function (message, options) {
-            document.getElementById("toast_container").append(Toast.Generate(Util.GenerateId(8),null,message))
+        JSToastr: function (message,type='success',position='top-right',timer=5000,onclick=null) {
+
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": false,
+                "positionClass": "toast-"+position,
+                "preventDuplicates": true,
+                "onclick": onclick,
+                "showDuration": "400",
+                "hideDuration": "1000",
+                "timeOut": timer,
+                "extendedTimeOut": timer,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+            toastr[type](message);
         },
         TCVerify: function(tcNo) {
             tcNo = tcNo.toString();
@@ -313,13 +320,11 @@ var Util = function () {
             return document.querySelectorAll("[data-"+dataKey+"='"+value+"']");
         },
         ParseJSON: function (str) {
-            let _json;
             try {
-                _json = JSON.parse(str);
+                return JSON.parse(str);
             } catch (e) {
-                return false;
+                return str;
             }
-            return _json;
         },
         VatFromTotal: function (total,ratio,round=true) {
             if(total === 0) { return; }
@@ -538,17 +543,35 @@ var Util = function () {
                 return false;
             }
             if(resp.state === 'failure') {
-                console.error("Response_Failure")
-                Util.JSAlert(resp.message,"Cevap hatası");
+                console.error("Response_Failure",resp.message)
+                Util.JSAlert(resp.message.toString(),"Cevap hatası");
                 return false;
             }
             if(resp.state !== 'success') {
-                Util.JSAlert(resp.message,"Bilinmeyen cevap");
+                Util.JSAlert(resp.message.toString(),"Bilinmeyen cevap");
                 return false;
             }
             if(!resp.hasOwnProperty('payload')) {
                 console.error("Response has no payload",resp)
                 return false;
+            }
+            if(resp['payload'].hasOwnProperty('xheaders')) {
+                console.log("xheaders var");
+                if(resp['payload']['xheaders'].hasOwnProperty('X-Requested-With')) {
+                    glb.env.xHeaders['X-Requested-With'] = resp['payload']['xheaders']['X-Requested-With'];
+                }
+                if(resp['payload']['xheaders'].hasOwnProperty('tamga')) {
+                    glb.env.xHeaders['tamga'] = resp['payload']['xheaders']['tamga'];
+                }
+                if(resp['payload']['xheaders'].hasOwnProperty('employer')) {
+                    glb.env.xHeaders['employer'] = resp['payload']['xheaders']['employer'];
+                }
+                if(resp['payload']['xheaders'].hasOwnProperty('bsv')) {
+                    glb.env.xHeaders['bsv'] = resp['payload']['xheaders']['bsv'];
+                }
+                delete(resp['payload']['xheaders']);
+            } else {
+                console.warn("xheaders yoğ");
             }
             return resp;
         },
@@ -681,7 +704,6 @@ Date.prototype.yyyymmdd = function(separator='') {
 
     return ping;
 }));
-
 
 const isElementLoaded = async selector => {
     while ( document.querySelector(selector) === null) {

@@ -3,23 +3,16 @@
 
 const glb = {};
 glb.ParseCallback = function (obj,path) {
-  let path_ = path.split(".");
-  if(path_[0] !== "glb") {
-      return false;
-  }
+    let path_ = path.split(".");
+    if(path_[0] !== "glb") {
+        return false;
+    }
     for (var i=0, path=path.split('.'), len=path.length; i<len; i++){
         obj = obj[path[i]];
     };
     return obj;
 };
-glb.sound = {};
-glb.sound.notify = {};
-//glb.sound.notify.message =  new Audio('/static/audio/notification_message.mp3');
-glb.state = {};
-glb.util = {};
-glb.Backs = {};
-glb.Lang = [];
-glb.Handson = {};
+
 glb.env = {};
 glb.env.isInIFrame = (window.location !== window.parent.location);
 glb.env.protocol = ("https:" === document.location.protocol) ? "https://" : "http://";
@@ -35,7 +28,15 @@ if(navigator.userAgent.match(/iemobile/i)) {
     glb.env.isIEMobile = true;
 }
 glb.env.isMobile = false;
-
+glb.env.lastScrollTop = 0;
+glb.sound = {};
+glb.sound.notify = {};
+//glb.sound.notify.message =  new Audio('/static/audio/notification_message.mp3');
+glb.state = {};
+glb.util = {};
+glb.CBacks = {};
+glb.Lang = [];
+glb.Handson = {};
 glb.Ncn = {};
 glb.Ncn.Behalf = {};
 glb.Ncn.Account = {};
@@ -45,8 +46,11 @@ glb.Ncn.Report = {};
 glb.Ncn.Hcc = {};
 glb.Ncn.Hysana = {};
 glb.Tunca = {};
+glb.Modules = {};
 glb.Events = {};
 glb.Multitabs = '';
+
+
 
 window.mobilecheck = function() {
     var check = false;
@@ -61,10 +65,12 @@ glb.date = {};
 glb.date.obj = new Date();
 glb.date.obj.toLocaleString("tr-TR", {timeZone: "Europe/Istanbul"});
 
-//--- Put Landing State
-history.pushState({call:'landing',url:window.location.href,data:{},type:'GET',requestHistory:null,callback:null,dataType:null}, null, window.location.href);
+/** Landing */
+history.scrollRestoration = 'manual';
+history.pushState({'call':'landing', 'url':window.location.href, 'data':{}, 'type':'GET', 'requestHistory':null, 'callback':null, 'dataType':null, 'scrollToTop':null,}, '', window.location.href);
 
 var Main = function () { return {
+    _urlChangeCallbacks : {},
     BufferBlocked : {},
     getWhp: function(wHeight,percent) {
         return Math.round((wHeight / 100) * percent);
@@ -79,98 +85,37 @@ var Main = function () { return {
         if(!$("#"+idForm).length) { console.error("Form not found ",idForm); return false; }
         $("#"+idForm).data("submitted",2);
     },
-    xhrCall: function(url,type,dataType,data,urlHistory="2",callBack=null){
-        if(typeof url === "undefined") {
-            console.error("xhr url",url,type,dataType,data,urlHistory,callBack);
-            return;
-        }
-
-        $(".xhr-remove").remove();
-
-        let _rHeaders = Util.CloneObj(glb.env.xHeaders);
-        if(glb.env.hasOwnProperty('tmpHeaders') && glb.env.tmpHeaders !== null) {
-            _rHeaders = Util.CloneObj(glb.env.tmpHeaders);
-            glb.env.tmpHeaders = null;
-        }
-
-        $.ajax({
-            headers: _rHeaders,
-            type: type, method: type, url: url, dataType: 'json', data: data,
-        })
-        .done(function(resp) {
-            if(!resp) {
-                console.error("Empty Ajax Request"); return false;
-            }
-            if(typeof resp !== "object") {
-                Util.JSAlert("response_error","Hatalı Cevap");
-                console.log(resp);
-                return false;
-            }
-            if(resp[Object.keys(resp)[0]] !== null && resp[Object.keys(resp)[0]].hasOwnProperty('DomID') && resp[Object.keys(resp)[0]].hasOwnProperty('Type') ) {
-                Ui.process(resp,callBack);
-            } else {
-                if (typeof callBack === "function") {
-                    callBack(resp);
-                    return;
-                } else {
-                    console.info("xhrCall_callback",typeof callBack,callBack);
-                }
-            }
-        })
-        .fail(function(resp) {
-            console.log("xhrcall Fail",url,type,dataType, data,"response",resp);
-            let _resp = JSON.stringify(resp);
-            Util.JSAlert("response_error","Hatalı Cevap","<pre>"+_resp+"</pre>",false,'full');
-        })
-        .always(function() {
-            setTimeout(function () { $(".alert-dismissible").hide(); $('.navbar-ajax-indicator').css('color', 'black');},50);
-        });
-    },
-    ajax: function(url,data,type='post') {
-        let _rHeaders = Util.CloneObj(glb.env.xHeaders);
-        if(glb.env.hasOwnProperty('tmpHeaders') && glb.env.tmpHeaders !== null) {
-            _rHeaders = Util.CloneObj(glb.env.tmpHeaders);
-            glb.env.tmpHeaders = null;
-        }
-        return $.ajax({
-            headers: _rHeaders,
-            statusCode : {
-                403: function() { window.alert("Forbidden \n"+url); },
-                404: function() { window.alert("Requested url not found \n"+url); },
-            },
-            type: type, method: type, url: url, dataType: 'json', data: data,
-            beforeSend: function () { }
-        });
-    },
     deferredAjax: function(requests,callbackDone) {
         const def = $.Deferred();
         $.when.apply($,requests).done(function () {
-                def.resolve(arguments);
-            })
+            def.resolve(arguments);
+        })
             .fail(function() {
-                console.info(arguments);
-                def.reject(arguments);
-            }
-        );
+                    console.info(arguments);
+                    def.reject(arguments);
+                }
+            );
         return def.promise();
     },
-    xCall: function(url,type,data,requestHistory=null,callBack=null){
+    /*xjCall: function(url,type,fields,options){
         if(typeof url === "undefined") {
-            console.error("xhr url",url,type,data,requestHistory,callBack);
+            console.error("xjCall Failed",url,type,fields,options);
             return;
         }
-
         $(".xhr-remove").remove();
-
         let _rHeaders = Util.CloneObj(glb.env.xHeaders);
         if(glb.env.hasOwnProperty('tmpHeaders') && glb.env.tmpHeaders !== null) {
             _rHeaders = Util.CloneObj(glb.env.tmpHeaders);
             glb.env.tmpHeaders = null;
         }
-
+        if(options.hasOwnProperty('headers')) {
+            Object.assign(_rHeaders, options.headers);
+        }
+        //console.log("xjHref",_rHeaders,type,type,url,'json',fields,options);
+        console.log("opions",options);
         $.ajax({
             headers: _rHeaders,
-            type: type, method: type, url: url, dataType: 'json', data: data,
+            type: type, method: type, url: url, dataType: 'json', data: fields,
         }).done(function(resp) {
             if(!resp) {
                 console.error("Empty Ajax Request");
@@ -178,42 +123,166 @@ var Main = function () { return {
             }
             if(typeof resp !== "object") {
                 Util.JSAlert("response_error","Hatalı Cevap");
-                console.log(resp);
                 return false;
             }
-            if(requestHistory !== null) {
+            if(options.hasOwnProperty('requestHistory') && options.requestHistory !== null) {
                 history.pushState(
                     {
-                        'call':'xCall',
+                        'call':'xjCall',
                         'url':url,
-                        'data':data,
+                        'fields':fields,
                         'type':type,
-                        'requestHistory':requestHistory,
-                        'callback':callBack,
+                        'options': options,
                         'dataType':'json'
                     },
                     '',
                     url
                 );
+                if(Main.hasOwnProperty('_urlChangeCallbacks')) {
+                    for (let key in Main._urlChangeCallbacks) {
+                        let _cbFunc = Main._urlChangeCallbacks[key];
+                        if(typeof _cbFunc === "function") {
+                            _cbFunc({
+                                'url':url,
+                                'type':type,
+                                'fields':fields,
+                                'options':options
+                            });
+                        }
+                    }
+                }
             }
             if(resp[Object.keys(resp)[0]] !== null && resp[Object.keys(resp)[0]].hasOwnProperty('DomID') && resp[Object.keys(resp)[0]].hasOwnProperty('Type') ) {
-                Ui.process(resp,callBack);
+                Ui.process(resp,options);
             } else {
-                if (typeof callBack === "function") {
-                    callBack(resp);
+                if (options.hasOwnProperty('callback') && typeof options.callback === "function") {
+                    options.callback(resp);
                 } else {
-                    console.info("xhrCall_callback",typeof callBack,callBack);
+                    console.info("xjCall Callback",typeof options.callback,options.callback);
                 }
             }
         })
         .fail(function(resp) {
-            console.log("xhrcall Fail",url,type,dataType, data,"response",resp);
+            console.error("xjCall Fail",url,type,fields,options,"response",resp);
             let _resp = JSON.stringify(resp);
             Util.JSAlert("response_error","Hatalı Cevap","<pre>"+_resp+"</pre>",false,'full');
         })
         .always(function() {
             setTimeout(function () { $(".alert-dismissible").hide(); $('.navbar-ajax-indicator').css('color', 'black');},50);
+            if(options.hasOwnProperty('scrollToTop') && options.scrollToTop !== null) {
+                window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: "instant",
+                });
+            }
+            if(glb.CBacks.hasOwnProperty('xjCall')) {
+                glb.CBacks.xjCall();
+            }
         });
+    },*/
+    xjCall: function(url,type,fields,options){
+        if(typeof url === "undefined") {
+            console.error("xjCall undefined url",url,type,fields,options);
+            return;
+        }
+        $(".xhr-remove").remove();
+        let _rHeaders = Util.CloneObj(glb.env.xHeaders);
+        if(glb.env.hasOwnProperty('tmpHeaders') && glb.env.tmpHeaders !== null) {
+            _rHeaders = Util.CloneObj(glb.env.tmpHeaders);
+            glb.env.tmpHeaders = null;
+        }
+        if(options.hasOwnProperty('headers')) {
+            Object.assign(_rHeaders, options.headers);
+        }
+        //console.log("xjHref",_rHeaders,type,type,url,'json',fields,options);
+        console.log("xjHref_options",options);
+        $.ajax({
+            headers: _rHeaders, type: type, method: type, url: url, dataType: 'text', data: fields
+        }).done(function(_resp) {
+            if(!_resp) {
+                console.error("Empty Ajax Request");
+                return false;
+            }
+            let resp = Util.ParseJSON(_resp);
+            if(typeof resp !== "object") {
+                Util.JSAlert(resp,"Hatalı Cevap");
+                return false;
+            }
+            if(options.hasOwnProperty('requestHistory') && options.requestHistory !== null) {
+                history.pushState({'call':'xjCall', 'url':url, 'fields':fields, 'type':type, 'options': options, 'dataType':'json'}, '', url);
+                if(Main.hasOwnProperty('_urlChangeCallbacks')) {
+                    for (let key in Main._urlChangeCallbacks) {
+                        let _cbFunc = Main._urlChangeCallbacks[key];
+                        if(typeof _cbFunc === "function") {
+                            _cbFunc({'url':url, 'type':type, 'fields':fields, 'options':options});
+                        }
+                    }
+                }
+            }
+            if(resp[Object.keys(resp)[0]] !== null && resp[Object.keys(resp)[0]].hasOwnProperty('DomID') && resp[Object.keys(resp)[0]].hasOwnProperty('Type') ) {
+                Ui.process(resp,options);
+            } else {
+                if (options.hasOwnProperty('callback') && typeof options.callback === "function") {
+                    options.callback(resp);
+                } else {
+                    console.info("xjCall Callback",typeof options.callback,options.callback);
+                }
+            }
+        })
+            .fail(function(resp) {
+                if(!resp.hasOwnProperty('status')) {
+                    Modal5.Error("Tanımlanmamış hata mesajı.","Hatalı Cevap");
+                    return false;
+                }
+                switch (resp.status) {
+                    case 400: Modal5.Error("Sistemimize yaptığınız istekte bir sorun var.","400 Hatalı istek.");break;
+                    case 401: Modal5.Error("Sistemimize yaptığınız istek için gecerli erişim yetkiniz yok.","401 Yetkisiz erişim.");break;
+                    case 402: Modal5.Error("Sistemimize yaptığınız istek için gecerli erişim yetkiniz yok.","402 Yetkisiz erişim!!!.");break;
+                    case 403: Modal5.Error("","403 Girilmez");break;
+                    case 404: Modal5.Error("Erişmek istediğiniz sayfa bulunamadı","404 Sayfa yok");break;
+                    case 405: Modal5.Error("İstek metodu uygunsuz.","405");break;
+                    case 406: Modal5.Error("Yapılan istek kabul edilebilir değil.","406");break;
+                    case 407: Modal5.Error("Bu kaynağa erişmek için vekil üzerinden yetkilendirilmelisiniz.","407 Yetkisiz vekil erişimi");break;
+                    case 408: Modal5.Error("Sunucu vaktinde cevap vermiyor.","408 Zaman aşımı");break;
+                    case 409: case 410: case 411: case 412: Modal5.Error(resp.status+" hatası",""+resp.status);break;
+                    case 413: Modal5.Error("Yüklenmeye çalışan veri, sunucunun kabul edebileceğinden fazla.","413 Çok büyük paket",);break;
+                    case 414: Modal5.Error("İstek yapılan adres bilgisi çok uzun.","414 Çok uzun adres");break;
+                    case 415: case 416: case 417: case 418: case 421: case 422: case 423: Modal5.Error(resp.status+" hatası",""+resp.status);break;
+                    case 424: case 425:  Modal5.Error(resp.status+" hatası",""+resp.status);break;
+                    case 426: Modal5.Error("Sunucu bu bağlantıyı devam ettirmek için güncelleme yapıyor.","426 Güncelleme şart");break;
+                    case 429: Modal5.Error("Sunucu çok kısa süre içinde yapılan çok fazla isteği yerine getirmeyi kabul etmiyor.","429 Çok Fazla İstek");break;
+                    case 431: Modal5.Error("","431 İstek başlıkları çok büyük");break;
+                    case 451: Modal5.Error("Yasal zorunlulukar nedeni ile sunucu bu isteğe yanıt vermiyor","451");break;
+
+                    case 500: Modal5.Error("Amanın !, sunucuda bir şeyler bozuldu.","500");break;
+                    case 501: Modal5.Error("Hayır !, bu isteğe cevap verebilecek bir uygulama yok.","501");break;
+                    case 502: Modal5.Error("Nizamiye de sorun var...","502");break;
+                    case 503: Modal5.Error("Necefli marşapa","503 Hizmet verilemiyor");break;
+                    case 504: Modal5.Error("Nizamiye yoğun.","504 ");break;
+                    case 505: Modal5.Error("Bu istek sürümü desteklenmiyor. Çok eski bir cihazdan erişmeye çalışıyor olabilirsiniz.","505 ");break;
+                    case 506: Modal5.Error("Sunucu ayar hatası.","506 ");break;
+                    case 507: case 508: case 510: case 511: Modal5.Error(resp.status+" hatası",""+resp.status);break;
+
+
+                }
+                console.error("xjCall Fail");
+                console.info("resp",resp);
+                let _sResp = JSON.stringify(resp);
+            })
+            .always(function() {
+                setTimeout(function () { $(".alert-dismissible").hide(); $('.navbar-ajax-indicator').css('color', 'black');},50);
+                if(options.hasOwnProperty('scrollToTop') && options.scrollToTop !== null) {
+                    window.scrollTo({
+                        top: 0,
+                        left: 0,
+                        behavior: "instant",
+                    });
+                }
+                if(glb.CBacks.hasOwnProperty('xjCall')) {
+                    glb.CBacks.xjCall();
+                }
+            });
     },
     submitForm: function (oForm,formID) {
         if(glb.state.hasOwnProperty(formID)) {
@@ -234,13 +303,18 @@ var Main = function () { return {
         if(!$('#'+formID)[0].checkValidity()) {
             $('#'+formID).find(':submit').click();
         } else {
-            let _req = {};
+            let _formData = Util.GetFormData(formID);
+
+            let _req = XHref.initRequest(oForm);
             _req.url = oForm.action;
-            _req.data = XHref.appendData(oForm,Util.GetFormData(formID));
             _req.type = oForm.method;
-            if (oForm.dataset.hasOwnProperty("issuerprefix")) { _req.data['issuer_prefix'] = oForm.dataset.issuerprefix; }
-            _req.callback = (oForm.dataset.hasOwnProperty("backhandler")) ? oForm.dataset.backhandler : null;
-            Main.xhrCall(_req.url,_req.type,'json',_req.data,2,_req.callback);
+            for(let p in _formData) {
+                if(_formData.hasOwnProperty(p)) {
+                    _req.fields[p] = _formData[p];
+                }
+            }
+
+            Main.xjCall(_req.url,_req.type,_req.fields,_req.options);
         }
     },
     SetFormState: function (formId,elementId,state) {
@@ -284,18 +358,6 @@ var Main = function () { return {
             console.log(resp,"------------------------------------");
             return false;
         }
-        if(resp.state === 'failure') {
-            console.error("Response_Failure");
-            console.log(resp,"------------------------------------");
-            let _txt = resp.message.join("<br>\n");
-            Util.JSAlert("Response_Payload_Failure",false,_txt);
-            return false;
-        }
-        if(resp.state !== 'success') {
-            console.error("Response_not_success");
-            console.log(resp,"------------------------------------");
-            return false;
-        }
         if(!resp.hasOwnProperty('payload')) {
             console.error("Response has no payload");
             console.log(resp,"------------------------------------");
@@ -304,7 +366,6 @@ var Main = function () { return {
         return resp;
     },
     getIfSrc: async function (url,iframeId) {
-        console.log("getIfSrc",url,iframeId);
         let headers = {};
         headers['tamga'] = glb.env.xHeaders['tamga'];
         headers['employer'] = glb.env.xHeaders['employer'];
@@ -322,7 +383,7 @@ var Main = function () { return {
 };
 }();
 
-let XHref = function () { return {
+const XHref = function () { return {
     isConfirmed: function(_elm) {
         if(!_elm.dataset.hasOwnProperty("question")) { // no question so it auto confirmed
             return true;
@@ -331,6 +392,78 @@ let XHref = function () { return {
             return true;
         }
         return false;
+    },
+    initRequest : function (_elm) {
+        let _req = {};
+        _req.fields = {};
+        _req.options = {};
+        _req.options.headers = {};
+
+        if(_elm.dataset.hasOwnProperty("domdestination")) { _req.options.headers['Dom-Destination'] = _elm.dataset.domdestination; }
+        if(_elm.dataset.hasOwnProperty("isdata")) { _req.options.headers['Is-Data'] = _elm.dataset.isdata; }
+        if(_elm.dataset.hasOwnProperty("iscommon")) { _req.options.headers['Is-Common'] = _elm.dataset.iscommon; }
+        if(_elm.dataset.hasOwnProperty("ismodal")) { _req.options.headers['Is-Modal'] = _elm.dataset.ismodal; }
+        if(_elm.dataset.hasOwnProperty("actualtabid")) { _req.options.headers['Actual-Tab-Id'] = _elm.dataset.actualtabid; }
+        if(_elm.dataset.hasOwnProperty("iscomponent")) { _req.options.headers['Is-Component'] = _elm.dataset.iscomponent; }
+        if(_elm.dataset.hasOwnProperty("employer")) { _req.options.headers['Employer'] = _elm.dataset.employer; }
+
+        if(_elm.dataset.hasOwnProperty('append')) {
+            let _params = JSON.parse(_elm.dataset.append);
+            for (const key in _params) {
+                if (_params.hasOwnProperty(key)) {
+                    _req.fields[key] = _params[key];
+                }
+            }
+            if(_req.fields.hasOwnProperty('Is-Modal')) {
+                _req.options.headers['Is-Modal'] = _req.fields['Is-Modal'];
+                delete(_req.fields['Is-Modal']);
+            }
+            if(_req.fields.hasOwnProperty('Dom-Destination')) {
+                _req.options.headers['Dom-Destination'] = _req.fields['Dom-Destination'];
+                delete(_req.fields['Dom-Destination']);
+            }
+            if(_req.fields.hasOwnProperty('Is-Common')) {
+                _req.options.headers['Is-Common'] = _req.fields['Is-Common'];
+                delete(_req.fields['Is-Common']);
+            }
+            if(_req.fields.hasOwnProperty('Is-Data')) {
+                _req.options.headers['Is-Data'] = _req.fields['Is-Data'];
+                delete(_req.fields['Is-Data']);
+            }
+            if(_req.fields.hasOwnProperty('Actual-Tab-Id')) {
+                _req.options.headers['Actual-Tab-Id'] = _req.fields['Actual-Tab-Id'];
+                delete(_req.fields['Actual-Tab-Id']);
+            }
+            if(_req.fields.hasOwnProperty('Is-Component')) {
+                _req.options.headers['Is-Component'] = _req.fields['Is-Component'];
+                delete(_req.fields['Is-Component']);
+            }
+            if(_req.fields.hasOwnProperty('Employer')) {
+                _req.options.headers['Employer'] = _req.fields['Employer'];
+                delete(_req.fields['Employer']);
+            }
+        }
+
+        _req.url = (_elm.tagName === 'A') ? _elm.href : _elm.dataset.href;
+        _req.url = (_elm.dataset.hasOwnProperty('url')) ? _elm.dataset.url : _req.url; // Override for tabs etc
+        _req.type = (_elm.dataset.hasOwnProperty('type')) ? _elm.dataset.type : "GET";
+
+        if(_elm.dataset.hasOwnProperty('scrolltotop')) {
+            _req.options.scrollToTop = 'yes';
+        } else {
+            _req.options.scrollToTop = null;
+        }
+
+        _req.options.callback = null;
+
+        if(_elm.dataset.hasOwnProperty('backhandler')) {
+            if(window.hasOwnProperty(_elm.dataset.backhandler)) {
+                _req.options.callback = window[_elm.dataset.backhandler]();
+            }  else {
+                console.error("Callback not found ",_elm.dataset.backhandler);
+            }
+        }
+        return _req;
     },
     appendData: function(_elm,_data) {
         if(!_elm.dataset.hasOwnProperty("append")) {
@@ -380,7 +513,7 @@ let XHref = function () { return {
                 if(_req !== false) {
                     _req.data['form_id'] = formID;
                     Main.SetFormState(_req.data['form_id'],_req.data['form_element_id'],"wait");
-                    Main.xhrCall(_req.url,_req.type,'json',_req.data,2,_req.callback);
+                    Main.xjCall(_req.url,_req.type,_req.data,2,_req.callback);
                     ret = false;
                 }
             }
@@ -427,36 +560,6 @@ let XHref = function () { return {
 };
 }();
 
-$(document).off('click','.xhref').on('click','.xhref', function(ev) {
-    try {
-        ev.preventDefault();
-        glb.util.OverlayIframeClose();
-        let _elm = ev.currentTarget;
-        if(_elm.dataset.collapse) { document.querySelector('.navbar-toggle').click(); }
-        if(!XHref.isConfirmed(_elm)) { return false; }
-
-        let _req = {};
-        _req.data = XHref.appendData(_elm,{});
-        if(_elm.dataset.hasOwnProperty("issuerprefix")) { _req.data.issuer_prefix = _elm.dataset.issuerprefix; }
-        if(_elm.dataset.hasOwnProperty("recordpid")) { _req.data.record_pid = _elm.dataset.recordpid; }
-        if(_elm.dataset.hasOwnProperty("domdestination")) { _req.data.dom_destination = _elm.dataset.domdestination; }
-
-        _req.url = (_elm.tagName === 'BUTTON') ? _elm.dataset.href : _elm.href;
-        _req.url = (_elm.dataset.hasOwnProperty('url')) ? _elm.dataset.url : _req.url; // Override for tabs etc
-        _req.type = (_elm.dataset.hasOwnProperty('type')) ? _elm.dataset.type : "GET";
-        _req.history = (_elm.dataset.hasOwnProperty('nohistory')) ? null : 'yes';
-        _req.callback = (_elm.dataset.hasOwnProperty('backhandler')) ? window[_elm.dataset.backhandler]() : null;
-
-        if(_elm.dataset.hasOwnProperty('is_data')) {
-            glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders,1,'is_data');
-        }
-
-        Main.xCall(_req.url,_req.type,_req.data,_req.history,_req.callback);
-    } catch (e) {
-        console.error("Xhref Error",e);
-    }
-
-});
 
 $(document).off("submit",".xhr-form");
 $(document).on("submit", ".xhr-form", function (ev) {
@@ -466,14 +569,11 @@ $(document).on("submit", ".xhr-form", function (ev) {
 
     if(oForm.dataset.hasOwnProperty("single") && oForm.dataset.single === 1) {
         if (oForm.dataset.hasOwnProperty("submitted") && oForm.dataset.submitted === 1) {
-            Util.JSAlert(formID+"_submit_alert","","Bu form birden fazla aynı gönderime kapalıdır. Lütfen formu yenileyin.");
+            Util.JSAlert("Bu form birden fazla aynı gönderime kapalıdır. Lütfen formu yenileyin.","","warning");
             return false;
         } else {
             oForm.dataset.submitted = 1;
         }
-    }
-    if(oForm.dataset.hasOwnProperty('is_data')) {
-        glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders,1,'is_data');
     }
     XHref.formCheckUnique(oForm,formID);
     Main.submitForm(oForm,formID);
@@ -501,17 +601,6 @@ Array.from(document.getElementsByClassName("back-to-top")).forEach(function(_elm
     });
 });
 
-glb.util.MinimizeLayout = function() {
-    $("#layout_subHeader").hide();
-    $("#layout_content").hide();
-    $("#layout_footer").hide();
-};
-
-glb.util.RestoreLayout = function() {
-    $("#layout_subHeader").show();
-    $("#layout_content").show();
-    $("#layout_footer").show();
-};
 
 glb.util.AvailableHeight = function() {
     let aHeight = Util.getAvailableHeight("top_nav_bar");
@@ -557,48 +646,47 @@ glb.util.OverlayIframeClose = function () {
     }
 };
 
-glb.util.ToggleSidebar = function () {
-    var triggers = document.getElementsByClassName('sidebar-trigger');
-    if(document.body.classList.contains('sidebar-collapse')) {
-        document.body.classList.remove('sidebar-collapse');
-        document.body.classList.remove('sidebar-closed');
-        document.body.classList.add('sidebar-open');
-        for (var i = 0; i < triggers.length; i++) {
-            triggers[i].classList.remove('fa-arrow-to-right');
-            triggers[i].classList.add('fa-arrow-to-left');
-        }
-    } else {
-        document.body.classList.add('sidebar-collapse');
-        document.body.classList.add('sidebar-closed');
-        document.body.classList.remove('sidebar-open');
-        for (var i = 0; i < triggers.length; i++) {
-            triggers[i].classList.remove('fa-arrow-to-left');
-            triggers[i].classList.add('fa-arrow-to-right');
-        }
-    }
-};
-
-window.addEventListener('popstate', function(e) {
-    if(history.state != null && history.state.hasOwnProperty('call')) {
-        switch (history.state.call) {
+window.addEventListener('popstate', function(popStateEvent) {
+    if(popStateEvent.state !== null && popStateEvent.state.hasOwnProperty('call')) {
+        switch (popStateEvent.state.call) {
             case "ajaxCall":
-                Main.xhrCall(history.state.url,history.state.type,'json',history.state.data,history.state.data.callback);
+                Main.xhrCall(popStateEvent.state.url,popStateEvent.state.type,'json',popStateEvent.state.data,popStateEvent.state.data.callback);
                 break;
             case "xhrCall":
-                Main.xhrCall(history.state.url,history.state.type,'json',history.state.data,"2",history.state.callback);
+                Main.xhrCall(popStateEvent.state.url,popStateEvent.state.type,'json',popStateEvent.state.data,"2",popStateEvent.state.callback);
                 break;
             case "xCall":
-                Main.xCall(history.state.url,history.state.type,history.state.data,history.state.requestHistory,history.state.callback);
+                Main.xCall(popStateEvent.state.url,popStateEvent.state.type,popStateEvent.state.data,null,popStateEvent.state.callback,popStateEvent.state.scrollToTop);
+                break;
+            case "xjCall":
+                if(popStateEvent.state.options.hasOwnProperty('requestHistory')) {
+                    delete(popStateEvent.state.options['requestHistory']);
+                }
+                Main.xjCall(popStateEvent.state.url,popStateEvent.state.type,popStateEvent.state.fields,popStateEvent.state.options);
                 break;
             case "landing":
-                Util.loadUrl(history.state.url);
+                window.location.href = popStateEvent.state.url;
                 break;
             case null:
                 console.info("Case NUll");
                 break;
         }
     } else {
-        console.info("Return to index",e);
+        console.info("Return to index",popStateEvent);
     }
+    //window.dispatchEvent(new Event('locationchange'));
 });
 
+const observeUrlChange = () => {
+    let oldHref = document.location.href;
+    const body = document.querySelector("body");
+    const observer = new MutationObserver(mutations => {
+        if (oldHref !== document.location.href) {
+            oldHref = document.location.href;
+            window.dispatchEvent(new Event('locationchange'));
+        }
+    });
+    observer.observe(body, { childList: true, subtree: true });
+};
+
+window.onload = observeUrlChange;

@@ -221,7 +221,6 @@ const Ui = function () { return {
             if(_modalFooter) {
                 _modalFooter.innerHTML = _r.Modal_Footer;
             }
-
         }
     },
     processModal5:function(_r) {
@@ -316,6 +315,8 @@ const Ui = function () { return {
                 } catch (e) {
                     console.info("Json Parse error", e,_elm.dataset);
                 }
+            } else if(i === 'type') {
+                _req.type = _elm.dataset.type;
             } else if(i === 'datatable') {
                 _req.callback = function (resp) {
                     let _conf = JSON.parse(_elm.dataset.datatable);
