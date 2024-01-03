@@ -70,7 +70,7 @@ class BaseController extends \Phalcon\Mvc\Controller
     }
 
     public function GetModalPacket(string $content,string $domId,?string $title=null,?string $footer=null,
-                                   string $size='medium',string $close= 'right', ?string $callback=null,bool $isIframe=false) : \K5\Entity\View\BsModal
+                                   string $size='medium',string $close= 'right', bool $isIframe=false) : \K5\Entity\View\BsModal
     {
         $e = new \K5\Entity\View\BsModal();
         $e->DomID = $domId;
