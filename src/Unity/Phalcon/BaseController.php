@@ -45,7 +45,7 @@ class BaseController extends \Phalcon\Mvc\Controller
         $html->Content = $content;
         $html->DomDestination = $domDestination;
         $html->Mode = $mode;
-        $html->DomID = "";
+        $html->DomID = "katmer-".crc32($html->Content);
         $html->Type = 'katmer';
         return $html;
     }
