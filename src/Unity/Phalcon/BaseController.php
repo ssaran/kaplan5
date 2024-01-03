@@ -80,7 +80,6 @@ class BaseController extends \Phalcon\Mvc\Controller
         $e->Modal_Footer = $footer;
         $e->Modal_Size = $size;
         $e->Modal_Close = $close;
-        $e->Modal_Callback = $callback;
         $e->IsIframe = $isIframe;
 
         return $e;
