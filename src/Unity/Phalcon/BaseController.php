@@ -39,6 +39,17 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $html;
     }
 
+    public function GetKatmerPacket($content,$domDestination='layout_content',$mode='content-add') : \K5\Entity\View\Html
+    {
+        $html = new \K5\Entity\View\Html();
+        $html->Content = $content;
+        $html->DomDestination = $domDestination;
+        $html->Mode = $mode;
+        $html->DomID = "";
+        $html->Type = 'katmer';
+        return $html;
+    }
+
     public function GetJavascriptPacket($content,$domId,$refresh=false,$mode='add',$k5Type='documentReady') : \K5\Entity\View\Javascript
     {
         $js = new \K5\Entity\View\Javascript();
