@@ -361,7 +361,7 @@ class Ui
     {
         $_data = is_null($data) ? '{}' : json_encode($data);
         $_headers = (count($headers) < 1) ?  '{}' : '{'.implode(",",$headers).'}';
-        Ui::PrepareJavascriptContent("\nMain.jxCall('".$url."','".$type."',".$_data.",".$_headers.");\n",
+        Ui::PrepareJavascriptContent("\nMain.xjCall('".$url."','".$type."',".$_data.",".$_headers.");\n",
             'ajax_call_'.U::randomChars(8,true),'add','','documentReady');
     }
 
