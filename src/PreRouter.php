@@ -49,6 +49,9 @@ class PreRouter
 
                 if(isset(self::$config->domain[self::$_route->sessionDomain])) {
                     self::$requestedDomainConfig = self::$config->domain[self::$_route->sessionDomain];
+                } else {
+                    self::log("Session domain config not found : ".self::$_route->sessionDomain,'error');
+                    self::log(self::$config,'error');
                 }
 
                 self::$_route->app = self::$requestedDomainConfig->default->app;
