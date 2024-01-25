@@ -205,6 +205,7 @@ class PreRouter
 
         self::$tmp['parsedUrl'] = parse_url(str_replace("//","/",self::$_server['REQUEST_URI']));
         self::$tmp['aParsedUrl'] = explode("/",trim(self::$tmp['parsedUrl']['path'],"/"));
+        self::$_route->tmp = self::$tmp;
         $tmp = self::$tmp['aParsedUrl'];
         if(sizeof($tmp) < 1) {
             return;

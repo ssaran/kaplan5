@@ -19,6 +19,7 @@ class Route
     public array $params = [];
     public bool $hasCms = false;
     public ?string $cmsDomain = null;
+    public array $tmp = [];
 }
 
 
