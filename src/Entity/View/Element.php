@@ -16,4 +16,5 @@ class Element
     public string $Type;
     public string $K5Type = 'lib';
     public ?string $Content;
+    public bool $Refresh = false;
 }
