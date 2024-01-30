@@ -24,7 +24,7 @@ class Prepare
     public function generate($entity=null)
     {
         if(!is_countable($this->formData)) {
-            \K5\Log::Error("Form Data Not countable");
+            \K5\U::ldbg("Form Data Not countable");
             throw new \Exception("Form data not prepared");
         }
 

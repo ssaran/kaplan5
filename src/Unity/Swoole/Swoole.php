@@ -34,7 +34,7 @@ class Swoole
             if($ret) {
                 $cli->push($packet);
             } else {
-                \K5\Log::Error("Cannot Upgrade ".socket_strerror($cli->errCode));
+                \K5\U::ldbg("Cannot Upgrade ".socket_strerror($cli->errCode));
             }
             return false;
         });

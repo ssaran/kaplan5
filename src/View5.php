@@ -44,7 +44,7 @@ class View5
             $this->JsOutput = $this->renderJs($this->setup,$this->data);
             $this->CssOutput = $this->renderCss($this->setup,$this->data);
         } catch (\Exception $e) {
-            \K5\Log::Error("View Error",$e->getMessage());
+            \K5\U::ldbg("View Error",$e->getMessage());
         }
     }
 

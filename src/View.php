@@ -96,7 +96,7 @@ class View
             }
 
         } catch (\Exception $e) {
-            \K5\Log::Error("View Error",$e->getMessage());
+            \K5\U::ldbg("View Error",$e->getMessage());
         }
     }
 
@@ -109,7 +109,7 @@ class View
             include $this->_htmlFile;
             $this->HtmlOutput = ob_get_clean();
         } catch (\Exception $e) {
-            \K5\Log::Error("View Error",$e->getMessage());
+            \K5\U::ldbg("View Error",$e->getMessage());
         }
     }
 

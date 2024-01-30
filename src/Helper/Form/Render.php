@@ -115,7 +115,7 @@ class Render
                 if (sizeof($findRepl) == 2) {
                     $html = str_replace($findRepl[0], $findRepl[1], $html);
                 } else {
-                    \K5\Log::Error($findRepl);
+                    \K5\U::ldbg($findRepl);
                 }
             }
             $this->_content[$id] = "<div class=\"form-group\" id=\"".$id."_form_group_cover\">" . $label . "" . $html . "</div>";

@@ -291,7 +291,7 @@ class V
             return $destination;
 
         } catch (\Exception $e) {
-            \K5\Log::Error($e->getMessage());
+            \K5\U::ldbg($e->getMessage());
             throw $e;
         }
     }
@@ -342,7 +342,7 @@ class V
             }
             unlink($temp);
         } catch (\Exception $e) {
-            \K5\Log::Error($e->getMessage());
+            \K5\U::ldbg($e->getMessage());
             throw $e;
         }
     }
