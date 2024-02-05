@@ -153,6 +153,17 @@ class U
     }
 
     /**
+     * @param $message
+     * @param string $type
+     */
+    public static function lrnf($message,$type='debug')
+    {
+        openlog('php', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
+        syslog(LOG_WARNING,"RNF:".print_r($message,true));
+        closelog();
+    }
+
+    /**
      * Retrieves the best guess of the client's actual IP address.
      * Takes into account numerous HTTP proxy headers due to variations
      * in how different ISPs handle IP addresses in headers between hops.
