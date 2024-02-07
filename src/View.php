@@ -50,7 +50,7 @@ class View
         $this->Routes = $this->setup->Routes;
     }
 
-    protected function setTemplate()
+    protected function setTemplate() : void
     {
         if($this->jsCustom && $this->_skinName !== 'default') {
             $jsFile = $this->_skinPath."_js.php";
@@ -67,7 +67,7 @@ class View
         }
     }
 
-    public function Render()
+    public function Render() : void
     {
         try {
             $this->vars['dom'] = $this->Dom;
@@ -96,7 +96,7 @@ class View
             }
 
         } catch (\Exception $e) {
-            \K5\U::ldbg("View Error",$e->getMessage());
+            \K5\U::lerr("View Error",$e->getMessage());
         }
     }
 
@@ -109,7 +109,7 @@ class View
             include $this->_htmlFile;
             $this->HtmlOutput = ob_get_clean();
         } catch (\Exception $e) {
-            \K5\U::ldbg("View Error",$e->getMessage());
+            \K5\U::lerr("View Error",$e->getMessage());
         }
     }
 
