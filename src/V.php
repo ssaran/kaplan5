@@ -231,10 +231,11 @@ class V
      * @param int $afterWidth
      * @param int $quality
      * @param bool $deleteSource
-     * @return bool
+     * @param string $targetType
+     * @return mixed
      * @throws \Exception
      */
-    public static function ImageScale($source,$destination,$afterWidth=1920,$quality=80,$deleteSource=true)
+    public static function ImageScale($source,$destination,int $afterWidth=1920,int $quality=80,bool $deleteSource=true,string $targetType='webp')
     {
         try {
             //separate the file name and the extension
@@ -280,8 +281,16 @@ class V
             $afterWidth = intval($afterWidth);
             $after_height = intval($after_height);
             $imgResized = imagescale($img, $afterWidth, $after_height);
+            if($targetType === 'jpg') {
+                imagejpeg($imgResized, $destination,$quality);
+            }elseif($targetType === 'png') {
+                imagepng($imgResized, $destination,$quality);
+            }elseif($targetType === 'webp') {
+                imagewebp($imgResized, $destination,$quality);
+            }else {
+                imagewebp($imgResized, $destination,$quality);
+            }
 
-            imagejpeg($imgResized, $destination,$quality);
             if(!is_file($destination)) {
                 throw new \Exception("New file was not created \n".$destination);
             }
@@ -291,7 +300,7 @@ class V
             return $destination;
 
         } catch (\Exception $e) {
-            \K5\U::ldbg($e->getMessage());
+            \K5\U::lerr($e->getMessage());
             throw $e;
         }
     }
