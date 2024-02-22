@@ -12,6 +12,8 @@ class JavascriptModule extends Element
 {
     public string $Type = 'js_module';
     public string $Mode = 'js_module';
+    public string $K5Type = 'js_module';
+    public ?string $JsType = null;
     public bool $Refresh = false;
     public bool $IsHashed = false;
     public bool $Embed = true;

@@ -158,7 +158,7 @@ const Ui = function () { return {
                             return null;
                         }
                     }
-                    document.getElementsByTagName('body').item(0).appendChild(this.newScript(_r.Content,"js-cover",_r.DomID));
+                    document.getElementsByTagName('body').item(0).appendChild(this.newJsModule(_r.Content,"js-cover",_r.DomID));
                     break;
                 case "remove":
                     document.getElementById(_r.DomID).remove();
@@ -193,9 +193,6 @@ const Ui = function () { return {
             return false;
         }
     },
-    loadJsModule:function(_r) {
-
-    }
     processCss:function(_r) {
         if (document.getElementById(_r.DomID)){
             if(_r.hasOwnProperty('Refresh') && _r.Refresh === true) {
