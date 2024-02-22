@@ -67,7 +67,7 @@ glb.date.obj.toLocaleString("tr-TR", {timeZone: "Europe/Istanbul"});
 
 /** Landing */
 history.scrollRestoration = 'manual';
-history.pushState({'call':'landing', 'url':window.location.href, 'data':{}, 'type':'GET', 'requestHistory':null, 'callback':null, 'dataType':null, 'scrollToTop':null,}, '', window.location.href);
+history.pushState({'call':'landing', 'url':window.location.href, 'data':{}, 'type':'GET', 'options':{},'requestHistory':null, 'callback':null, 'dataType':null, 'scrollToTop':null,}, '', window.location.href);
 
 var Main = function () { return {
     _urlChangeCallbacks : {},
@@ -97,90 +97,6 @@ var Main = function () { return {
             );
         return def.promise();
     },
-    /*xjCall: function(url,type,fields,options){
-        if(typeof url === "undefined") {
-            console.error("xjCall Failed",url,type,fields,options);
-            return;
-        }
-        $(".xhr-remove").remove();
-        let _rHeaders = Util.CloneObj(glb.env.xHeaders);
-        if(glb.env.hasOwnProperty('tmpHeaders') && glb.env.tmpHeaders !== null) {
-            _rHeaders = Util.CloneObj(glb.env.tmpHeaders);
-            glb.env.tmpHeaders = null;
-        }
-        if(options.hasOwnProperty('headers')) {
-            Object.assign(_rHeaders, options.headers);
-        }
-        //console.log("xjHref",_rHeaders,type,type,url,'json',fields,options);
-        console.log("opions",options);
-        $.ajax({
-            headers: _rHeaders,
-            type: type, method: type, url: url, dataType: 'json', data: fields,
-        }).done(function(resp) {
-            if(!resp) {
-                console.error("Empty Ajax Request");
-                return false;
-            }
-            if(typeof resp !== "object") {
-                Util.JSAlert("response_error","Hatalı Cevap");
-                return false;
-            }
-            if(options.hasOwnProperty('requestHistory') && options.requestHistory !== null) {
-                history.pushState(
-                    {
-                        'call':'xjCall',
-                        'url':url,
-                        'fields':fields,
-                        'type':type,
-                        'options': options,
-                        'dataType':'json'
-                    },
-                    '',
-                    url
-                );
-                if(Main.hasOwnProperty('_urlChangeCallbacks')) {
-                    for (let key in Main._urlChangeCallbacks) {
-                        let _cbFunc = Main._urlChangeCallbacks[key];
-                        if(typeof _cbFunc === "function") {
-                            _cbFunc({
-                                'url':url,
-                                'type':type,
-                                'fields':fields,
-                                'options':options
-                            });
-                        }
-                    }
-                }
-            }
-            if(resp[Object.keys(resp)[0]] !== null && resp[Object.keys(resp)[0]].hasOwnProperty('DomID') && resp[Object.keys(resp)[0]].hasOwnProperty('Type') ) {
-                Ui.process(resp,options);
-            } else {
-                if (options.hasOwnProperty('callback') && typeof options.callback === "function") {
-                    options.callback(resp);
-                } else {
-                    console.info("xjCall Callback",typeof options.callback,options.callback);
-                }
-            }
-        })
-        .fail(function(resp) {
-            console.error("xjCall Fail",url,type,fields,options,"response",resp);
-            let _resp = JSON.stringify(resp);
-            Util.JSAlert("response_error","Hatalı Cevap","<pre>"+_resp+"</pre>",false,'full');
-        })
-        .always(function() {
-            setTimeout(function () { $(".alert-dismissible").hide(); $('.navbar-ajax-indicator').css('color', 'black');},50);
-            if(options.hasOwnProperty('scrollToTop') && options.scrollToTop !== null) {
-                window.scrollTo({
-                    top: 0,
-                    left: 0,
-                    behavior: "instant",
-                });
-            }
-            if(glb.CBacks.hasOwnProperty('xjCall')) {
-                glb.CBacks.xjCall();
-            }
-        });
-    },*/
     xjCall: function(url,type,fields,options){
         if(typeof url === "undefined") {
             console.error("xjCall undefined url",url,type,fields,options);
@@ -195,8 +111,7 @@ var Main = function () { return {
         if(options.hasOwnProperty('headers')) {
             Object.assign(_rHeaders, options.headers);
         }
-        //console.log("xjHref",_rHeaders,type,type,url,'json',fields,options);
-        console.log("xjHref_options",options);
+
         $.ajax({
             headers: _rHeaders, type: type, method: type, url: url, dataType: 'text', data: fields
         }).done(function(_resp) {
@@ -209,8 +124,11 @@ var Main = function () { return {
                 Util.JSAlert(resp,"Hatalı Cevap");
                 return false;
             }
+            observeUrlChange();
             if(options.hasOwnProperty('requestHistory') && options.requestHistory !== null) {
-                history.pushState({'call':'xjCall', 'url':url, 'fields':fields, 'type':type, 'options': options, 'dataType':'json'}, '', url);
+                let __data = JSON.stringify(fields);
+                let _yada = {'call':'xjCall', 'url':url, 'data':__data, 'type':type, 'options': options, 'dataType':'json'};
+                history.pushState(_yada, '', url);
                 if(Main.hasOwnProperty('_urlChangeCallbacks')) {
                     for (let key in Main._urlChangeCallbacks) {
                         let _cbFunc = Main._urlChangeCallbacks[key];
@@ -230,59 +148,67 @@ var Main = function () { return {
                 }
             }
         })
-            .fail(function(resp) {
-                if(!resp.hasOwnProperty('status')) {
-                    Modal5.Error("Tanımlanmamış hata mesajı.","Hatalı Cevap");
-                    return false;
-                }
-                switch (resp.status) {
-                    case 400: Modal5.Error("Sistemimize yaptığınız istekte bir sorun var.","400 Hatalı istek.");break;
-                    case 401: Modal5.Error("Sistemimize yaptığınız istek için gecerli erişim yetkiniz yok.","401 Yetkisiz erişim.");break;
-                    case 402: Modal5.Error("Sistemimize yaptığınız istek için gecerli erişim yetkiniz yok.","402 Yetkisiz erişim!!!.");break;
-                    case 403: Modal5.Error("","403 Girilmez");break;
-                    case 404: Modal5.Error("Erişmek istediğiniz sayfa bulunamadı","404 Sayfa yok");break;
-                    case 405: Modal5.Error("İstek metodu uygunsuz.","405");break;
-                    case 406: Modal5.Error("Yapılan istek kabul edilebilir değil.","406");break;
-                    case 407: Modal5.Error("Bu kaynağa erişmek için vekil üzerinden yetkilendirilmelisiniz.","407 Yetkisiz vekil erişimi");break;
-                    case 408: Modal5.Error("Sunucu vaktinde cevap vermiyor.","408 Zaman aşımı");break;
-                    case 409: case 410: case 411: case 412: Modal5.Error(resp.status+" hatası",""+resp.status);break;
-                    case 413: Modal5.Error("Yüklenmeye çalışan veri, sunucunun kabul edebileceğinden fazla.","413 Çok büyük paket",);break;
-                    case 414: Modal5.Error("İstek yapılan adres bilgisi çok uzun.","414 Çok uzun adres");break;
-                    case 415: case 416: case 417: case 418: case 421: case 422: case 423: Modal5.Error(resp.status+" hatası",""+resp.status);break;
-                    case 424: case 425:  Modal5.Error(resp.status+" hatası",""+resp.status);break;
-                    case 426: Modal5.Error("Sunucu bu bağlantıyı devam ettirmek için güncelleme yapıyor.","426 Güncelleme şart");break;
-                    case 429: Modal5.Error("Sunucu çok kısa süre içinde yapılan çok fazla isteği yerine getirmeyi kabul etmiyor.","429 Çok Fazla İstek");break;
-                    case 431: Modal5.Error("","431 İstek başlıkları çok büyük");break;
-                    case 451: Modal5.Error("Yasal zorunlulukar nedeni ile sunucu bu isteğe yanıt vermiyor","451");break;
+        .fail(function(resp) {
+            if(!resp.hasOwnProperty('status')) {
+                Modal5.Error("Tanımlanmamış hata mesajı.","Hatalı Cevap");
+                return false;
+            }
+            switch (resp.status) {
+                case 400: Modal5.Error("Sistemimize yaptığınız istekte bir sorun var.","400 Hatalı istek.");break;
+                case 401: Modal5.Error("Sistemimize yaptığınız istek için gecerli erişim yetkiniz yok.","401 Yetkisiz erişim.");break;
+                case 402: Modal5.Error("Sistemimize yaptığınız istek için gecerli erişim yetkiniz yok.","402 Yetkisiz erişim!!!.");break;
+                case 403: Modal5.Error("","403 Girilmez");break;
+                case 404: Modal5.Error("Erişmek istediğiniz sayfa bulunamadı","404 Sayfa yok");break;
+                case 405: Modal5.Error("İstek metodu uygunsuz.","405");break;
+                case 406: Modal5.Error("Yapılan istek kabul edilebilir değil.","406");break;
+                case 407: Modal5.Error("Bu kaynağa erişmek için vekil üzerinden yetkilendirilmelisiniz.","407 Yetkisiz vekil erişimi");break;
+                case 408: Modal5.Error("Sunucu vaktinde cevap vermiyor.","408 Zaman aşımı");break;
+                case 409: case 410: case 411: case 412: Modal5.Error(resp.status+" hatası",""+resp.status);break;
+                case 413: Modal5.Error("Yüklenmeye çalışan veri, sunucunun kabul edebileceğinden fazla.","413 Çok büyük paket",);break;
+                case 414: Modal5.Error("İstek yapılan adres bilgisi çok uzun.","414 Çok uzun adres");break;
+                case 415: case 416: case 417: case 418: case 421: case 422: case 423: Modal5.Error(resp.status+" hatası",""+resp.status);break;
+                case 424: case 425:  Modal5.Error(resp.status+" hatası",""+resp.status);break;
+                case 426: Modal5.Error("Sunucu bu bağlantıyı devam ettirmek için güncelleme yapıyor.","426 Güncelleme şart");break;
+                case 429: Modal5.Error("Sunucu çok kısa süre içinde yapılan çok fazla isteği yerine getirmeyi kabul etmiyor.","429 Çok Fazla İstek");break;
+                case 431: Modal5.Error("","431 İstek başlıkları çok büyük");break;
+                case 451: Modal5.Error("Yasal zorunlulukar nedeni ile sunucu bu isteğe yanıt vermiyor","451");break;
 
-                    case 500: Modal5.Error("Amanın !, sunucuda bir şeyler bozuldu.","500");break;
-                    case 501: Modal5.Error("Hayır !, bu isteğe cevap verebilecek bir uygulama yok.","501");break;
-                    case 502: Modal5.Error("Nizamiye de sorun var...","502");break;
-                    case 503: Modal5.Error("Necefli marşapa","503 Hizmet verilemiyor");break;
-                    case 504: Modal5.Error("Nizamiye yoğun.","504 ");break;
-                    case 505: Modal5.Error("Bu istek sürümü desteklenmiyor. Çok eski bir cihazdan erişmeye çalışıyor olabilirsiniz.","505 ");break;
-                    case 506: Modal5.Error("Sunucu ayar hatası.","506 ");break;
-                    case 507: case 508: case 510: case 511: Modal5.Error(resp.status+" hatası",""+resp.status);break;
+                case 500: Modal5.Error("Amanın !, sunucuda bir şeyler bozuldu.","500");break;
+                case 501: Modal5.Error("Hayır !, bu isteğe cevap verebilecek bir uygulama yok.","501");break;
+                case 502: Modal5.Error("Nizamiye de sorun var...","502");break;
+                case 503: Modal5.Error("Necefli marşapa","503 Hizmet verilemiyor");break;
+                case 504: Modal5.Error("Nizamiye yoğun.","504 ");break;
+                case 505: Modal5.Error("Bu istek sürümü desteklenmiyor. Çok eski bir cihazdan erişmeye çalışıyor olabilirsiniz.","505 ");break;
+                case 506: Modal5.Error("Sunucu ayar hatası.","506 ");break;
+                case 507: case 508: case 510: case 511: Modal5.Error(resp.status+" hatası",""+resp.status);break;
 
 
-                }
-                console.error("xjCall Fail");
-                console.info("resp",resp);
-                let _sResp = JSON.stringify(resp);
-            })
-            .always(function() {
-                setTimeout(function () { $(".alert-dismissible").hide(); $('.navbar-ajax-indicator').css('color', 'black');},50);
-                if(options.hasOwnProperty('scrollToTop') && options.scrollToTop !== null) {
-                    window.scrollTo({
-                        top: 0,
-                        left: 0,
-                        behavior: "instant",
-                    });
-                }
-                if(glb.CBacks.hasOwnProperty('xjCall')) {
-                    glb.CBacks.xjCall();
-                }
-            });
+            }
+            console.error("xjCall Fail");
+            console.info("resp",resp);
+            let _sResp = JSON.stringify(resp);
+        })
+        .always(function() {
+            setTimeout(function () { $(".alert-dismissible").hide(); $('.navbar-ajax-indicator').css('color', 'black');},50);
+            if(options.hasOwnProperty('scrollToTop') && options.scrollToTop !== null) {
+                window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: "instant",
+                });
+            }
+            if(glb.CBacks.hasOwnProperty('xjCall')) {
+                glb.CBacks.xjCall();
+            }
+            if(window.hasOwnProperty('ga')) {
+                ga('send', {
+                    hitType: 'xjhref',
+                    eventCategory: 'pageview',
+                    eventAction: 'xjload'
+
+                });
+            }
+        });
     },
     submitForm: function (oForm,formID) {
         if(glb.state.hasOwnProperty(formID)) {
@@ -649,20 +575,12 @@ glb.util.OverlayIframeClose = function () {
 window.addEventListener('popstate', function(popStateEvent) {
     if(popStateEvent.state !== null && popStateEvent.state.hasOwnProperty('call')) {
         switch (popStateEvent.state.call) {
-            case "ajaxCall":
-                Main.xhrCall(popStateEvent.state.url,popStateEvent.state.type,'json',popStateEvent.state.data,popStateEvent.state.data.callback);
-                break;
-            case "xhrCall":
-                Main.xhrCall(popStateEvent.state.url,popStateEvent.state.type,'json',popStateEvent.state.data,"2",popStateEvent.state.callback);
-                break;
-            case "xCall":
-                Main.xCall(popStateEvent.state.url,popStateEvent.state.type,popStateEvent.state.data,null,popStateEvent.state.callback,popStateEvent.state.scrollToTop);
-                break;
             case "xjCall":
                 if(popStateEvent.state.options.hasOwnProperty('requestHistory')) {
                     delete(popStateEvent.state.options['requestHistory']);
                 }
-                Main.xjCall(popStateEvent.state.url,popStateEvent.state.type,popStateEvent.state.fields,popStateEvent.state.options);
+                let _fields = JSON.parse(popStateEvent.state.data);
+                Main.xjCall(popStateEvent.state.url,popStateEvent.state.type,_fields,popStateEvent.state.options);
                 break;
             case "landing":
                 window.location.href = popStateEvent.state.url;
@@ -674,7 +592,6 @@ window.addEventListener('popstate', function(popStateEvent) {
     } else {
         console.info("Return to index",popStateEvent);
     }
-    //window.dispatchEvent(new Event('locationchange'));
 });
 
 const observeUrlChange = () => {

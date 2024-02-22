@@ -35,10 +35,10 @@ let OffCanvas = function () { return {
     },
     tplOffcanvas: function (domId,header,body,location) {
         return Tpl.Dom('div',{
-                'class':'offcanvas offcanvas-'+location,
-                'id':domId+'_offcanvas',
-                'tabindex':'-1',
-                'style':'display:none;'
+            'class':'offcanvas offcanvas-'+location,
+            'id':domId+'_offcanvas',
+            'tabindex':'-1',
+            'style':'display:none;'
             },
             [
                 header,
@@ -58,8 +58,8 @@ let OffCanvas = function () { return {
             Tpl.Dom('div',{'class':'offcanvas-title','id':domId+'_offcanvas_header_title'},title)
         ]);
         if(close) {
-            let _c = Tpl.Dom('button',{'id':domId+"_btn_close_offcanvas",'class':'btn-close','aria-label':'Close','offcanvas':'modal','type':'button'});
-            header.appendChild(_c);
+                let _c = Tpl.Dom('button',{'id':domId+"_btn_close_offcanvas",'class':'btn-close','aria-label':'Close','offcanvas':'modal','type':'button'});
+                header.appendChild(_c);
         }
         return header;
     }

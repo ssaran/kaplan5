@@ -434,11 +434,11 @@ var Util = function () {
             return new Date(d.getFullYear(), d.getMonth(), d.getDate() + (day == 0?0:7)-day );
         },
         getAvailableHeight: function (topBarId) {
-            var top_nav_height = $("#"+topBarId).height();
-            var window_height = $(window).height();
+                var top_nav_height = $("#"+topBarId).height();
+                var window_height = $(window).height();
 
-            var height_of_open_space = window_height - (top_nav_height);
-            return height_of_open_space;
+                var height_of_open_space = window_height - (top_nav_height);
+                return height_of_open_space;
         },
         getWeekNumber: function (d) {
             // Copy date so don't modify original
@@ -503,26 +503,34 @@ var Util = function () {
                 }
             }
         },
-        Base64ToBlob : function (base64, mime) {
-            mime = mime || '';
-            var sliceSize = 1024;
-            var byteChars = window.atob(base64);
-            var byteArrays = [];
+        Base64ToBlob : function (base64, mime,sError=false) {
+            try {
+                mime = mime || '';
+                var sliceSize = 1024;
+                var byteChars = window.atob(base64);
+                var byteArrays = [];
 
-            for (var offset = 0, len = byteChars.length; offset < len; offset += sliceSize) {
-                var slice = byteChars.slice(offset, offset + sliceSize);
+                for (var offset = 0, len = byteChars.length; offset < len; offset += sliceSize) {
+                    var slice = byteChars.slice(offset, offset + sliceSize);
 
-                var byteNumbers = new Array(slice.length);
-                for (var i = 0; i < slice.length; i++) {
-                    byteNumbers[i] = slice.charCodeAt(i);
+                    var byteNumbers = new Array(slice.length);
+                    for (var i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+
+                    var byteArray = new Uint8Array(byteNumbers);
+
+                    byteArrays.push(byteArray);
                 }
 
-                var byteArray = new Uint8Array(byteNumbers);
-
-                byteArrays.push(byteArray);
+                return new Blob(byteArrays, {type: mime});
+            } catch (e) {
+                console.log("blob error e");
+                if(sError === true) {
+                    alert("Web cam kayıt hatası, pencereyi kapatıp tekrar deneyin")
+                }
+                return null;
             }
-
-            return new Blob(byteArrays, {type: mime});
         },
         GetQueryStringValue : function (name) {
             name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -570,10 +578,35 @@ var Util = function () {
                     glb.env.xHeaders['bsv'] = resp['payload']['xheaders']['bsv'];
                 }
                 delete(resp['payload']['xheaders']);
-            } else {
-                console.warn("xheaders yoğ");
             }
             return resp;
+        },
+        removeTrailingSlash : function (str) {
+            return str.replace(/\/+$/, '');
+        },
+        IsIOS: function () {
+        return [
+                'iPad Simulator',
+                'iPhone Simulator',
+                'iPod Simulator',
+                'iPad',
+                'iPhone',
+                'iPod'
+            ].includes(navigator.platform)
+            // iPad on iOS 13 detection
+            || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+        },
+        iOSversion : function () {
+            let iOS = Util.IsIOS();
+            if (iOS) { // <-- Use the one here above
+                if (window.indexedDB) { return 'iOS8+'; }
+                if (window.SpeechSynthesisUtterance) { return 'iOS7'; }
+                if (window.webkitAudioContext) { return 'iOS6'; }
+                if (window.matchMedia) { return 'iOS5'; }
+                if (window.history && 'pushState' in window.history) { return 'iOS4'; }
+                return 'iOS3-';
+            }
+            return 'iOS-';
         },
         CloneObj(obj,append=null,append_key=null) {
             let ret = {};
@@ -704,6 +737,7 @@ Date.prototype.yyyymmdd = function(separator='') {
 
     return ping;
 }));
+
 
 const isElementLoaded = async selector => {
     while ( document.querySelector(selector) === null) {

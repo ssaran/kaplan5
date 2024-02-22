@@ -420,7 +420,7 @@ function JanusWrapper(config) {
                                     self.Notify("  -- Error " + Error,'error');
                                 },
                                 destroyed: function () {
-                                    console.log("Janus destroyed");
+                                    console.warn("Janus destroyed");
                                 }
                             });
                     }

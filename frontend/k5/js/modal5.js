@@ -25,9 +25,10 @@ let Modal5 = function () { return {
                 break;
         }
         let mBody = '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'+_type+'<h3>'+title+'</h3><div class="text-secondary">'+message+'</div></div>';
-        Modal5.Get("error_message_"+Util.GenerateId(10),null,mBody,null,size,null)
+        let mTitle = (title === null) ? '' : title;
+        Modal5.Get("alert_"+Util.GenerateId(10),mTitle,mBody,'',size,null)
     },
-    Get: function(modalID,title,body,footer,modalSize='medium',close="right",removeBackdrop=null,isIFrame=false) {
+    Get: function(modalID,title,body,footer,modalSize='medium',close="right",isIFrame=false,removeBackdrop=null) {
         if(document.body === null) { return; }
         modalSize = (glb.env.isMobile === true) ? 'full' : modalSize;
 
@@ -59,7 +60,6 @@ let Modal5 = function () { return {
             });
         } else {
             modalSize = typeof modalSize !== 'undefined' ? modalSize: 'medium';
-
             let _content = document.getElementById("layout_content");
             _content.appendChild(Modal5.tplModal(modalID, Modal5.tplDialog(modalID,_modalContent, modalSize),removeBackdrop));
             let _modal = new bootstrap.Modal('#'+modalID);
@@ -86,6 +86,7 @@ let Modal5 = function () { return {
             case "large": modalClass = 'modal-lg modal-dialog-centered'; break;
             case "full": modalClass = 'modal-fullscreen modal-dialog-centered'; break;
         }
+
         return Tpl.Node('div',false,{
             'class':'modal-dialog '+modalClass+' ',
             'role':'document',
@@ -107,7 +108,7 @@ let Modal5 = function () { return {
         title = typeof title !== 'undefined' ? title : '&nbsp';
 
         let header = Tpl.Node('div',false,{'class':'modal-header pl-3 pr-3 pt-1 pb-1'},false,[
-            Tpl.Node('div',title,{'class':'modal-title w-100','id':modalID+'_title'})
+            Tpl.Node('div',title,{'class':'modal-title w-100 d-print-none','id':modalID+'_title'})
         ])
         let _c = '';
 

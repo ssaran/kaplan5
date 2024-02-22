@@ -9,8 +9,7 @@ const _module = class Module {
 
     GetCurrentDomain()
     {
-        let current = window.location.href;
-        return current.split("/")[2];
+        return window.location.href.split("/")[2];
     }
 
     Set(index,key,data)

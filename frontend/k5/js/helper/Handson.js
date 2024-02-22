@@ -32,12 +32,13 @@ function HandsonTableHelper() {
                 glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders);
                 glb.env.tmpHeaders['employer'] = this.config.Employer;
             }
-
-            if(this.config.hasOwnProperty('callback') && this.config.callback.hasOwnProperty('Load') && typeof this.config.callback.Load === "function") {
-                Main.xhrCall(this.config.Routes.Load, 'POST', 'json', data,2,this.config.callback.Load);
-            } else {
-                Main.xhrCall(this.config.Routes.Load, 'POST', 'json', data,2);
+            let _options = {
+                'nohistory':'yes'
             }
+            if(this.config.hasOwnProperty('callback') && this.config.callback.hasOwnProperty('Load') && typeof this.config.callback.Load === "function") {
+                _options['callback'] = this.config.callback.Load;
+            }
+            Main.xjCall(this.config.Routes.Load, 'post',  data, _options);
         },
         InitHtml: function() {
             this.config.dropdownClass = Util.slugify(this.config.DomElements.HotObject);
@@ -309,7 +310,7 @@ function HandsonTableHelper() {
                         }
 
                         let btnAppend = JSON.stringify(_append);
-                        _buttons[key] = '<button type="button" class="'+config.Class+'" data-url="'+config.Uri+'" title="'+config.Title+'" data-append='+btnAppend+' '+_data+' ><i class="'+config.Icon+'" aria-hidden="true"></i> '+config.Label+'</button>';
+                        _buttons[key] = '<button type="button" class="'+config.Class+'" data-url="'+config.Uri+'" data-type="post"  data-nohistory="yes" data-scrolltotop="yes" title="'+config.Title+'" data-append='+btnAppend+' '+_data+' ><i class="'+config.Icon+'" aria-hidden="true"></i> &nbsp; '+config.Label+'</button>';
                     }
                 }
             }
@@ -320,8 +321,8 @@ function HandsonTableHelper() {
                         if(key === 'dropdown') {
                             _buttons['dropdown'] = ''+
                                 '      <div class="btn-group" role="group">\n' +
-                                '         <button id="hot_bar_field_dropdown" type="button" class="btn btn-raised btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
-                                '            <i class="fa fa-eye" aria-hidden="true"></i> Göster\n' +
+                                '         <button id="hot_bar_field_dropdown" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
+                                '            <i class="fa fa-eye" aria-hidden="true"></i> &nbsp; Göster\n' +
                                 '         </button>\n' +
                                 '         <div class="dropdown-menu" aria-labelledby="hot_bar_field_dropdown">\n' +
                                 ''+this.fieldOptions+'\n'+
@@ -329,10 +330,10 @@ function HandsonTableHelper() {
                                 '      </div>\n';
                         }
                         if(key === 'print') {
-                            _buttons['print'] = '      <button type="button" class="btn btn-raised btn-secondary button-print-data"><i class="fa fa-print" aria-hidden="true"></i> Yazdır</button>';
+                            _buttons['print'] = '      <button type="button" class="btn btn-secondary button-print-data"><i class="fa fa-print" aria-hidden="true"></i> Yazdır</button>';
                         }
                         if(key === 'excel') {
-                            _buttons['excel'] = '      <button type="button" class="btn btn-raised btn-secondary button-xls-data"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel</button>\n';
+                            _buttons['excel'] = '      <button type="button" class="btn btn-secondary button-xls-data"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel</button>\n';
                         }
                     }
                 }
@@ -359,23 +360,31 @@ function HandsonTableHelper() {
             let _reloadClass = '';
             if(this.config.Routes.hasOwnProperty('Reload')) {
                 _reloadUrl = this.config.Routes.Reload;
-                _reloadClass = 'xhref';
+                _reloadClass = 'xjhref';
             }
 
             let _html =
-                '<nav class="navbar navbar-expand-lg navbar-light bg-light">' +
-                '   <a class="navbar-brand '+_reloadClass+'" href="'+_reloadUrl+'" data-nohistory="2" data-type="POST">' +
-                '       <i class="fa fa-circle fa-fw navbar-ajax-indicator"></i>'+
-                '       <span class="sr-only">Loading...</span> ' + _navbarLabel +
-                '   </a>' +
-                '   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">' +
-                '       <span class="navbar-toggler-icon"></span>' +
-                '   </button>\n' +
-                '   <div class="collapse navbar-collapse" id="handson_table_navbar">\n' +
-                '       '+_btnGroup+' \n'+
-                '       '+_searchForm+' \n'+
-                '   </div>\n' +
-                '</nav>\n';
+                '<header class="navbar navbar-expand-md d-print-none">'+
+                '    <div class="container-fluid">'+
+                '        <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">'+
+                '           <a class="navbar-brand '+_reloadClass+'" href="'+_reloadUrl+'" data-nohistory="yes" data-type="post">' +
+                '               <i class="fa fa-circle fa-fw navbar-ajax-indicator"></i>'+
+                '               <span class="sr-only">Loading...</span> ' + _navbarLabel +
+                '           </a>' +
+                '        </h1>'+
+                '                <ul class="navbar-nav">'+
+                '                    <li class="nav-item">'+
+                '                        <div class="btn-group flex-wrap btn-group-justified" role="toolbar" aria-label="App Navigation" data-toggle="buttons">'+
+                '                            '+_btnGroup+' \n'+
+                '                        </div>'+
+                '                    </li>'+
+                '                </ul>'+
+                '                <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">'+
+                '                   '+_searchForm+' \n'+
+                '                </div>'+
+                '    </div>'+
+                '</header>';
+
             return _html;
         },
         _setupNavbar: function() {
@@ -467,8 +476,12 @@ function HandsonTableHelper() {
                 glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders);
                 glb.env.tmpHeaders['employer'] = this.config.Employer;
             }
-            Main.xhrCall(this.config.Routes.Search, 'POST', 'json', data,2,function (resp) {
-                Export.Print(resp.data);
+
+            Main.xjCall(this.config.Routes.Search, 'post',  data,{
+                'nohistory':'yes',
+                'callback': function (resp) {
+                    Export.Print(resp.data);
+                }
             });
         },
         Pdf: function() {
@@ -483,8 +496,11 @@ function HandsonTableHelper() {
                 glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders);
                 glb.env.tmpHeaders['employer'] = that.config.Employer;
             }
-            Main.xhrCall(this.config.Routes.Search, 'POST', 'json', data,2,function (resp) {
-                Export.Pdf(resp.data,that.config.ExportPrefix);
+            Main.xjCall(this.config.Routes.Search, 'post',data,{
+                'nohistory':'yes',
+                'callback':function (resp) {
+                    Export.Pdf(resp.data,that.config.ExportPrefix);
+                }
             });
         },
         Xls: function(_e) {
@@ -499,8 +515,11 @@ function HandsonTableHelper() {
                 glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders);
                 glb.env.tmpHeaders['employer'] = that.config.Employer;
             }
-            Main.xhrCall(this.config.Routes.Search, 'POST', 'json', data,2,function (resp) {
-                $("#"+that.config.DomElements.HotSelector+"_export_container").html(resp.data).promise().done(that.DownloadXLSX(_e));
+            Main.xjCall(this.config.Routes.Search, 'post', data,{
+                'nohistory':'yes',
+                'callback':function (resp) {
+                    $("#"+that.config.DomElements.HotSelector+"_export_container").html(resp.data).promise().done(that.DownloadXLSX(_e));
+                }
             });
         },
         DownloadXLSX: function(_e) {
@@ -521,8 +540,11 @@ function HandsonTableHelper() {
                 glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders);
                 glb.env.tmpHeaders['employer'] = that.config.Employer;
             }
-            Main.xhrCall(this.config.Routes.Search, 'POST', 'json', data,2,function (resp) {
-                Export.Cvs(resp.data,that.config.ExportPrefix,that.config.DomElements.HotSelector);
+            Main.xjCall(this.config.Routes.Search, 'post',data,{
+                'nohistory':'yes',
+                'callback':function (resp) {
+                    Export.Cvs(resp.data,that.config.ExportPrefix,that.config.DomElements.HotSelector);
+                }
             });
         },
         Search: function (value,pageId,paginator) {
@@ -540,11 +562,13 @@ function HandsonTableHelper() {
                     glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders);
                     glb.env.tmpHeaders['employer'] = this.config.Employer;
                 }
-                if(this.config.hasOwnProperty('callback') && this.config.callback.hasOwnProperty('Load') && typeof this.config.callback.Search === "function") {
-                    Main.xhrCall(this.config.Routes.Search, 'POST', 'json', data,2,this.config.callback.Search);
-                } else {
-                    Main.xhrCall(this.config.Routes.Search, 'POST', 'json', data,2);
+                let _options = {
+                    'nohistory':'yes'
                 }
+                if(this.config.hasOwnProperty('callback') && this.config.callback.hasOwnProperty('Load') && typeof this.config.callback.Search === "function") {
+                    _options['callback'] = this.config.callback.Search;
+                }
+                Main.xjCall(this.config.Routes.Search, 'post', data,_options);
             }
         },
         RendererDefaultAction: function (instance, td, row, col, prop, value, cellProperties) {
@@ -663,7 +687,7 @@ var HandsonTableFunctions = function () {
                 glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders);
                 glb.env.tmpHeaders['employer'] = that.config.Employer;
             }
-            Main.xhrCall(that.config.Routes.CellUpdate, 'POST', 'json', data,"2");
+            Main.xjCall(that.config.Routes.CellUpdate, 'post', data,{'nohistory':'yes'});
         }
     }
 }();
@@ -676,5 +700,3 @@ var i18n = {
     weekdays		: [" pazar "," pazartesi "," salı "," çarşamba "," perşembe "," cuma "," cumartesi "],
     weekdaysShort	: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt']
 };
-
-console.log(i18n);
