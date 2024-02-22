@@ -415,9 +415,6 @@ class Ui
                             $r['js']['embed'][] = $o->Content;
                         }
                         break;
-                    case "js_module":
-                        $r['js']['link'][] = '<script type="module" src="'.$o->Content.'"></script>';
-                        break;
                     case "head":
                         $r['js']['header'][] = '<script src="'.$o->Content.'"></script>';
                         if(!$o->Embed) {
@@ -457,6 +454,9 @@ class Ui
                 } else {
                     $r['js']['embed'][] = $o->Content;
                 }
+            }
+            if(is_a($o,'K5\Entity\View\JavascriptModule')) {
+                $r['js']['link'][] = '<script type="module" src="'.$o->Content.'" '.$o->JsType.'></script>';
             }
 
             if(is_a($o,'K5\Entity\View\HeadLine')) {
