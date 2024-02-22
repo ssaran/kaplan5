@@ -192,7 +192,23 @@ class Ui
         $js = new \K5\Entity\View\JavascriptLib();
         $js->Content = $content;
         $js->DomID = $domId;
-        $js->Refresh = ($refresh) ? $refresh : false;
+        $js->Refresh = $refresh;
+
+        return $js;
+    }
+
+    /**
+     * @param $content
+     * @param $domId
+     * @param $refresh
+     * @return Entity\View\JavascriptLib
+     */
+    public static function GetJavascriptModule($content,$domId,$refresh=false) : \K5\Entity\View\JavascriptModule
+    {
+        $js = new \K5\Entity\View\JavascriptModule();
+        $js->Content = $content;
+        $js->DomID = $domId;
+        $js->Refresh = $refresh;
 
         return $js;
     }
@@ -399,7 +415,9 @@ class Ui
                             $r['js']['embed'][] = $o->Content;
                         }
                         break;
-
+                    case "js_module":
+                        $r['js']['link'][] = '<script type="module" src="'.$o->Content.'"></script>';
+                        break;
                     case "head":
                         $r['js']['header'][] = '<script src="'.$o->Content.'"></script>';
                         if(!$o->Embed) {

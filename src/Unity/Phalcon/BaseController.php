@@ -61,11 +61,12 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $js;
     }
 
-    public function GetJavascriptModule($content) : \K5\Entity\View\JavascriptModule
+    public function GetJavascriptModule($content,$refresh=false) : \K5\Entity\View\JavascriptModule
     {
         $js = new \K5\Entity\View\JavascriptModule();
         $js->Content = $content;
         $js->DomID = "js_module_".crc32($content);
+        $js->Refresh = $refresh;
         return $js;
     }
 

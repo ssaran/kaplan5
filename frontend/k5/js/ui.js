@@ -21,7 +21,7 @@ const Ui = function () { return {
                 case "css": Ui.processCss(_r); break;
                 case "modal":
                 case "modal5":
-                        Ui.processModal5(_r);
+                    Ui.processModal5(_r);
                     break;
                 case "tabs": Ui.processTab(_r); break;
                 case "tab_title": Ui.processTabTitle(_r); break;
@@ -146,7 +146,7 @@ const Ui = function () { return {
                         }
                     }
                     (async() => {
-                        const _ldr = new ScriptLoader({src: _r.Content,global:_r.DomID});
+                        const _ldr = new ScriptLoader({src: _r.Content,global:_r.DomID,is_module: false});
                         const _to = await _ldr.load();
                     })();
                     break;
@@ -158,7 +158,10 @@ const Ui = function () { return {
                             return null;
                         }
                     }
-                    document.getElementsByTagName('body').item(0).appendChild(this.newJsModule(_r.Content,"js-cover",_r.DomID));
+                    (async() => {
+                        const _ldr = new ScriptLoader({src: _r.Content,global:_r.DomID,is_module:true});
+                        const _to = await _ldr.load();
+                    })();
                     break;
                 case "remove":
                     document.getElementById(_r.DomID).remove();
@@ -185,7 +188,7 @@ const Ui = function () { return {
                 }
             }
             (async() => {
-                const _ldr = new ScriptLoader({src: _r.Content,global:_r.DomID});
+                const _ldr = new ScriptLoader({src: _r.Content,global:_r.DomID,is_module:false});
                 const _to = await _ldr.load();
             })();
         } catch (e) {
@@ -241,20 +244,6 @@ const Ui = function () { return {
         _el.className = className;
         return _el;
     },
-    newJsModule: function(src,className,DomID) {
-        var _el = document.createElement("script");
-        _el.language = "javascript";
-        _el.src = src;
-        _el.type = "module"
-        className = (typeof className === undefined) ? 'js-module' : className;
-
-        if(typeof DomID !== undefined) {
-            _el.id = DomID;
-        }
-
-        _el.className = className;
-        return _el;
-    },
     newContentScript: function(content,className,DomID) {
         var _el = document.createElement("script");
         _el.language = "javascript";
@@ -279,6 +268,20 @@ const Ui = function () { return {
         if(typeof className === undefined) {
             className = "css-load";
         }
+
+        if(typeof DomID !== undefined) {
+            _el.id = DomID;
+        }
+
+        _el.className = className;
+        return _el;
+    },
+    newJsModule: function(src,className,DomID) {
+        var _el = document.createElement("script");
+        _el.language = "javascript";
+        _el.src = src;
+        _el.type = "module"
+        className = (typeof className === undefined) ? 'js-module' : className;
 
         if(typeof DomID !== undefined) {
             _el.id = DomID;
@@ -367,11 +370,12 @@ const Ui = function () { return {
 
 class ScriptLoader {
     constructor (options) {
-        const { src, global, protocol = document.location.protocol } = options
+        const { src, global, protocol = document.location.protocol,is_module } = options
         this.src = src
         this.global = global
         this.protocol = protocol
         this.isLoaded = false
+        this.isModule = is_module
     }
 
     loadScript () {
@@ -383,6 +387,9 @@ class ScriptLoader {
             //script.src = `${this.protocol}//${this.src}`;
             script.src = `${this.src}`;
             script.setAttribute("id", this.global);
+            if(this.isModule === true) {
+                script.type = 'module';
+            }
 
             // Append the script to the DOM
             const el = document.getElementsByTagName('script')[0];
