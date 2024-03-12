@@ -11,7 +11,7 @@ namespace K5\Entity\View;
 class JavascriptModule extends Element
 {
     public string $Type = 'js_module';
-    public string $Mode = 'js_module';
+    public string $Mode = 'add';
     public string $K5Type = 'js_module';
     public ?string $JsType = null;
     public bool $Refresh = false;

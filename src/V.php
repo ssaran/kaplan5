@@ -250,7 +250,7 @@ class V
 
             //Now detect the file extension
             //if the file extension is 'jpg', 'jpeg', 'JPG' or 'JPEG'
-            if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'JPG' || $extension == 'JPEG') {
+            /*if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'JPG' || $extension == 'JPEG') {
                 //then return the image as a jpeg image for the next step
                 $img = imagecreatefromjpeg($source);
             } elseif ($extension == 'png' || $extension == 'PNG') {
@@ -259,6 +259,12 @@ class V
             } else {
                 //show an error message if the file extension is not available
                 throw new \Exception("Resim türü desteklenmiyor, jpg veya png. -".$extension."-, ".$source.">".$destination);
+            }*/
+
+            $image_data = file_get_contents($source);
+            $img = imagecreatefromstring($image_data);
+            if(!$img) {
+                throw new \Exception("resim dosyası okunamıyor ");
             }
 
             //resize only when the original image is larger than expected with.
@@ -329,7 +335,7 @@ class V
 
             //Now detect the file extension
             //if the file extension is 'jpg', 'jpeg', 'JPG' or 'JPEG'
-            if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'JPG' || $extension == 'JPEG') {
+            /*if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'JPG' || $extension == 'JPEG') {
                 //then return the image as a jpeg image for the next step
                 $img = imagecreatefromjpeg($temp);
             } elseif ($extension == 'png' || $extension == 'PNG') {
@@ -338,6 +344,11 @@ class V
             } else {
                 //show an error message if the file extension is not available
                 throw new \Exception("Resim türü desteklenmiyor, jpg veya png. ".$extension);
+            }*/
+            $image_data = file_get_contents($source);
+            $img = imagecreatefromstring($image_data);
+            if(!$img) {
+                throw new \Exception("resim dosyası okunamıyor ");
             }
 
             // Rotate

@@ -18,6 +18,7 @@ const Ui = function () { return {
                 case "katmer": Ui.processKatmer(_r); break;
                 case "js": Ui.processJs(_r); break;
                 case "js_lib": Ui.loadJsLib(_r); break;
+                case "js_module": Ui.loadJsModule(_r); break;
                 case "css": Ui.processCss(_r); break;
                 case "modal":
                 case "modal5":
@@ -119,7 +120,7 @@ const Ui = function () { return {
                 _r.Mode = "add";
             }
             //Util.RemoveElementsByClass("js-cover");
-
+            console.log("UI Processjs",_r);
             switch(_r.Mode) {
                 case "add":
                     if (document.getElementById(_r.DomID)){
@@ -150,19 +151,6 @@ const Ui = function () { return {
                         const _to = await _ldr.load();
                     })();
                     break;
-                case "js_module":
-                    if (document.getElementById(_r.DomID)){
-                        if(_r.hasOwnProperty('Refresh') && _r.Refresh === true) {
-                            document.getElementById(_r.DomID).remove();
-                        } else {
-                            return null;
-                        }
-                    }
-                    (async() => {
-                        const _ldr = new ScriptLoader({src: _r.Content,global:_r.DomID,is_module:true});
-                        const _to = await _ldr.load();
-                    })();
-                    break;
                 case "remove":
                     document.getElementById(_r.DomID).remove();
                     break;
@@ -189,6 +177,25 @@ const Ui = function () { return {
             }
             (async() => {
                 const _ldr = new ScriptLoader({src: _r.Content,global:_r.DomID,is_module:false});
+                const _to = await _ldr.load();
+            })();
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
+    loadJsModule:function(_r) {
+        try {
+            if (document.getElementById(_r.DomID)){
+                if(_r.hasOwnProperty('Refresh') && _r.Refresh === true) {
+                    document.getElementById(_r.DomID).remove();
+                } else {
+                    return null;
+                }
+            }
+            console.log("JS Module load",_r);
+            (async() => {
+                const _ldr = new ScriptLoader({src: _r.Content,global:_r.DomID,is_module:true});
                 const _to = await _ldr.load();
             })();
         } catch (e) {
