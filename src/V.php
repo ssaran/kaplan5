@@ -345,7 +345,7 @@ class V
                 //show an error message if the file extension is not available
                 throw new \Exception("Resim türü desteklenmiyor, jpg veya png. ".$extension);
             }*/
-            $image_data = file_get_contents($source);
+            $image_data = file_get_contents($temp);
             $img = imagecreatefromstring($image_data);
             if(!$img) {
                 throw new \Exception("resim dosyası okunamıyor ");
