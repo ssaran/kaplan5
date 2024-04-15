@@ -9,6 +9,7 @@ class Route
     public string $sessionDomain;
     public string $app;
     public string $module;
+    public ?string $deep;
     public ?string $extension = null;
     public string $controller;
     public string $action;

@@ -18,9 +18,11 @@ class PreRouter
     private static ?string $subDomain = null;
     private static string $app  = "front";
     private static string $module = "index";
+    private static ?string $deep = null;
     private static string $controller = "index";
     private static string $action = "index";
     private static string $_module;
+    private static ?string $_deep = null;
     private static string $_controller;
     private static string $_action;
     private static ?string $namespace = null;
@@ -56,6 +58,7 @@ class PreRouter
 
                 self::$_route->app = self::$requestedDomainConfig->default->app;
                 self::$_route->module = self::$requestedDomainConfig->default->module;
+                self::$_route->deep = null;
                 self::$_route->controller = self::$requestedDomainConfig->default->controller;
                 self::$_route->action = self::$requestedDomainConfig->default->action;
                 self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
@@ -74,6 +77,7 @@ class PreRouter
             } else {
                 self::$_route->app = self::$requestedDomainConfig->default->app;
                 self::$_route->module = self::$requestedDomainConfig->default->module;
+                self::$_route->deep = null;
                 self::$_route->controller = self::$requestedDomainConfig->default->controller;
                 self::$_route->action = self::$requestedDomainConfig->default->action;
                 self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
@@ -257,6 +261,12 @@ class PreRouter
         }
         self::$_module = self::$_route->module;
 
+        if(self::$appConfig['route'] === 'deep') {
+            if(sizeof($tmp) > 0) {
+                self::$_route->deep = array_shift($tmp);
+                self::$deep = self::$_route->deep;
+            }
+        }
         /** Check forced index */
         $_fController = null;
         if(isset(self::$appConfig['forceModuleController']) && isset(self::$appConfig['forceModuleController'][self::$_route->module])) {
@@ -317,6 +327,10 @@ class PreRouter
         }
         self::$_controller = self::$_route->controller;
         self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module);
+        if(!is_null(self::$_route->deep)) {
+            self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module). '\\' . ucfirst(self::$_route->deep);
+        }
+
         return true;
     }
 
