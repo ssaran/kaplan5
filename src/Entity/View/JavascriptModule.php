@@ -17,5 +17,6 @@ class JavascriptModule extends Element
     public bool $Refresh = false;
     public bool $IsHashed = false;
     public bool $Embed = true;
+    public bool $Defer = false;
 }
 
