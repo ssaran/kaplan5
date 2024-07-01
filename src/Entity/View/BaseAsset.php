@@ -13,6 +13,7 @@ class BaseAsset
     {
         $this->baseUrl = $baseUrl;
         $this->develMode = $develMode;
+        $this->collection = [];
     }
 
     public function Append(\K5\Entity\View\Element $elm) : void
