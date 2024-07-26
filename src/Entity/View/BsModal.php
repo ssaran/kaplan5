@@ -22,5 +22,7 @@ class BsModal extends DomElement
     public string $Modal_Size = 'medium';
     public string $Modal_Close = 'right';
     public bool|null $IsIframe = false;
+    public bool|null $RemoveBackdrop = null;
+    public array|null $JsCallbacks = null;
 
 }

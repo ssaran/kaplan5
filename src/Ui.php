@@ -240,7 +240,8 @@ class Ui
      * @return Entity\View\BsModal
      */
     public static function GetModalPacket(string $content,string $domId,?string $title=null,?string $footer=null,
-                                   string $size='medium',string $close= 'right', bool $isIframe=false) : \K5\Entity\View\BsModal
+                                   string $size='medium',string $close= 'right', bool $isIframe=false, ?bool $removeBackdrop=null,
+                                          ?array $jsCallbacks = null) : \K5\Entity\View\BsModal
     {
         $e = new \K5\Entity\View\BsModal();
         $e->DomID = $domId;
@@ -251,6 +252,8 @@ class Ui
         $e->Modal_Size = $size;
         $e->Modal_Close = $close;
         $e->IsIframe = $isIframe;
+        $e->RemoveBackdrop = $removeBackdrop;
+        $e->JsCallbacks = $jsCallbacks;
 
         return $e;
     }

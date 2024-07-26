@@ -608,6 +608,128 @@ var Util = function () {
             }
             return 'iOS-';
         },
+        DateGetYearStartAndEndUnixTimestamps : function (year) {
+            // Create date objects for the start and end of the given year
+            const firstDayOfYear = new Date(year, 0, 1); // January 1st
+            const lastDayOfYear = new Date(year + 1, 0, 0); // December 31st (end of year)
+
+            // Set times to the first minute of the start day (00:00:00) and last minute of the last day (23:59:59)
+            const yearStart = new Date(year, 0, 1, 0, 0, 0);
+            const yearEnd = new Date(year, 11, 31, 23, 59, 59);
+
+            // Convert to Unix timestamps (seconds since epoch)
+            const yearStartUnixTimestamp = Math.floor(yearStart.getTime() / 1000);
+            const yearEndUnixTimestamp = Math.floor(yearEnd.getTime() / 1000);
+
+            return {
+                dateStart: yearStartUnixTimestamp,
+                dateEnd: yearEndUnixTimestamp
+            };
+        },
+        DateGetQuarterStartAndEndDates : function (now,manuplate=0) {
+            var quarter = 0;
+            if(manuplate !== 0) {
+                quarter = Math.floor((now.getMonth() / 3))+manuplate;
+            } else {
+                quarter = Math.floor((now.getMonth() / 3));
+            }
+
+            const firstDay = new Date(now.getFullYear(), quarter * 3, 1);
+            const lastDay = new Date(firstDay.getFullYear(), firstDay.getMonth() + 3, 0);
+
+            const quarterStart = new Date(firstDay.getFullYear(), firstDay.getMonth(), firstDay.getDate(), 0, 0, 0);
+            const quarterEnd = new Date(lastDay.getFullYear(), lastDay.getMonth(), lastDay.getDate(), 23, 59, 59);
+
+            return {
+                dateStart: Math.floor(quarterStart.getTime() / 1000),
+                dateEnd: Math.floor(quarterEnd.getTime() / 1000)
+            };
+        },
+        DateGetUnixTimestamps: function (dateInput) {
+            const date = new Date(dateInput);
+
+            // Set start of the day (hours, minutes, seconds, and milliseconds to 0)
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0);
+
+            // Set end of the day (hours to 23, minutes to 59, seconds to 59, milliseconds to 999)
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999);
+
+            return {
+                dateStart: Math.floor(startOfDay.getTime() / 1000),
+                dateEnd: Math.floor(endOfDay.getTime() / 1000)
+            };
+        },
+        DateGetWeekStartAndEndTimestamps : function (weekInput) {
+            if (!weekInput) {
+                alert("Lütfen bir hafta belirtin");
+                console.log("Please select a week.");
+                return;
+            }
+
+            const [year, week] = weekInput.split('-W');
+            const firstDayOfYear = new Date(Date.UTC(year, 0, 1));
+            const daysOffset = (firstDayOfYear.getUTCDay() <= 4 ? 1 : 8) - firstDayOfYear.getUTCDay();
+            const firstThursday = new Date(Date.UTC(year, 0, 1 + daysOffset));
+
+            const weekStart = new Date(firstThursday);
+            weekStart.setUTCDate(firstThursday.getUTCDate() - firstThursday.getUTCDay() + 1 + (week - 1) * 7);
+            weekStart.setUTCHours(0, 0, 0, 0);
+
+            const weekEnd = new Date(weekStart);
+            weekEnd.setUTCDate(weekStart.getUTCDate() + 6);
+            weekEnd.setUTCHours(23, 59, 59, 999);
+
+            const startTimestamp = Math.floor(weekStart.getTime() / 1000);
+            const endTimestamp = Math.floor(weekEnd.getTime() / 1000);
+
+            return {
+                dateStart: startTimestamp,
+                dateEnd: endTimestamp
+            };
+        },
+        DateGetMonthStartAndEndTimestamps : function (monthInput) {
+            if (!monthInput) {
+                alert("Lütfen bir ay belirtin");
+                console.log("Please select a month.");
+                return;
+            }
+
+            let startDate = new Date(monthInput);
+            startDate.setDate(1);
+            startDate.setHours(0, 0, 0, 0);
+
+            // Create a Date object for the last day of the month
+            let endDate = new Date(startDate);
+            endDate.setMonth(endDate.getMonth() + 1);
+            endDate.setDate(0);
+            endDate.setHours(23, 59, 59, 999);
+
+            // Convert to Unix timestamps
+            let startTimestamp = Math.floor(startDate.getTime() / 1000);
+            let endTimestamp = Math.floor(endDate.getTime() / 1000);
+
+            return {
+                dateStart: startTimestamp,
+                dateEnd: endTimestamp
+            };
+        },
+        DateFormatMonthDate : function (date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+            return `${year}-${month}`;
+        },
+        DateGetWeekNumber : function (date) {
+            const startOfYear = new Date(date.getFullYear(), 0, 0);
+            const diff = (date - startOfYear) + ((startOfYear.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
+            const oneWeek = 604800000; // milliseconds in a week
+            var weekNumber = Math.floor(diff / oneWeek);
+            if(manuplate !== 0) {
+                weekNumber = weekNumber + manuplate;
+            }
+            return weekNumber;
+        },
         CloneObj(obj,append=null,append_key=null) {
             let ret = {};
             let _strAp = '';
@@ -621,7 +743,8 @@ var Util = function () {
                 ret[append_key] = ret[append_key]+"__"+Util.domIdfy(_strAp);
             }
             return ret;
-        }
+        },
+
     };
 }();
 

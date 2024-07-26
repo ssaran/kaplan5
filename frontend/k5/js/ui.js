@@ -102,15 +102,7 @@ const Ui = function () { return {
             case 'bypass':
                 break;
             case 'modal':
-                if(typeof _r.Modal === 'undefined') {
-                    return false;
-                }
-                if (document.getElementById(_r.Modal.DomID)){
-                    document.getElementById(_r.Modal.DomID+' .modal-body').innerHTML = _r.Modal.Body;
-                    document.getElementById(_r.Modal.DomID+' .modal-footer').innerHTML = _r.Modal.Footer;
-                } else {
-                    Modal.Get(_r.Modal.DomID,_r.Modal.Title,_r.Modal.Body,_r.Modal.Footer,_r.Modal.Size);
-                }
+                console.error("Wrong modal request");
                 break;
         }
     },
@@ -120,7 +112,6 @@ const Ui = function () { return {
                 _r.Mode = "add";
             }
             //Util.RemoveElementsByClass("js-cover");
-            console.log("UI Processjs",_r);
             switch(_r.Mode) {
                 case "add":
                     if (document.getElementById(_r.DomID)){
@@ -214,7 +205,7 @@ const Ui = function () { return {
         document.getElementsByTagName('head').item(0).appendChild(this.newStyle(_r.Content,"css-load",_r.DomID));
     },
     processModal5:function(_r) {
-        Modal5.Get(_r.Modal_DomID,_r.Modal_Title,_r.Modal_Body,_r.Modal_Footer,_r.Modal_Size,_r.Modal_Close,_r.IsIframe);
+        Modal5.Get(_r.Modal_DomID,_r.Modal_Title,_r.Modal_Body,_r.Modal_Footer,_r.Modal_Size,_r.Modal_Close,_r.IsIframe,_r.RemoveBackdrop,_r.JsCallbacks);
     },
     processTab:function(_r) {
         if(!_r.hasOwnProperty("Mode") || _r.Mode === false) {
@@ -399,8 +390,10 @@ class ScriptLoader {
             }
 
             // Append the script to the DOM
-            const el = document.getElementsByTagName('script')[0];
-            el.parentNode.insertBefore(script, el);
+            //const el = document.getElementsByTagName('script')[0];
+            //el.parentNode.insertBefore(script, el);
+            const el = document.getElementById('k5_latebind_anchor');
+            el.parentNode.append(script);
 
             // Resolve the promise once the script is loaded
             script.addEventListener('load', () => {
