@@ -15,5 +15,6 @@ class Css extends Element
     public string $Mode = 'add';
     public bool $Refresh = false;
     public bool $Embed = true;
+    public bool $Defer = false;
 }
 

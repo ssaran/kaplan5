@@ -408,20 +408,21 @@ class Ui
         foreach($_output as $o){
 
             if(is_a($o,'K5\Entity\View\Javascript')) {
+                $_defer = ($o->Defer) ? 'defer' : '';
                 switch ($o->K5Type) {
                     case "link":
                     case "lib":
-                        $r['js']['link'][] = '<script src="'.$o->Content.'"></script>';
+                        $r['js']['link'][] = '<script src="'.$o->Content.'" '.$_defer.'></script>';
                         if(!$o->Embed) {
-                            $r['js']['forced'][] = '<script src="'.$o->Content.'"></script>';
+                            $r['js']['forced'][] = '<script src="'.$o->Content.'" '.$_defer.'></script>';
                         } else {
                             $r['js']['embed'][] = $o->Content;
                         }
                         break;
                     case "head":
-                        $r['js']['header'][] = '<script src="'.$o->Content.'"></script>';
+                        $r['js']['header'][] = '<script src="'.$o->Content.'" '.$_defer.'></script>';
                         if(!$o->Embed) {
-                            $r['js']['forced_header'][] = '<script src="'.$o->Content.'"></script>';
+                            $r['js']['forced_header'][] = '<script src="'.$o->Content.'" '.$_defer.'></script>';
                         } else {
                             $r['js']['embed_header'][] = $o->Content;
                         }
@@ -438,9 +439,10 @@ class Ui
 
             }
             if(is_a($o,'K5\Entity\View\Css')) {
-                $r['css'][] = '<link rel="stylesheet" href="' . $o->Content . '">';
+                $_defer = ($o->Defer) ? 'defer' : '';
+                $r['css'][] = '<link rel="stylesheet" href="' . $o->Content . '" '.$_defer.'>';
                 if(!$o->Embed) {
-                    $r['css_forced'][] = '<link rel="stylesheet" href="' . $o->Content . '">';
+                    $r['css_forced'][] = '<link rel="stylesheet" href="' . $o->Content . '" '.$_defer.'>';
                 } else {
                     $r['css_embed'][] = $o->Content;
                 }
@@ -451,15 +453,17 @@ class Ui
             }
 
             if(is_a($o,'K5\Entity\View\JavascriptLib')) {
-                $r['js']['link'][] = '<script src="'.$o->Content.'" '.$o->JsType.'></script>';
+                $_defer = ($o->Defer) ? 'defer' : '';
+                $r['js']['link'][] = '<script src="'.$o->Content.'" '.$o->JsType.' '.$_defer.'></script>';
                 if(!$o->Embed) {
-                    $r['js']['forced'][] = '<script src="'.$o->Content.'" '.$o->JsType.'></script>';
+                    $r['js']['forced'][] = '<script src="'.$o->Content.'" '.$o->JsType.' '.$_defer.'></script>';
                 } else {
                     $r['js']['embed'][] = $o->Content;
                 }
             }
             if(is_a($o,'K5\Entity\View\JavascriptModule')) {
-                $r['js']['link'][] = '<script type="module" src="'.$o->Content.'" '.$o->JsType.'></script>';
+                $_defer = ($o->Defer) ? 'defer' : '';
+                $r['js']['link'][] = '<script type="module" src="'.$o->Content.'" '.$o->JsType.' '.$_defer.'></script>';
             }
 
             if(is_a($o,'K5\Entity\View\HeadLine')) {
