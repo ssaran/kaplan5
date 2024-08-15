@@ -28,7 +28,7 @@ let Modal5 = function () { return {
         let mTitle = (title === null) ? '' : title;
         Modal5.Get("alert_"+Util.GenerateId(10),mTitle,mBody,'',size,null)
     },
-    Get: function(modalID,title,body,footer,modalSize='medium',close="right",isIFrame=false,removeBackdrop=null,jsCallbacks=null) {
+    Get: function(modalID,title,body,footer,modalSize='medium',close="right",config=null) {
         if(document.body === null) { return; }
         modalSize = (glb.env.isMobile === true) ? 'full' : modalSize;
 
@@ -42,7 +42,7 @@ let Modal5 = function () { return {
         }
 
 
-        let _body = Modal5.tplBody(body,modalID,isIFrame);
+        let _body = Modal5.tplBody(body,modalID,config.IsIframe);
         let _footer = '';
         if(footer && footer !== '') {
             _footer = Modal5.tplFooter(footer,modalID);
@@ -68,8 +68,8 @@ let Modal5 = function () { return {
             $(document).off('click','#'+modalID+'_btn_close').on('click','#'+modalID+'_btn_close',function (){
                 _modal.hide();
             });
-            if(jsCallbacks !== null) {
-                Modal5.jsAddCallbacks(jsCallbacks,modalId);
+            if(config.JsCallbacks !== null) {
+                Modal5.jsAddCallbacks(config.JsCallbacks,modalId);
             }
         }
     },

@@ -21,6 +21,6 @@ class BsModal5 extends DomElement
     public string $Modal_Footer = '';
     public string $Modal_Size = 'medium';
     public string $Modal_Close = 'right';
-    public bool $IsIframe = false;
+    public ?\K5\Entity\Config\BsModal5 $Config = null;
 
 }
