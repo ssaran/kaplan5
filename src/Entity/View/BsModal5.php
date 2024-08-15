@@ -16,9 +16,9 @@ class BsModal5 extends DomElement
     public string $Type = 'modal5';
     public string $Mode = 'add';
     public string $Modal_DomID;
-    public string $Modal_Title = '';
+    public ?string $Modal_Title = '';
     public string $Modal_Body = '';
-    public string $Modal_Footer = '';
+    public ?string $Modal_Footer = '';
     public string $Modal_Size = 'medium';
     public string $Modal_Close = 'right';
     public ?\K5\Entity\Config\BsModal5 $Config = null;
