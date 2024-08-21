@@ -55,8 +55,8 @@ class Asset
         $collection->Append($js);
 
         $js = new \K5\Entity\View\JavascriptLib();
-        $js->Content = $prefix."/k5/js/ui.js";
-        $js->DomID = "JsLib_k5_ui";
+        $js->Content = $prefix."/k5/js/ui_async.js";
+        $js->DomID = "JsLib_k5_ui_async";
         $js->Refresh = $refreshJs;
         $js->Defer = true;
         $collection->Append($js);

@@ -26,6 +26,7 @@ class Setup
     public array $Sanitized = [];
     public string $Locale = 'tr_TR';
     public string $i18n = 'tr';
+    public string $EventId = '';
 
     public string $SessionDomain;
     public ?\K5\Entity\View\Dom\Keys $Dom;
