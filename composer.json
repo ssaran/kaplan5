@@ -18,15 +18,7 @@
         "php": "^8.1",
         "oittaa/uuid": "dev-master"
     },
-    "scripts": {
-        "copyFrontendRequirements": [
-            "cp fontend/ public/static/assets/"
-        ],
-        "post-update-cmd": [
-            "@copyFrontendRequirements"
-        ],
-        "post-install-cmd": [
-            "@copyFrontendRequirements"
-        ]
+    "require-dev": {
+        "phalcon/ide-stubs": "*"
     }
 }

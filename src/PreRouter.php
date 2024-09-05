@@ -43,18 +43,12 @@ class PreRouter
             self::$_route = new \K5\Entity\Request\Route();
             self::$_server = $server;
             self::$config = $config;
-            self::$requestedDomainConfig = self::$config->domain->default;
+            self::$requestedDomainConfig = self::$config->routes;
 
             if(!isset(self::$_server['SHELL'])) {
                 self::$requestMethod = self::$_server['REQUEST_METHOD'];
                 self::parseDomain();
 
-                if(isset(self::$config->domain[self::$_route->sessionDomain])) {
-                    self::$requestedDomainConfig = self::$config->domain[self::$_route->sessionDomain];
-                } else {
-                    self::log("Session domain config not found : ".self::$_route->sessionDomain,'error');
-                    self::log(self::$config,'error');
-                }
 
                 self::$_route->app = self::$requestedDomainConfig->default->app;
                 self::$_route->module = self::$requestedDomainConfig->default->module;

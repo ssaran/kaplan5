@@ -10,7 +10,6 @@ class Setup
     public bool $IsAjax = false;
     public bool $IsApi = false;
     public int $Page = 1;
-        public string $EventId = '';
     public ?\K5\Entity\Request\Headers $Headers;
     public ?\K5\Entity\Request\Route $Route;
     public ?string $Permission;

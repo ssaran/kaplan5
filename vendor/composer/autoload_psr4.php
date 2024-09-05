@@ -6,5 +6,6 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Ssaran\\Kaplan5\\' => array($baseDir . '/src'),
+    'UUID\\' => array($vendorDir . '/oittaa/uuid/src'),
+    'K5\\' => array($baseDir . '/src'),
 );
