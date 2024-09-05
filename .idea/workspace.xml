@@ -27,6 +27,8 @@
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/phalcon/ide-stubs" />
+      <path value="$PROJECT_DIR$/vendor/oittaa/uuid" />
     </include_path>
   </component>
   <component name="ProjectId" id="2Oxs2mhPIKhs1LSxAjrBmoNqznO" />
@@ -148,7 +150,8 @@
       <workItem from="1724227744109" duration="1483000" />
       <workItem from="1725521807733" duration="993000" />
       <workItem from="1725525930516" duration="2840000" />
-      <workItem from="1725532979748" duration="474000" />
+      <workItem from="1725532979748" duration="1485000" />
+      <workItem from="1725534936756" duration="126000" />
     </task>
     <servers />
   </component>

@@ -24,17 +24,17 @@ class InitModule
                                 string $dom_class, string $css_class, string $module,string $issuer)
     {
         /** INIT MODULE !!! */
-        if($setup->Employer == $issuer) {
-            $setup->Employer = '';
+        if($setup->Headers->Employer == $issuer) {
+            $setup->Headers->Employer = '';
         }
 
-        $setup->ApiPrefix = ($issuer !== '' ) ? $issuer.'_' : '';
-        $setup->ApiPrefix = (!empty($setup->Employer)) ? $setup->Employer.'_'.$setup->ApiPrefix : $setup->ApiPrefix;
+        $setup->Headers->ApiPrefix = ($issuer !== '' ) ? $issuer.'_' : '';
+        $setup->Headers->ApiPrefix = (!empty($setup->Headers->Employer)) ? $setup->Headers->Employer.'_'.$setup->Headers->ApiPrefix : $setup->Headers->ApiPrefix;
 
 
 
-        $setup->Dom = \K5\V::ParseDom(new $dom_class(),"",$setup->ApiPrefix);
-        $setup->Css = \K5\V::ParseCss(new $css_class(),"",$setup->ApiPrefix);
+        $setup->Dom = \K5\V::ParseDom(new $dom_class(),"",$setup->Headers->ApiPrefix);
+        $setup->Css = \K5\V::ParseCss(new $css_class(),"",$setup->Headers->ApiPrefix);
         $setup->Routes = \K5\PreRouter::ParseDefault(new $route_class());
 
         return $setup;
