@@ -10,15 +10,7 @@ class Setup
 
     public bool $IsApi = false;
     public bool $IsAjax = false;
-    public ?string $ApiPrefix;
-    public ?string $Employer;
-    public ?string $DomDestination;
-    public ?string $ActiveTabId = null;
-    public ?string $IsModal;
-    public ?string $IsIframe;
-    public ?string $IsData;
-    public ?string $IsCommon;
-    public ?string $IsComponent;
+    public ?\K5\Entity\Request\Headers $Headers;
     public ?string $Controller;
     public ?string $Action;
     public ?string $Permission;
