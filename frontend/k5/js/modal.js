@@ -145,6 +145,9 @@ let Modal = function () { return {
     },
     tplFooter: function (footer,modalID) {
         return Tpl.Node('div',footer,{'class':'modal-footer','id':modalID+'_footer'});
+    },
+    tplHede: function () {
+        return "Hede";
     }
 };
 }();
