@@ -421,7 +421,7 @@ class PreRouter
 
     protected static function log($message,$type='debug') : void
     {
-        openlog('php', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
+        openlog('k5_preroute', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
         if($type == 'error') {
             syslog(LOG_ERR, 'PreRouter -'.$type.'- '.print_r($message,true));
         } else {
