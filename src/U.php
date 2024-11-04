@@ -261,12 +261,14 @@ class U
                 }
             }
         } else {
-            while ($i < $pw_length) {
-                $n[] = rand(0,9);
-                $i++;
+            if ($pw_length > 0) {
+                $password = mt_rand(1, 9);
+                for ($i = 1; $i < $pw_length; $i++) {
+                    $password .= mt_rand(0, 9);
+                }
             }
-            $password = implode('',$n);
         }
+
         if(!$isPlate) {
             return $password;
         }
