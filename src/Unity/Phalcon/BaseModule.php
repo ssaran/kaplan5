@@ -103,21 +103,4 @@ class BaseModule
         }
         return $r;
     }
-
-    /**
-     * @param $data
-     * @param int $page
-     * @param int $limit
-     * @return mixed
-     */
-    public function Paginate($data,$page=1,$limit=10)
-    {
-        $paginator = new \Phalcon\Paginator\Adapter\Model([
-            "data" => $data,
-            "limit"=> $limit,
-            "page" => $page
-        ]);
-
-        return $paginator->getPaginate();
-    }
 }

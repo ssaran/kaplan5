@@ -11,15 +11,15 @@ namespace K5\Component\HandsonTable;
 
 class Setup
 {
-    public $DomAnchor;
-    public $DomElements;
-    public $ExportPrefix;
-    public $ListRoute = [];
-    public $Routes = [];
-    public $Fields = [];
-    public $Labels = [];
-    public $Buttons = [];
-    public $ButtonRoutes = [];
+    public string $DomAnchor;
+    public array $DomElements;
+    public string $ExportPrefix;
+    public array $ListRoute = [];
+    public array $Routes = [];
+    public array $Fields = [];
+    public array $Labels = [];
+    public array $Buttons = [];
+    public array $ButtonRoutes = [];
     public $Lookup;
     public $Components;
     public $RequestAppend;

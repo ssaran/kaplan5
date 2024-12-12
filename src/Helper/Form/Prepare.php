@@ -17,11 +17,11 @@ class Prepare
     }
 
     /**
-     * @param null $entity
+     * @param $entity
      * @return \Phalcon\Forms\Form
      * @throws \Exception
      */
-    public function generate($entity=null)
+    public function generate($entity=null) : \Phalcon\Forms\Form
     {
         if(!is_countable($this->formData)) {
             \K5\U::ldbg("Form Data Not countable");
@@ -37,11 +37,6 @@ class Prepare
 
     public function parse()
     {
-        /**
-         * @var  $k
-         * @var \K5\Http\Field\FormElement $elm
-         */
-
         foreach($this->raw as $k => $elm) {
             if(!isset($elm->type)) {
                 continue;
@@ -90,10 +85,6 @@ class Prepare
     {
 
         if(is_countable($elm->validators) && sizeof($elm->validators) > 0) {
-            /**
-             * @var  $vk
-             * @var  \K5\Http\Field\FormValidator $validator
-             */
             foreach ($elm->validators as $vk => $validator) {
                 $vAttr = $this->parseValidationAttributes($validator,$elm);
                 switch ($validator->type) {
@@ -169,9 +160,10 @@ class Prepare
 
     /**
      * @param \K5\Http\Field\FormElement $elm
-     * @return \Phalcon\Forms\Element\Text
+     * @return \Phalcon\Forms\Element\Password
      */
-    protected function passwordElement(\K5\Http\Field\FormElement $elm) {
+    protected function passwordElement(\K5\Http\Field\FormElement $elm) : \Phalcon\Forms\Element\Password
+    {
         $attr = $this->parseAttributes($elm->attributes);
         $attr['id'] = $this->apiPrefix.$elm->attributes->id;
         $r = new \Phalcon\Forms\Element\Password($elm->name,$attr);
@@ -181,7 +173,6 @@ class Prepare
         if($elm->defaultValue) {
             $r->setDefault($elm->defaultValue);
         }
-
         return $r;
     }
 
@@ -240,7 +231,7 @@ class Prepare
      * @param \K5\Http\Field\FormElement $elm
      * @return \Phalcon\Forms\Element\Select
      */
-    protected function selectElement(\K5\Http\Field\FormElement $elm)
+    protected function selectElement(\K5\Http\Field\FormElement $elm) : \Phalcon\Forms\Element\Select
     {
         $attr = $this->parseAttributes($elm->attributes);
         $attr['id'] = $this->apiPrefix.$elm->attributes->id;
@@ -256,11 +247,12 @@ class Prepare
      * @param \K5\Http\Field\FormElementCommonAttributes $attr
      * @return array
      */
-    protected function parseAttributes(\K5\Http\Field\FormElementCommonAttributes $attr)
+    protected function parseAttributes(\K5\Http\Field\FormElementCommonAttributes $attr) : array
     {
         $r = [];
-        foreach($attr as $k => $v) {
-            if($v != null && !empty($v)) {
+        $properties = get_object_vars($attr);
+        foreach($properties as $k => $v) {
+            if(!empty($v)) {
                 $r[$k] = $v;
             }
         }
@@ -272,11 +264,12 @@ class Prepare
      * @param \K5\Http\Field\FormElement $elm
      * @return array
      */
-    protected function parseValidationAttributes(\K5\Http\Field\FormValidator $attr,\K5\Http\Field\FormElement $elm)
+    protected function parseValidationAttributes(\K5\Http\Field\FormValidator $attr,\K5\Http\Field\FormElement $elm) : array
     {
         $r = [];
-        foreach($attr as $k => $v) {
-            if($v != null && !empty($v)) {
+        $properties = get_object_vars($attr);
+        foreach($properties as $k => $v) {
+            if(!empty($v)) {
                 $r[$k] = $v;
             }
         }

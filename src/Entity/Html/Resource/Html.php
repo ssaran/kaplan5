@@ -6,10 +6,9 @@
  * Time: 16:14
  */
 
-namespace K5\Entity\View;
+namespace K5\Entity\Html\Resource;
 
-
-class Html extends Element
+class Html extends \K5\Entity\Html\Component
 {
     public string $Type = 'html';
     public string $Mode = 'content-add';

@@ -29,24 +29,14 @@ class Validate extends \K5\Helper\Form\Prepare
     {
         try {
             $validate = new \Phalcon\Filter\Validation();
-            /**
-             * @var  $k
-             * @var \Phalcon\Forms\Element $elm
-             */
-            $debug = false;
             foreach($this->formData as $k => $elm) {
                 $name = $elm->getName();
                 $validators = $elm->getValidators();
-                $debug = false;
                 if(is_countable($validators) && sizeof($validators) > 0) {
                     foreach ($validators as $validator) {
                         $validate->add($name,$validator);
                     }
                 }
-            }
-
-            if($debug) {
-                \K5\U::linfo($validators);
             }
 
             $messages = $validate->validate($post);

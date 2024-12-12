@@ -17,8 +17,8 @@ class Setup
     public string $Locale = 'tr_TR';
     public string $i18n = 'tr';
 
-    public ?\K5\Entity\View\Dom\Keys $Dom;
-    public ?\K5\Entity\View\Dom\ClassKeys $Css;
+    public ?\K5\Entity\Dom\IdKeys $Dom;
+    public ?\K5\Entity\Dom\ClassKeys $Css;
     public ?\K5\Component\Route $Routes;
     public ?\K5\Component\RequestFields $Fields;
     public ?array $Decoded = [];

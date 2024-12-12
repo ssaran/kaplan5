@@ -29,6 +29,15 @@
       <path value="$PROJECT_DIR$/vendor/composer" />
       <path value="$PROJECT_DIR$/vendor/phalcon/ide-stubs" />
       <path value="$PROJECT_DIR$/vendor/oittaa/uuid" />
+      <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/vendor/phpstan/phpstan" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
     </include_path>
   </component>
   <component name="ProjectId" id="2Oxs2mhPIKhs1LSxAjrBmoNqznO" />
@@ -41,17 +50,17 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;Q:/ssaran/kaplan5/src/Entity/Request&quot;,
+    &quot;last_opened_file_path&quot;: &quot;Q:/ssaran/kaplan5/src/Entity/Html&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="Q:\ssaran\kaplan5\src\Entity\Request" />
-      <recent name="Q:\ssaran\kaplan5\frontend\k5\js" />
-      <recent name="Q:\ssaran\kaplan5\src\Entity\Config" />
+      <recent name="Q:\ssaran\kaplan5\src\Entity\Html" />
+      <recent name="Q:\ssaran\kaplan5\src\Entity\Response\Asset" />
       <recent name="Q:\ssaran\kaplan5\src\Entity\View" />
-      <recent name="Q:\ssaran\kaplan5\src\Entity\Auth" />
+      <recent name="Q:\ssaran\kaplan5\src\View" />
+      <recent name="Q:\ssaran\kaplan5\src\Entity\Request" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -152,7 +161,13 @@
       <workItem from="1725525930516" duration="2840000" />
       <workItem from="1725532979748" duration="1485000" />
       <workItem from="1725534936756" duration="1385000" />
-      <workItem from="1728029235520" duration="158000" />
+      <workItem from="1728029235520" duration="825000" />
+      <workItem from="1733735748398" duration="31000" />
+      <workItem from="1733735994314" duration="12000" />
+      <workItem from="1733738695612" duration="2673000" />
+      <workItem from="1733812943329" duration="2750000" />
+      <workItem from="1733985507360" duration="4575000" />
+      <workItem from="1733994870150" duration="9562000" />
     </task>
     <servers />
   </component>

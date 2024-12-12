@@ -6,15 +6,13 @@
  * Time: 16:14
  */
 
-namespace K5\Entity\View;
+namespace K5\Entity\Html;
 
-
-class BsModal5 extends DomElement
+class BsModal5 extends Component
 {
-    public bool $Refresh = false;
-    public int $Modal_Force = 0;
     public string $Type = 'modal5';
     public string $Mode = 'add';
+    public int $Modal_Force = 0;
     public string $Modal_DomID;
     public ?string $Modal_Title = '';
     public string $Modal_Body = '';

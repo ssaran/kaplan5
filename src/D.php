@@ -11,7 +11,7 @@ namespace K5;
 
 class D
 {
-    public static function RangeMonth ($datestr)
+    public static function RangeMonth ($datestr) : array
     {
         date_default_timezone_set (date_default_timezone_get());
         $dt = strtotime ($datestr);
@@ -21,7 +21,8 @@ class D
         );
     }
 
-    public static function RangeWeek ($datestr) {
+    public static function RangeWeek ($datestr) : array
+    {
         date_default_timezone_set (date_default_timezone_get());
         $dt = strtotime ($datestr);
         return array (
@@ -30,14 +31,14 @@ class D
         );
     }
 
-    public static function WeekNumber($dateStr)
+    public static function WeekNumber($dateStr) : int
     {
         $date = new \DateTime($dateStr);
         $week = $date->format("W");
         return (int) $week;
     }
 
-    public static function GetStartAndEndDateFromWeekNumber($week,$year)
+    public static function GetStartAndEndDateFromWeekNumber($week,$year) : array
     {
         $dto = new \DateTime();
         $dto->setISODate($year, $week);
@@ -47,7 +48,7 @@ class D
         return $ret;
     }
 
-    public static function GetSundaysForTheMonth($y, $m, $lm)
+    public static function GetSundaysForTheMonth($y, $m, $lm) : \DatePeriod
     {
         return new \DatePeriod(
             new \DateTime("first sunday of $y-$m") <= new \DateTime('today') ? new \DateTime("next sunday") : new \DateTime("first sunday of $y-$m"),
@@ -56,7 +57,7 @@ class D
         );
     }
 
-    public static function RangeDay($timeStamp,$timeZone='Europe/Berlin')
+    public static function RangeDay($timeStamp,$timeZone='Europe/Berlin') : \stdClass
     {
         $datetime = new \DateTime();
         $datetime->setTimestamp($timeStamp);
@@ -75,7 +76,7 @@ class D
         return $r;
     }
 
-    public static function CountDays($timeStart,$timeEnd)
+    public static function CountDays($timeStart,$timeEnd) : int
     {
         $start = new \DateTime();
         $start->setTimestamp($timeStart);
@@ -86,63 +87,32 @@ class D
         return $diff->days;
     }
 
-    public static function GetWorkingDays($startDate,$endDate,$holidays=[]){
+    /**
+     * @param $startDate
+     * @param $endDate
+     * @param $holidays
+     * @return int
+     */
+    public static function GetWorkingDays($startDate,$endDate,$holidays=[]) : int
+    {
+        $workingDays = 0;
 
-        //The total number of days between the two dates. We compute the no. of seconds and divide it to 60*60*24
-        //We add one to inlude both dates in the interval.
-        $days = ($endDate - $startDate) / 86400 + 1;
-
-        $no_full_weeks = floor($days / 7);
-        $no_remaining_days = fmod($days, 7);
-
-        //It will return 1 if it's Monday,.. ,7 for Sunday
-        $the_first_day_of_week = date("N", $startDate);
-        $the_last_day_of_week = date("N", $endDate);
-
-        //---->The two can be equal in leap years when february has 29 days, the equal sign is added here
-        //In the first case the whole interval is within a week, in the second case the interval falls in two weeks.
-        if ($the_first_day_of_week <= $the_last_day_of_week) {
-            if ($the_first_day_of_week <= 6 && 6 <= $the_last_day_of_week) $no_remaining_days--;
-            if ($the_first_day_of_week <= 7 && 7 <= $the_last_day_of_week) $no_remaining_days--;
+        // Ensure the start date is before the end date
+        if ($startDate > $endDate) {
+            return 0;
         }
-        else {
-            // (edit by Tokes to fix an edge case where the start day was a Sunday
-            // and the end day was NOT a Saturday)
 
-            // the day of the week for start is later than the day of the week for end
-            if ($the_first_day_of_week == 7) {
-                // if the start date is a Sunday, then we definitely subtract 1 day
-                $no_remaining_days--;
+        // Loop through each day between start and end date
+        for ($currentDate = $startDate; $currentDate <= $endDate; $currentDate += 86400) {
+            // Get the day of the week for the current date
+            $dayOfWeek = date('N', $currentDate); // 1 (Monday) to 7 (Sunday)
 
-                if ($the_last_day_of_week == 6) {
-                    // if the end date is a Saturday, then we subtract another day
-                    $no_remaining_days--;
-                }
-            }
-            else {
-                // the start date was a Saturday (or earlier), and the end date was (Mon..Fri)
-                // so we skip an entire weekend and subtract 2 days
-                $no_remaining_days -= 2;
+            // If it's a working day (Monday to Friday), and not a holiday, increment the count
+            if ($dayOfWeek >= 1 && $dayOfWeek <= 5 && !in_array($currentDate, $holidays)) {
+                $workingDays++;
             }
         }
-
-        //The no. of business days is: (number of weeks between the two dates) * (5 working days) + the remainder
-//---->february in none leap years gave a remainder of 0 but still calculated weekends between first and last day, this is one way to fix it
-        $workingDays = $no_full_weeks * 5;
-        if ($no_remaining_days > 0 )
-        {
-            $workingDays += $no_remaining_days;
-        }
-
-        //We subtract the holidays
-        foreach($holidays as $holiday){
-            $time_stamp=strtotime($holiday);
-            //If the holiday doesn't fall in weekend
-            if ($startDate <= $time_stamp && $time_stamp <= $endDate && date("N",$time_stamp) != 6 && date("N",$time_stamp) != 7)
-                $workingDays--;
-        }
-
-        return $workingDays;
+        return (int)$workingDays;
     }
 
     public static function CountSameDays($startDate,$endDate,$dayName)
@@ -213,8 +183,6 @@ class D
             return $ret." übrig.";
         }
     }
-
-
 
     public static function HourToSeconds($str_time)
     {

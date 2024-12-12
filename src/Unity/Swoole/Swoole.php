@@ -28,9 +28,7 @@ class Swoole
             ]);
             $cli->set([ 'timeout' => 1]);
             $cli->setMethod('POST');
-            $ret = $cli->upgrade('/',function (){
-
-            });
+            $ret = $cli->upgrade('/');
             if($ret) {
                 $cli->push($packet);
             } else {

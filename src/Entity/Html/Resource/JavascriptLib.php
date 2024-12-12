@@ -2,17 +2,18 @@
 /**
  * Created by PhpStorm.
  * User: Sancar Saran
- * Date: 09.04.2018
- * Time: 11:23
+ * Date: 12.01.2018
+ * Time: 16:14
  */
 
-namespace K5\Entity\View;
+namespace K5\Entity\Html\Resource;
 
-class JavascriptModule extends Element
+
+class JavascriptLib extends \K5\Entity\Html\Component
 {
-    public string $Type = 'js_module';
+    public string $Type = 'js_lib';
     public string $Mode = 'add';
-    public string $K5Type = 'js_module';
+    public string $K5Type = 'js_lib';
     public ?string $JsType = null;
     public bool $Refresh = false;
     public bool $IsHashed = false;

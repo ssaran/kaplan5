@@ -24,13 +24,13 @@ class FormElement
     const TYPE_TELEPHONE = 'tel';
     const TYPE_EMAIL= 'email';
 
-    public $type;
-    public $name;
-    public $label;
+    public string $type;
+    public string $name;
+    public string $label;
     public $defaultValue;
 
     /** @var \K5\Http\Field\FormElementCommonAttributes */
-    public $attributes;
+    public \K5\Http\Field\FormElementCommonAttributes $attributes;
     public $options;
     public $filters;
     public $validators = [];
@@ -38,13 +38,13 @@ class FormElement
     public $append;
 
 
-    public function __construct($type,$name,$label,$attributes,$append,$options,$filters,$validators,$messages,$defaultValue=false,$step=false)
+    public function __construct($type,$name,$label,$attributes,$append,$options,$filters,$validators,$messages,$defaultValue=false,?float $step=null)
     {
         $this->type = $type;
         $this->name = $name;
         $this->label = $label;
         $this->attributes = $attributes;
-        if($step) {
+        if(!is_null($step)) {
             $this->attributes->step = $step;
         }
         $this->append = $append;

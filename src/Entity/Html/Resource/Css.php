@@ -6,15 +6,14 @@
  * Time: 16:14
  */
 
-namespace K5\Entity\View;
+namespace K5\Entity\Html\Resource;
 
 
-class Javascript extends Element
+class Css extends \K5\Entity\Html\Component
 {
-    public string $Type = 'js';
+    public string $Type = 'css';
     public string $Mode = 'add';
     public bool $Refresh = false;
-    public bool $IsHashed = false;
     public bool $Embed = true;
     public bool $Defer = false;
 }

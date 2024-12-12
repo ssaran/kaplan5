@@ -31,7 +31,7 @@ class Base extends \K5\Unity\Phalcon\BaseModule
     {
         parent::__construct($setup);
 
-        $this->hotSetup = new \K5\Component\HandsonTable\Setup($domAnchor,$this->setup->ApiPrefix,$this->setup->BaseUrl);
+        $this->hotSetup = new \K5\Component\HandsonTable\Setup($domAnchor,'_k5_',$this->setup->BaseUrl);
         $this->data = $data;
         if($this->setup->Dom != null) {
             $this->dom = $this->setup->Dom;
@@ -67,7 +67,6 @@ class Base extends \K5\Unity\Phalcon\BaseModule
         $this->setButtons();
         $this->setFields();
         $this->setupComponents();
-        $this->prepare();
 
         return $this->jsContent;
     }
@@ -100,8 +99,8 @@ class Base extends \K5\Unity\Phalcon\BaseModule
 
     protected function setRoutes()
     {
-        $this->hotSetup->Routes = false;
-        $this->hotSetup->ButtonRoutes = false;
+        $this->hotSetup->Routes = [];
+        $this->hotSetup->ButtonRoutes = [];
     }
 
     protected function setButtons()
@@ -114,15 +113,29 @@ class Base extends \K5\Unity\Phalcon\BaseModule
     {
         //--- Default Buttons
         if($this->hotSetup->ButtonRoutes['Edit']) {
-            $btnEdit = new Button();
-            $btnEdit->SetRoute($this->hotSetup->ButtonRoutes['Edit'])->SetTitle('Düzenle')->SetClass(Button::CLASS_EDIT,true)
+            $btnEdit = new Button(
+                $this->hotSetup->ButtonRoutes['Edit'],
+                "Düzenle",
+                "Düzenle",
+                Button::ICON_EDIT,
+                Button::CLASS_EDIT,
+                "edit"
+            );
+            $btnEdit->SetTitle('Düzenle')->SetClass(Button::CLASS_EDIT,true)
                 ->SetIcon(Button::ICON_EDIT)->SetKey('edit');
             $this->hotSetup->AddButton($btnEdit);
         }
 
         if($this->hotSetup->ButtonRoutes['Disable']) {
-            $btnDisable = new Button();
-            $btnDisable->SetRoute($this->hotSetup->ButtonRoutes['Disable'])->SetTitle('Sil')->SetClass(Button::CLASS_DELETE,true)
+            $btnDisable = new Button(
+                $this->hotSetup->ButtonRoutes['Disable'],
+                "Sil",
+                "Sil",
+                Button::ICON_DELETE,
+                Button::CLASS_DELETE,
+                "delete"
+            );
+            $btnDisable->SetTitle('Sil')->SetClass(Button::CLASS_DELETE,true)
                 ->SetIcon(Button::ICON_DELETE)->SetKey('delete')
                 ->SetData(['question'=> 'Bu kaydı silmek istiyormusunuz ?']);
             $this->hotSetup->AddButton($btnDisable);
@@ -180,18 +193,18 @@ class Base extends \K5\Unity\Phalcon\BaseModule
         $cConfig->ExportPrefix = $this->hotSetup->ExportPrefix;
         $cConfig->RequestAppend = $this->hotSetup->RequestAppend;
         $cConfig->Components = $this->hotSetup->Components;
-        $cConfig->Employer = $this->setup->Employer;
+        $cConfig->Employer = '_k5_';
 
         return $cConfig;
     }
 
     /**
      * @param $data
-     * @return \Common\Entity\Handson\DataPacket
+     * @return \K5\Component\HandsonTable\DataPacket
      */
-    protected function fromPhalconPaginate($data,$loaderUrl)
+    protected function fromPhalconPaginate($data,$loaderUrl) : \K5\Component\HandsonTable\DataPacket
     {
-        $ret = new \Common\Entity\Handson\DataPacket();
+        $ret = new \K5\Component\HandsonTable\DataPacket();
         $ret->data = $data->Paginate->items;
         $ret->current_page = $data->Paginate->current;
         $ret->path = $this->setup->BaseUrl;

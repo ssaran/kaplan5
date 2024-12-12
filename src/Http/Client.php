@@ -164,7 +164,7 @@ class Client
 
             if($debug) {
                 syslog(LOG_INFO,"<Guzzle_Debug>");
-                syslog(LOG_INFO,$response);
+                syslog(LOG_INFO,print_r($response,true));
                 syslog(LOG_INFO,"</Guzzle_Debug>");
             }
 

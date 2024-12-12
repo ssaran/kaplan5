@@ -8,7 +8,7 @@
 
 namespace K5;
 
-use \K5\U as u;
+use K5\U as u;
 
 class Ui
 {
@@ -25,7 +25,7 @@ class Ui
     private static $_layout = '';
     private static bool $_isAjax = false;
     private static bool $_isCMS = false;
-    private static int $_bootstrapVersion = 4;
+    private static int $_bootstrapVersion = 5;
     private static string $_documentType = 'application/json';
 
     public static function SetDocumentType($dType) : void
@@ -38,12 +38,12 @@ class Ui
         return self::$_documentType;
     }
 
-    public static function SetAjax($ajax)
+    public static function SetAjax($ajax) : void
     {
         self::$_isAjax = $ajax;
     }
 
-    public static function GetIsAjax()
+    public static function GetIsAjax() : bool
     {
         return self::$_isAjax;
     }
@@ -131,7 +131,7 @@ class Ui
 
     public static function PrepareJavascriptContent($content,$domID=false,$mode='add',$refresh=false,$k5Type='link')
     {
-        $js = new \K5\Entity\View\Javascript();
+        $js = new Entity\Html\Resource\Javascript();
         $js->DomID = $domID;
         $js->Content = $content;
         $js->Mode = $mode;
@@ -149,11 +149,11 @@ class Ui
      * @param $mode
      * @param $domDestination
      * @param $k5Destination
-     * @return Entity\View\Html
+     * @return \K5\Entity\Html\Resource\Html
      */
-    public static function GetHtmlPacket($content,$domId,$mode='content-add',$domDestination='layout_content',$k5Destination='layout_content') : \K5\Entity\View\Html
+    public static function GetHtmlPacket($content,$domId,$mode='content-add',$domDestination='layout_content',$k5Destination='layout_content') : Entity\Html\Resource\Html
     {
-        $html = new \K5\Entity\View\Html();
+        $html = new Entity\Html\Resource\Html();
         $html->Content = $content;
         $html->DomID = $domId;
         $html->DomDestination = $domDestination;
@@ -168,11 +168,11 @@ class Ui
      * @param $refresh
      * @param $mode
      * @param $k5Type
-     * @return Entity\View\Javascript
+     * @return \K5\Entity\Html\Resource\Javascript
      */
-    public static function GetJavascriptPacket($content,$domId,$refresh=false,$mode='add',$k5Type='documentReady') : \K5\Entity\View\Javascript
+    public static function GetJavascriptPacket($content,$domId,$refresh=false,$mode='add',$k5Type='documentReady') : Entity\Html\Resource\Javascript
     {
-        $js = new \K5\Entity\View\Javascript();
+        $js = new Entity\Html\Resource\Javascript();
         $js->Content = $content;
         $js->DomID = $domId;
         $js->K5Type = $k5Type;
@@ -185,11 +185,11 @@ class Ui
      * @param $content
      * @param $domId
      * @param $refresh
-     * @return Entity\View\JavascriptLib
+     * @return \K5\Entity\Html\Resource\JavascriptLib
      */
-    public static function GetJavascriptLibPacket($content,$domId,$refresh=false) : \K5\Entity\View\JavascriptLib
+    public static function GetJavascriptLibPacket($content,$domId,$refresh=false) : Entity\Html\Resource\JavascriptLib
     {
-        $js = new \K5\Entity\View\JavascriptLib();
+        $js = new Entity\Html\Resource\JavascriptLib();
         $js->Content = $content;
         $js->DomID = $domId;
         $js->Refresh = $refresh;
@@ -201,11 +201,11 @@ class Ui
      * @param $content
      * @param $domId
      * @param $refresh
-     * @return Entity\View\JavascriptLib
+     * @return Entity\Html\Resource\JavascriptModule
      */
-    public static function GetJavascriptModule($content,$domId,$refresh=false) : \K5\Entity\View\JavascriptModule
+    public static function GetJavascriptModule($content,$domId,$refresh=false) : Entity\Html\Resource\JavascriptModule
     {
-        $js = new \K5\Entity\View\JavascriptModule();
+        $js = new Entity\Html\Resource\JavascriptModule();
         $js->Content = $content;
         $js->DomID = $domId;
         $js->Refresh = $refresh;
@@ -218,11 +218,11 @@ class Ui
      * @param $domId
      * @param $refresh
      * @param $mode
-     * @return Entity\View\Css
+     * @return \K5\Entity\Html\Resource\Css
      */
-    public static function GetCssPacket($content,$domId,$refresh=false,$mode=false) : \K5\Entity\View\Css
+    public static function GetCssPacket($content,$domId,$refresh=false,$mode=false) : Entity\Html\Resource\Css
     {
-        $css = new \K5\Entity\View\Css();
+        $css = new Entity\Html\Resource\Css();
         $css->Content = $content;
         $css->DomID = $domId;
         $css->Refresh = ($refresh) ? $refresh : false;
@@ -236,13 +236,13 @@ class Ui
      * @param string|null $footer
      * @param string $size
      * @param string $close
-     * @param string|null $callback
-     * @return Entity\View\BsModal5
+     * @param Entity\Config\BsModal5|null $config
+     * @return Entity\Html\BsModal5
      */
     public static function GetModalPacket(string $content,string $domId,?string $title=null,?string $footer=null,
-                                          string $size='medium',string $close= 'right', ?\K5\Entity\Config\BsModal5 $config=null) : \K5\Entity\View\BsModal5
+                                          string $size='medium',string $close= 'right', ?\K5\Entity\Config\BsModal5 $config=null) : \K5\Entity\Html\BsModal5
     {
-        $e = new \K5\Entity\View\BsModal5();
+        $e = new \K5\Entity\Html\BsModal5();
         $e->DomID = $domId;
         $e->Modal_DomID = $domId;
         $e->Modal_Body = $content;
@@ -258,11 +258,11 @@ class Ui
     /**
      * @param $title
      * @param $tabId
-     * @return Entity\View\Element
+     * @return \K5\Entity\Html\Component
      */
-    public static function GetTabTitlePacket($title,$tabId='main') : \K5\Entity\View\Element
+    public static function GetTabTitlePacket($title,$tabId='main') : \K5\Entity\Html\Component
     {
-        $html = new \K5\Entity\View\Element();
+        $html = new \K5\Entity\Html\Component();
         $html->Content = $title;
         $html->DomID = $tabId;
         $html->Type = 'tab_title';
@@ -272,11 +272,11 @@ class Ui
     /**
      * @param $content
      * @param $domID
-     * @return Entity\View\Element
+     * @return \K5\Entity\Html\Component
      */
-    public static function GetDataPacket($content,$domID = 'data') : \K5\Entity\View\Element
+    public static function GetDataPacket($content,$domID = 'data') : \K5\Entity\Html\Component
     {
-        $html = new \K5\Entity\View\Element();
+        $html = new \K5\Entity\Html\Component();
         $html->Content = json_encode($content);
         $html->DomID = $domID;
         $html->Type = 'data';
@@ -285,11 +285,11 @@ class Ui
 
     /**
      * @param string $content
-     * @return Entity\View\Element
+     * @return \K5\Entity\Html\Component
      */
-    public static function GetHeadLine(string $content) : \K5\Entity\View\Element
+    public static function GetHeadLine(string $content) : \K5\Entity\Html\Component
     {
-        $html = new \K5\Entity\View\HeadLine();
+        $html = new \K5\Entity\Html\Component();
         $html->Content = $content;
         $html->DomID = '-';
         $html->Type = 'head_line';
@@ -402,9 +402,10 @@ class Ui
             return $r;
         }
 
+        /** @var \K5\Entity\Html\Component $o */
         foreach($_output as $o){
 
-            if(is_a($o,'K5\Entity\View\Javascript')) {
+            if(is_a($o, 'K5\Entity\Html\Resource\Javascript')) {
                 $_defer = ($o->Defer) ? 'defer' : '';
                 switch ($o->K5Type) {
                     case "link":
@@ -435,7 +436,7 @@ class Ui
                 }
 
             }
-            if(is_a($o,'K5\Entity\View\Css')) {
+            if(is_a($o, 'K5\Entity\Html\Resource\Css')) {
                 $_defer = ($o->Defer) ? 'defer' : '';
                 $r['css'][] = '<link rel="stylesheet" href="' . $o->Content . '" '.$_defer.'>';
                 if(!$o->Embed) {
@@ -445,11 +446,11 @@ class Ui
                 }
             }
 
-            if(is_a($o,'K5\Entity\View\Html')) {
+            if(is_a($o, 'K5\Entity\Html\Resource\Html')) {
                 $r['html'][$o->K5Destination][] = $o->Content;
             }
 
-            if(is_a($o,'K5\Entity\View\JavascriptLib')) {
+            if(is_a($o, 'K5\Entity\Html\Resource\JavascriptLib')) {
                 $_defer = ($o->Defer) ? 'defer' : '';
                 $r['js']['link'][] = '<script src="'.$o->Content.'" '.$o->JsType.' '.$_defer.'></script>';
                 if(!$o->Embed) {
@@ -458,13 +459,9 @@ class Ui
                     $r['js']['embed'][] = $o->Content;
                 }
             }
-            if(is_a($o,'K5\Entity\View\JavascriptModule')) {
+            if(is_a($o, 'K5\Entity\Html\Resource\JavascriptModule')) {
                 $_defer = ($o->Defer) ? 'defer' : '';
                 $r['js']['link'][] = '<script type="module" src="'.$o->Content.'" '.$o->JsType.' '.$_defer.'></script>';
-            }
-
-            if(is_a($o,'K5\Entity\View\HeadLine')) {
-                $r['page_head'][] = $o->Content;
             }
         }
 
@@ -505,7 +502,7 @@ class Ui
     public static function getOMeta() : string
     {
         $r = '';
-        if(isset(self::$_pageMeta['other']) && sizeof(self::$_pageMeta['other'] > 0)) {
+        if(isset(self::$_pageMeta['other']) && is_array(self::$_pageMeta['other']) && count(self::$_pageMeta['other'])  > 0 ) {
             foreach(self::$_pageMeta['other'] as $k => $v) {
                 $r.= "\t<meta ".$k." content=\"".implode(" ",str_replace(array('"','\'')," ",$v))."\" />\n";
             }
@@ -529,7 +526,7 @@ class Ui
      */
     public static function getVar(string $key) : string
     {
-        return ($key !== false && isset(self::$_pageVars[$key])) ? self::$_pageVars[$key] : '';
+        return (isset(self::$_pageVars[$key])) ? self::$_pageVars[$key] : '';
     }
 
     public static function getAllVars() : array

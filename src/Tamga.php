@@ -12,13 +12,11 @@ namespace K5;
 class Tamga
 {
 
-    public static $TokenConfig;
-    public static $uKey;
+    public static array $TokenConfig;
+    public static string $uKey;
 
     private static $token;
     private static $decoded;
-
-    private static string $TimeZone = 'Europe/Istanbul';
 
     /**
      * @param Entity\Auth\Tamga $tamga

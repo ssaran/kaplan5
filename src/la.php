@@ -8,13 +8,19 @@
 
 class la
 {
-    /** @var \Common\Lang\keys */
-    public static $keys;
-    public static $values;
+
+    public static object $keys;
+    public static object $values;
 
     private static string $lang;
 
-    public static function Setup($keys,$values,$lang='Tr') : void
+    /**
+     * @param object $keys
+     * @param stdClass $values
+     * @param string $lang
+     * @return void
+     */
+    public static function Setup(object $keys,stdClass $values,string$lang='Tr') : void
     {
         self::$keys = $keys;
         self::$values = $values;
@@ -26,7 +32,7 @@ class la
         return self::$lang;
     }
 
-    public static function ng($key) : string
+    public static function ng(string $key) : string
     {
         if(!property_exists(self::$keys,$key)) {
             return "?".$key;
@@ -51,8 +57,7 @@ class la
     public static function ToJs() : array
     {
         $r = [];
-        foreach(self::$values as $k => $v)
-        {
+        foreach(self::$values as $k => $v) {
             $r[$k] = '"'.$k.'":"'.$v.'"';
         }
         return $r;

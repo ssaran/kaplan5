@@ -214,15 +214,15 @@ class U
      * @param $ip
      * @return bool
      */
-    public static function validateIp($ip)
+    public static function validateIp($ip) : bool
     {
         if (filter_var($ip, FILTER_VALIDATE_IP,
                 FILTER_FLAG_IPV4 |
                 FILTER_FLAG_IPV6 |
                 FILTER_FLAG_NO_PRIV_RANGE |
-                FILTER_FLAG_NO_RES_RANGE) === false)
+                FILTER_FLAG_NO_RES_RANGE) === false) {
             return false;
-        self::$ip = $ip;
+        }
         return true;
     }
 
@@ -230,7 +230,8 @@ class U
      * randomChars#
      * generates random string
      */
-    public static function randomChars ($pw_length = 8, $numOnly = false,$noNum=false,$isPlate=false) {
+    public static function randomChars ($pw_length = 8, $numOnly = false,$noNum=false,$isPlate=false) : string
+    {
         $i = 0;
         $password = '';
         if($numOnly == false) {
@@ -252,7 +253,7 @@ class U
                 }
             }
             while ($i < $pw_length) {
-                @mt_srand ((double)microtime() * 1000000);
+                mt_srand ((int)microtime() * 1000000);
                 // random limits within ASCII table
                 $randnum = mt_rand ($lower_ascii_bound, $upper_ascii_bound);
                 if (!in_array ($randnum, $notuse)) {
@@ -261,6 +262,7 @@ class U
                 }
             }
         } else {
+            $n = [];
             while ($i < $pw_length) {
                 $n[] = rand(0,9);
                 $i++;
@@ -430,10 +432,14 @@ class U
         return strtotime($time);
     }
 
-    public static function toTimeEndUnix($time)
+    /**
+     * @param string $time
+     * @return int
+     */
+    public static function toTimeEndUnix(string $time) : int
     {
         $uTime = strtotime($time);
-        return mktime(23,59,59,date('m',$uTime),date('d',$uTime),date('Y',$uTime));
+        return mktime(23,59,59,(int)date('m',$uTime),(int)date('d',$uTime),(int)date('Y',$uTime));
     }
 
     public static function Common2Time($common,$isHourly=false,$hourSeperator="T",$zoneSeperator="+")
@@ -443,9 +449,9 @@ class U
         }
         $_base = explode($zoneSeperator,$common);
         $time = strtotime(str_replace($hourSeperator,"",$_base[0]));
-        $timeAdd = str_replace(["0",":"],"",$_base[1]);
         if($isHourly) {
-            $time = $time + (60*60)*$timeAdd;
+            $timeAdd = (int)str_replace(["0",":"],"",$_base[1]);
+            $time = ($time + ((60*60)*$timeAdd));
         }
         return $time;
     }
@@ -541,7 +547,7 @@ class U
      * @param $path
      * @return int
      */
-    public static function CountFilesInDir($path)
+    public static function CountFilesInDir($path) : int
     {
         $fi = new \FilesystemIterator($path, \FilesystemIterator::SKIP_DOTS);
         return iterator_count($fi);
@@ -569,14 +575,14 @@ class U
     }
 
     /**
-     * @param $dir
+     * @param string $dir
      * @param $baseDir
      * @param $path
-     * @return bool
+     * @return array
      */
-    public static function parseFDirExt($dir,$baseDir,$path)
+    public static function parseFDirExt(string $dir,$baseDir,$path) : array
     {
-        $r = false;
+        $r = [];
         if ($dh = opendir($dir)) {
             while(($strFile = readdir($dh)) !== false) {
                 if( !preg_match('/^\./s', $strFile) ) {
@@ -605,8 +611,14 @@ class U
     /**
      * parseFDirFlat#
      * parses given dir and returns with full path
+     *
+     * @param $dir
+     * @param $baseDir
+     * @param $path
+     * @param $r
+     * @return array
      */
-    public static function parseFDirFlat($dir,$baseDir,$path,$r=array())
+    public static function parseFDirFlat($dir,$baseDir,$path,$r=array()) : array
     {
         if ($dh = opendir($dir)) {
             while(($strFile = readdir($dh)) !== false) {
@@ -973,56 +985,74 @@ class U
         return $z;
     }
 
-    public static function NiceNumber($number,$decimals=0,$dSeperator=",",$tSeperator=".")
+    public static function NiceNumber($number,$decimals=0,$dSeperator=",",$tSeperator=".") : string
     {
         return number_format($number,$decimals,$dSeperator,$tSeperator);
     }
 
-    public static function numberToWord( $num = '' )
+    public static function numberToWord( int $num) : string
     {
-        $num    = ( string ) ( ( int ) $num );
-        if( ( int ) ( $num ) && ctype_digit( $num ) )  {
-            $words  = array( );
-            $num    = str_replace( array( ',' , ' ' ) , '' , trim( $num ) );
+        if($num > 0)  {
+            $ones = [
+                '', 'bir', 'iki', 'üç', 'dört', 'beş', 'altı', 'yedi', 'sekiz', 'dokuz'
+            ];
 
-            $list1  = ['','bir','iki','üç','dört','beş','altı','yedi', 'sekiz','dokuz'];
-            $list2  = ['','on','yirmi','otuz','kırk','elli','altmış', 'yetmiş','seksen','doksan','yüz'];
-            $list3  = ['','bin','milyon','milyar','trilyon','katrilyon','kentrilyon','seksilyon','septilyon'];
+            $tens = [
+                '', 'on', 'yirmi', 'otuz', 'kırk', 'elli', 'altmış', 'yetmiş', 'seksen', 'doksan'
+            ];
 
-            $numLength = strlen( $num );
-            $levels = ( int ) ( ( $numLength + 2 ) / 3 );
-            $maxLength = $levels * 3;
-            $num    = substr( '00'.$num , -$maxLength );
-            $numLevels = str_split( $num , 3 );
+            $hundreds = [
+                '', 'yüz', 'iki yüz', 'üç yüz', 'dört yüz', 'beş yüz', 'altı yüz', 'yedi yüz', 'sekiz yüz', 'dokuz yüz'
+            ];
 
-            foreach( $numLevels as $numPart ) {
-                $levels--;
-                $hundreds  = ( int ) ( $numPart / 100 );
-                $hundreds  = ( $hundreds ? ' ' . $list1[$hundreds] . ' Yüz' . ( $hundreds == 1 ? '' : ' ' ) . ' ' : '' );
-                $hundreds = str_replace("bir","",$hundreds);
-                $tens = ( int ) ( $numPart % 100 );
+            $thousands = [
+                '', 'bin', 'milyon', 'milyar', 'trilyon'
+            ];
 
-                $tens = ( int ) ( $tens / 10 );
-                $tens = ' ' . $list2[$tens] . ' ';
-                $singles = ( int ) ( $numPart % 10 );
-                $singles = ' ' . $list1[$singles] . ' ';
-                $words[] = $hundreds . $tens . $singles . ( ( $levels && ( int ) ( $numPart ) ) ? ' ' . $list3[$levels] . ' ' : '' );
+            // Split number into groups of three digits
+            $numStr = strval($num);
+            $numLen = strlen($numStr);
+
+            $groups = [];
+            for ($i = $numLen; $i > 0; $i -= 3) {
+                $groups[] = substr($numStr, max(0, $i - 3), 3);
             }
 
-            $commas = count( $words );
-            if( $commas > 1 )  {
-                $commas = $commas - 1;
-            }
-            $words  = implode( ', ' , $words );
+            $words = [];
+            $groupCount = count($groups);
 
-            //Some Finishing Touch
-            //Replacing multiples of spaces with one space
-            $words  = trim( str_replace( ' ,' , ',' , self::trimAll( ucwords( $words ) ) ) , ', ' );
-            if( $commas )  {
-                $words  = self::strReplaceLast( ',' , ' ,' , $words );
+            // Convert each group into words
+            foreach ($groups as $index => $group) {
+                $groupNum = (int) $group;
+                $groupWords = [];
+
+                // Process hundreds
+                $hundredPart = (int) ($groupNum / 100);
+                if ($hundredPart > 0) {
+                    $groupWords[] = $hundreds[$hundredPart];
+                }
+
+                // Process tens
+                $tenPart = (int) (($groupNum % 100) / 10);
+                if ($tenPart > 0) {
+                    $groupWords[] = $tens[$tenPart];
+                }
+
+                // Process ones
+                $onePart = $groupNum % 10;
+                if ($onePart > 0) {
+                    $groupWords[] = $ones[$onePart];
+                }
+
+                // Add the corresponding thousand, million, etc.
+                if ($groupWords) {
+                    $words[] = implode(' ', $groupWords) . ' ' . $thousands[$groupCount - $index - 1];
+                }
+
             }
 
-            return $words;
+            // Return the full result by joining the parts with spaces
+            return trim(implode(' ', array_reverse($words)));
         }  else if( ! ( ( int ) $num ) )  {
             return 'Sıfır';
         }
@@ -1122,35 +1152,52 @@ class U
         return strlen($text);
     }
 
-    public static function ArrUpdateLast(&$array, $value){
+    /**
+     * @param $array
+     * @param $value
+     * @return array
+     */
+    public static function ArrUpdateLast(&$array, $value) : array
+    {
         array_pop($array);
         array_push($array, $value);
         return $array;
     }
 
-
-    public static function TCVerify($tcno)
+    /**
+     * @param string $tcno
+     * @return bool
+     */
+    public static function TCVerify(string $tcno) : bool
     {
         if (!preg_match('/^[1-9]{1}[0-9]{9}[0,2,4,6,8]{1}$/', $tcno)) {
             return false;
         }
-
-        $odd = $tcno[0] + $tcno[2] + $tcno[4] + $tcno[6] + $tcno[8];
-        $even = $tcno[1] + $tcno[3] + $tcno[5] + $tcno[7];
+        $_tcNo = str_split($tcno);
+        $odd = (int)$_tcNo[0] + (int)$_tcNo[2] + (int)$_tcNo[4] + (int)$_tcNo[6] + (int)$_tcNo[8];
+        $even = (int)$_tcNo[1] + (int)$_tcNo[3] + (int)$_tcNo[5] + (int)$_tcNo[7];
         $digit10 = ($odd * 7 - $even) % 10;
-        $total = ($odd + $even + $tcno[9]) % 10;
-        if ($digit10 != $tcno[9] ||  $total != $tcno[10]) {
+        $total = ($odd + $even + (int)$_tcNo[9]) % 10;
+        if ($digit10 != $_tcNo[9] ||  $total != $_tcNo[10]) {
             return false;
         }
         return true;
     }
 
-    public static function ClassToId($cn)
+    /**
+     * @param string $cn
+     * @return string
+     */
+    public static function ClassToId(string $cn) : string
     {
         return str_replace('\\','_',$cn);
     }
 
-    public static function MethodToCallback($cn)
+    /**
+     * @param string $cn
+     * @return string
+     */
+    public static function MethodToCallback(string $cn) : string
     {
         $cn = str_replace('\\','_',$cn);
         $arr = explode("::",$cn);
@@ -1173,55 +1220,90 @@ class U
         return join($seperator, $a );
     }
 
+    /**
+     * @param $str
+     * @return string
+     */
     public static function ToCamelCase($str) : string
     {
         return str_replace('_', '', ucwords($str, '_'));
     }
 
+    /**
+     * @param string $suffix
+     * @param string|null $hi
+     * @param string|null $clock
+     * @param string|null $node
+     * @return string
+     */
     public static function GetIMUuid(string $suffix,?string $hi=null,?string $clock=null,?string $node=null) : string
     {
         $uuid = \UUID\UUID::uuid7();
         $arr = explode("-",$uuid);
-        $arr[2] = (!is_null($hi)) ? u::FitStr($hi,4,"0") : $arr[2];
-        $arr[3] = (!is_null($clock)) ? u::FitStr($clock,4,"0") : $arr[3];
-        $arr[4] = (!is_null($node)) ? u::FitStr($node,12,"0") : $arr[4];
-        $arr[5] =  u::FitStr($suffix,13,"0");
+        $arr[2] = (!is_null($hi)) ? self::FitStr($hi,4,"0") : $arr[2];
+        $arr[3] = (!is_null($clock)) ? self::FitStr($clock,4,"0") : $arr[3];
+        $arr[4] = (!is_null($node)) ? self::FitStr($node,12,"0") : $arr[4];
+        $arr[5] =  self::FitStr($suffix,13,"0");
 
         return implode("-",$arr);
     }
 
-    public static function GetUuid($low=false,$mid=false,$hi=false,$clock=false,$node=false) : string
+    /**
+     * @param string|null $low
+     * @param string|null $mid
+     * @param string|null $hi
+     * @param string|null $clock
+     * @param string|null $node
+     * @return string
+     */
+    public static function GetUuid(?string $low=null,?string $mid=null,?string $hi=null,?string $clock=null,?string $node=null) : string
     {
         $uuid = \UUID\UUID::uuid7();
         $arr = explode("-",$uuid);
-        $arr[0] = ($low) ? u::FitStr($low,8) : $arr[0];
-        $arr[1] = ($mid) ? u::FitStr($mid,4) : $arr[1];
-        $arr[2] = ($hi) ? u::FitStr($hi,4) : $arr[2];
-        $arr[3] = ($clock) ? u::FitStr($clock,4) : $arr[3];
-        $arr[4] = ($node) ? u::FitStr($node,12) : $arr[4];
+        $arr[0] = (!is_null($low)) ? self::FitStr($low,8) : $arr[0];
+        $arr[1] = (!is_null($mid)) ? self::FitStr($mid,4) : $arr[1];
+        $arr[2] = (!is_null($hi)) ? self::FitStr($hi,4) : $arr[2];
+        $arr[3] = (!is_null($clock)) ? self::FitStr($clock,4) : $arr[3];
+        $arr[4] = (!is_null($node)) ? self::FitStr($node,12) : $arr[4];
 
         return implode("-",$arr);
     }
 
-    public static function Uuidze($low=false,$mid=false,$hi=false,$clock=false,$node=false,$filler=false) : string
+    /**
+     * @param string|null $low
+     * @param string|null $mid
+     * @param string|null $hi
+     * @param string|null $clock
+     * @param string|null $node
+     * @param string|null $filler
+     * @return string
+     */
+    public static function Uuidze(?string $low=null,?string $mid=null,?string $hi=null,?string $clock=null,?string $node=null,?string $filler=null) : string
     {
-        $arr[0] = ($low) ? u::FitStr($low,8,$filler) : u::FitStr("",8,$filler);
-        $arr[1] = ($mid) ? u::FitStr($mid,4,$filler) : u::FitStr("",4,$filler);
-        $arr[2] = ($hi) ? u::FitStr($hi,4,$filler) : u::FitStr("",4,$filler);
-        $arr[3] = ($clock) ? u::FitStr($clock,4,$filler) : u::FitStr("",4,$filler);
-        $arr[4] = ($node) ? u::FitStr($node,12,$filler) : u::FitStr("",12,$filler);
+        $arr[0] = (!is_null($low)) ? self::FitStr($low,8,$filler) : self::FitStr("",8,$filler);
+        $arr[1] = (!is_null($mid)) ? self::FitStr($mid,4,$filler) : self::FitStr("",4,$filler);
+        $arr[2] = (!is_null($hi)) ? self::FitStr($hi,4,$filler) : self::FitStr("",4,$filler);
+        $arr[3] = (!is_null($clock)) ? self::FitStr($clock,4,$filler) : self::FitStr("",4,$filler);
+        $arr[4] = (!is_null($node)) ? self::FitStr($node,12,$filler) : self::FitStr("",12,$filler);
         return implode("-",$arr);
     }
 
-    public static function FitStr($str,$max,$filler=false) : string
+    /**
+     * @param string $str
+     * @param int $max
+     * @param string $filler
+     * @return string
+     */
+    public static function FitStr(string $str, int $max, string $filler="0") : string
     {
         if(strlen($str) >= $max) {
             return substr($str, 0, $max);
         }
-        if($filler === false) {
-            return $str.strtolower(u::randomChars($max - strlen($str)));
+        if($filler === "random") {
+            return $str.strtolower(self::randomChars($max - strlen($str)));
         }
-        return $str.strtolower(str_repeat($filler, $max - strlen($str)));
+
+        return $str.strtolower(str_pad($str,$max - strlen($str),$filler,STR_PAD_RIGHT));
     }
 
     /**
@@ -1237,64 +1319,16 @@ class U
         return $r;
     }
 
-    public static function GenerateEInvoiceID($key,$num)
+    /**
+     * @param $key
+     * @param $num
+     * @return string
+     */
+    public static function GenerateEInvoiceID($key,$num) : string
     {
         $num_length = strlen((string)$num);
         $left = (16 - ($num_length+7));
         $ID = $key.date('Y').str_repeat("0",$left).$num;
         return $ID;
-    }
-
-    public static function HtmlPurify($text)
-    {
-        $config = \HTMLPurifier_Config::createDefault();
-        $config->set('Core.Encoding', 'UTF-8');
-        $config->set('HTML.Doctype', 'HTML 4.01 Transitional');
-        $allowedElements = [
-            'p[style]',
-            'br',
-            'b',
-            'strong',
-            'i',
-            'em',
-            's',
-            'u',
-            'ul',
-            'ol',
-            'li',
-            'span[class]',
-            'table[border|cellpadding|cellspacing]',
-            'tbody',
-            'tr',
-            'td[valign]',
-        ];
-
-        $config->set('HTML.Allowed', implode(',', $allowedElements));
-
-        $def = $config->getHTMLDefinition(true);
-        $purifier = new \HTMLPurifier($def);
-        $purified = $purifier->purify($text);
-        return $purified;
-    }
-
-    /**
-     * @param $record
-     * @return mixed
-     * @throws \Exception
-     */
-    public static function WriteToDb($record) {
-        try {
-            if(!$record->save()) {
-                $m = [];
-                $_msgs = $record->getMessages();
-                foreach($_msgs as $_m) {
-                    $m[] = $_m->getMessage();
-                }
-                throw new \Exception(implode("\n",$m));
-            }
-            return $record;
-        } catch (\Exception $e) {
-            throw $e;
-        }
     }
 }

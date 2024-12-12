@@ -8,22 +8,24 @@
 
 namespace K5\Helper;
 
-
 class Seeder
 {
-    public $HumanNames = [];
-    public $Surnames = [];
-    public $VehicleModels = [];
-    public $CompanyNames = [];
-    public $EmailProviders = [];
-    public $StreetNames = [];
-    public $TaxOffices = [];
-    public $ListCity;
-    public $ListCounty;
-    public $ListArea;
-    public $ListNeigh;
-    public $Personel;
-    public $DeliveryLabels = [];
+    public array $HumanNames = [];
+    public array $Surnames = [];
+    public array $VehicleModels = [];
+    public array $CompanyNames = [];
+    public array $EmailProviders = [];
+    public array $StreetNames = [];
+    public array $TaxOffices = [];
+    public array $ListCity = [];
+    public array $ListCounty = [];
+    public array $ListArea = [];
+    public array $ListNeigh = [];
+    public array $Personel = [];
+    public array $DeliveryLabels = [];
+
+    private array $_email = [];
+    private array $_doms = [];
 
     public function __construct()
     {
@@ -9001,6 +9003,7 @@ class Seeder
             $gender = (mt_rand(1,2) ==2) ? 'w' : 'm';
         }
 
+        $r = [];
         $names = $this->HumanNames[$gender];
         $myName = mt_rand(0,sizeof($this->HumanNames[$gender])-1);
         $i = 0;
@@ -9008,11 +9011,10 @@ class Seeder
             if($i == $myName) {
                 break;
             }
+            $r['name'] = $name;
             $i++;
         }
-        //$name = $this->HumanNames[$gender][mt_rand(0,sizeof($this->HumanNames[$gender])-1)];
         $r['gender'] = ($gender == 'w') ? 2 : 1;
-        $r['name'] = $name;
         return $r;
     }
 
@@ -9113,7 +9115,7 @@ class Seeder
                 }
             }
             while ($i < $pw_length) {
-                mt_srand ((double)microtime() * 1000000);
+                mt_srand ((int)microtime() * 1000000);
                 // random limits within ASCII table
                 $randnum = mt_rand ($lower_ascii_bound, $upper_ascii_bound);
                 if (!in_array ($randnum, $notuse)) {
@@ -9122,6 +9124,7 @@ class Seeder
                 }
             }
         } else {
+            $n = [];
             while ($i < $pw_length) {
                 $n[] = rand(0,9);
                 $i++;

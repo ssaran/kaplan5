@@ -1,20 +1,18 @@
 <?php
 
-
 namespace K5\Helper\Field;
-
 
 use Phalcon\Db\Column;
 
 class Generator
 {
     /**
-     * @param $name
-     * @param $isPrimary
-     * @param $isNullable
+     * @param string $name
+     * @param bool $isPrimary
+     * @param bool $isNullable
      * @return \K5\Http\Field
      */
-    public static function GetUUID($name,$isPrimary=false,$isNullable=false)
+    public static function GetUUID(string $name,bool $isPrimary=false,bool $isNullable=false) :  \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
@@ -58,7 +56,7 @@ class Generator
         return $field;
     }
 
-    public static function GetIntID($name,$isPrimary=false)
+    public static function GetIntID($name,$isPrimary=false) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
@@ -85,12 +83,17 @@ class Generator
         return $field;
     }
 
-    public static function GetTinyInt($name,$isUnsigned=false)
+    /**
+     * @param string $name
+     * @param bool $isUnsigned
+     * @return \K5\Http\Field
+     */
+    public static function GetTinyInt(string $name,int $default=0, bool $isUnsigned=false) : \K5\Http\Field
     {
-        return self::dGetTinyInt($name,false,$isUnsigned);
+        return self::dGetTinyInt($name,$default,$isUnsigned);
     }
 
-    public static function dGetTinyInt($name,$default=0,$isUnsigned=false)
+    public static function dGetTinyInt(string $name,int $default=0,bool $isUnsigned=false) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
@@ -125,7 +128,12 @@ class Generator
         return $field;
     }
 
-    public static function GetMediumInteger($name,$isUnsigned=false)
+    /**
+     * @param string $name
+     * @param bool $isUnsigned
+     * @return \K5\Http\Field
+     */
+    public static function GetMediumInteger(string $name,bool $isUnsigned=false) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
@@ -159,7 +167,12 @@ class Generator
         return $field;
     }
 
-    public static function GetInteger($name,$isUnsigned=false)
+    /**
+     * @param string $name
+     * @param bool $isUnsigned
+     * @return \K5\Http\Field
+     */
+    public static function GetInteger(string $name,bool $isUnsigned=false) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
@@ -193,7 +206,13 @@ class Generator
         return $field;
     }
 
-    public static function dGetInteger($name,$default=0,$isUnsigned=false)
+    /**
+     * @param string $name
+     * @param int $default
+     * @param bool $isUnsigned
+     * @return \K5\Http\Field
+     */
+    public static function dGetInteger(string $name,int $default=0,bool $isUnsigned=false) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
@@ -228,7 +247,14 @@ class Generator
         return $field;
     }
 
-    public static function GetPlainNumeric($name,$label,$placeholder,$class="form-control")
+    /**
+     * @param string $name
+     * @param string $label
+     * @param string $placeholder
+     * @param string $class
+     * @return \K5\Http\Field
+     */
+    public static function GetPlainNumeric(string $name,string $label,string $placeholder,string $class="form-control") : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
@@ -405,12 +431,12 @@ class Generator
     }
 
     /**
-     * @param $name
-     * @param bool $max
-     * @param bool $min
+     * @param string $name
+     * @param int|null $maxLength
+     * @param int|null $minLength
      * @return \K5\Http\Field
      */
-    public static function GetHiddenString($name,$maxLength=false,$minLength=false)
+    public static function GetHiddenString(string $name,?int $maxLength=null,?int $minLength=null) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
@@ -434,17 +460,21 @@ class Generator
             null
         );
         $field->form_element->attributes->id = $field->database->cell_name;
-        if($maxLength) {
+        if(!is_null($minLength)) {
             $field->form_element->attributes->minlength = $minLength;
         }
-        if($minLength) {
+        if(!is_null($maxLength)) {
             $field->form_element->attributes->maxlength = $maxLength;
         }
 
         return $field;
     }
 
-    public static function GetNationalId($name)
+    /**
+     * @param string $name
+     * @return \K5\Http\Field
+     */
+    public static function GetNationalId(string $name) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;

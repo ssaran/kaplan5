@@ -1,7 +1,7 @@
 <?php
 
 
-namespace K5\Entity\View\Dom;
+namespace K5\Entity\Dom;
 
 
 class ClassKeys

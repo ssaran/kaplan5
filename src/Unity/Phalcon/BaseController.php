@@ -8,8 +8,8 @@
 
 namespace K5\Unity\Phalcon;
 
-use K5\Ui;
 use K5\U;
+use K5\Ui;
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -28,9 +28,9 @@ class BaseController extends \Phalcon\Mvc\Controller
 
     }
 
-    public function GetHtmlPacket($content,$domId,$mode='content-add',$domDestination='layout_content',$k5Destination='layout_content') : \K5\Entity\View\Html
+    public function GetHtmlPacket($content,$domId,$mode='content-add',$domDestination='layout_content',$k5Destination='layout_content') : \K5\Entity\Html\Resource\Html
     {
-        $html = new \K5\Entity\View\Html();
+        $html = new \K5\Entity\Html\Resource\Html();
         $html->Content = $content;
         $html->DomID = $domId;
         $html->DomDestination = $domDestination;
@@ -39,9 +39,9 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $html;
     }
 
-    public function GetKatmerPacket($content,$domDestination='layout_content',$mode='content-add') : \K5\Entity\View\Html
+    public function GetKatmerPacket($content,$domDestination='layout_content',$mode='content-add') : \K5\Entity\Html\Resource\Html
     {
-        $html = new \K5\Entity\View\Html();
+        $html = new \K5\Entity\Html\Resource\Html();
         $html->Content = $content;
         $html->DomDestination = $domDestination;
         $html->Mode = $mode;
@@ -50,9 +50,9 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $html;
     }
 
-    public function GetJavascriptPacket($content,$domId,$refresh=false,$mode='add',$k5Type='documentReady') : \K5\Entity\View\Javascript
+    public function GetJavascriptPacket($content,$domId,$refresh=false,$mode='add',$k5Type='documentReady') : \K5\Entity\Html\Resource\Javascript
     {
-        $js = new \K5\Entity\View\Javascript();
+        $js = new \K5\Entity\Html\Resource\Javascript();
         $js->Content = $content;
         $js->DomID = $domId;
         $js->K5Type = $k5Type;
@@ -61,18 +61,18 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $js;
     }
 
-    public function GetJavascriptModule($content,$refresh=false) : \K5\Entity\View\JavascriptModule
+    public function GetJavascriptModule($content,$refresh=false) : \K5\Entity\Html\Resource\JavascriptModule
     {
-        $js = new \K5\Entity\View\JavascriptModule();
+        $js = new \K5\Entity\Html\Resource\JavascriptModule();
         $js->Content = $content;
         $js->DomID = "js_module_".crc32($content);
         $js->Refresh = $refresh;
         return $js;
     }
 
-    public function GetJavascriptLibPacket($content,$domId,$refresh=false) : \K5\Entity\View\JavascriptLib
+    public function GetJavascriptLibPacket($content,$domId,$refresh=false) : \K5\Entity\Html\Resource\JavascriptLib
     {
-        $js = new \K5\Entity\View\JavascriptLib();
+        $js = new \K5\Entity\Html\Resource\JavascriptLib();
         $js->Content = $content;
         $js->DomID = $domId;
         $js->Refresh = ($refresh) ? $refresh : false;
@@ -80,9 +80,9 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $js;
     }
 
-    public function GetCssPacket($content,$domId,$refresh=false,$mode=false) : \K5\Entity\View\Css
+    public function GetCssPacket($content,$domId,$refresh=false,$mode=false) : \K5\Entity\Html\Resource\Css
     {
-        $css = new \K5\Entity\View\Css();
+        $css = new \K5\Entity\Html\Resource\Css();
         $css->Content = $content;
         $css->DomID = $domId;
         $css->Refresh = ($refresh) ? $refresh : false;
@@ -90,9 +90,9 @@ class BaseController extends \Phalcon\Mvc\Controller
     }
 
     public function GetModalPacket(string $content,string $domId,?string $title=null,?string $footer=null,
-    string $size='medium',string $close= 'right', ?\K5\Entity\Config\BsModal5 $config=null) : \K5\Entity\View\BsModal5
+    string $size='medium',string $close= 'right', ?\K5\Entity\Config\BsModal5 $config=null) : \K5\Entity\Html\BsModal5
     {
-        $e = new \K5\Entity\View\BsModal5();
+        $e = new \K5\Entity\Html\BsModal5();
         $e->DomID = $domId;
         $e->Modal_DomID = $domId;
         $e->Modal_Body = $content;
@@ -105,18 +105,18 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $e;
     }
 
-    public function GetTabTitlePacket($title,$tabId='main') : \K5\Entity\View\Element
+    public function GetTabTitlePacket($title,$tabId='main') : \K5\Entity\Html\Component
     {
-        $html = new \K5\Entity\View\Element();
+        $html = new \K5\Entity\Html\Component();
         $html->Content = $title;
         $html->DomID = $tabId;
         $html->Type = 'tab_title';
         return $html;
     }
 
-    public function GetDataPacket($content,$domID = 'data') : \K5\Entity\View\Element
+    public function GetDataPacket($content,$domID = 'data') : \K5\Entity\Html\Component
     {
-        $html = new \K5\Entity\View\Element();
+        $html = new \K5\Entity\Html\Component();
         $html->Content = json_encode($content);
         $html->DomID = $domID;
         $html->Type = 'data';

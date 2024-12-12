@@ -1,6 +1,6 @@
 <?php
 
-namespace K5\Entity\View;
+namespace K5\Http\Response;
 
 class BaseAsset
 {
@@ -16,7 +16,7 @@ class BaseAsset
         $this->collection = [];
     }
 
-    public function Append(\K5\Entity\View\Element $elm) : void
+    public function Append(\K5\Entity\Html\Component $elm) : void
     {
         if($elm->Type === 'lib' || $elm->Type === 'js_lib' || $elm->Type === 'css' ) {
             $elm->Content = $this->baseUrl.$elm->Content;
@@ -27,7 +27,7 @@ class BaseAsset
         $this->collection[$elm->DomID] = $elm;
     }
 
-    public function AppendRemote(\K5\Entity\View\Element $elm) : void
+    public function AppendRemote(\K5\Entity\Html\Component $elm) : void
     {
         $this->collection[$elm->DomID] = $elm;
     }
@@ -39,7 +39,7 @@ class BaseAsset
         }
     }
 
-    public function GetByDomId(string $domId) : ?\K5\Entity\View\Element
+    public function GetByDomId(string $domId) : ?\K5\Entity\Html\Component
     {
         if(!isset($this->collection[$domId])) {
             return null;

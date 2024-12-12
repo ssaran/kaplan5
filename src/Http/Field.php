@@ -25,8 +25,8 @@ class Field
     /** @var \K5\Http\Field\Database */
     public $database;
     public $validation;
-    /** @var \K5\Http\Field\FormElement */
-    public $form_element;
+
+    public \K5\Http\Field\FormElement $form_element;
     public $default_value;
 
 

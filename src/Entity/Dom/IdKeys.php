@@ -1,10 +1,10 @@
 <?php
 
 
-namespace K5\Entity\View\Dom;
+namespace K5\Entity\Dom;
 
 
-class Keys
+class IdKeys
 {
     public string $Employer = '';
     public string $BaseCover = '';

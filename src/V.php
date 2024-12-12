@@ -12,7 +12,7 @@ use K5\U as u;
 
 class V
 {
-    public static function GetCallout($msg,$title,$class='warning')
+    public static function GetCallout($msg,$title,$class='warning') : string
     {
         return '
             <div class="callout callout-.'.$class.'">
@@ -22,36 +22,36 @@ class V
         ';
     }
 
-    public static function CCMonths()
+    public static function CCMonths() : array
     {
         $arr = ['01'=>'01','02'=>'02','03'=>'03','04'=>'04','05'=>'05','06'=>'06','07'=>'07','08'=>'09','09'=>'09','10'=>'10','11'=>'11','12'=>'12'];
         return $arr;
     }
 
-    public static function CCYears($years=9)
+    public static function CCYears($years=9) : array
     {
         $arr = [];
-        $year = (int) date('Y',PX_CTIME);
+        $year = (int) date('Y',time());
         for($i=0; $i <= $years;$i++) {
-            $c = (string) $year + $i;
+            $c = (string) ($year + $i);
             $arr[$c] =  $c;
         }
         return $arr;
     }
 
-    public static function GetEmployerObject($employerPrefix,$data)
+    public static function GetEmployerObject($employerPrefix,$data) : string
     {
-        $html = '
+        return '
         <div class="d-none employer" id="'.$employerPrefix.'_employer"
         data-employer-dom-prefix="'.$employerPrefix.'" 
         '.implode("\n",$data).'
         ></div>
         ';
-        return $html;
     }
-    public static function StripCode($code)
+
+    public static function StripCode($code) : string
     {
-        $arr = explode(TEMPLATE_TAG,$code);
+        $arr = explode("<!--//**-|-**/-->",$code);
         return (sizeof($arr) == 3) ? $arr[1] : $code;
     }
 
@@ -65,7 +65,7 @@ class V
         return str_replace('\\','.',$cn);
     }
 
-    public static function GetClassName($cn)
+    public static function GetClassName($cn) : string
     {
         $arr = explode('\\', $cn);
         return array_pop($arr);
@@ -76,13 +76,6 @@ class V
         return str_replace('_','-',$domId);
     }
 
-    public static function ClassToTemplate($cn)
-    {
-        $cn = str_replace("View\\","",$cn);
-        $arr = explode("_",str_replace('\\','_',$cn));
-        array_shift($arr);
-        return "Modules/".implode("/",$arr);
-    }
 
     public static function ParseDom($keys,$employer=false,string $prefix='')
     {
@@ -111,103 +104,7 @@ class V
         return $obj;
     }
 
-    public static function getFlashTemplate($message)
-    {
-        return '<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Kapat</span></button>
-		'.$message;
-    }
-
-    public static function renderFlashMessages($messages)
-    {
-        if(!array($messages) || sizeof($messages) < 1) {
-            return '';
-        }
-        $r = '';
-        foreach($messages as $k => $v) {
-            $class = ($k == 'notice') ? 'info' : $k;
-            $class = ($class === 'error') ? 'danger' : $k;
-            foreach($v as $mk => $mv) {
-                $r.= '
-				<div class="alert alert-'.$class.' alert-dismissible" role="alert">'.$mv.'</div>
-';
-            }
-        }
-        return $r;
-    }
-
-    function Dom2Array($root) {
-        $array = array();
-
-        //list attributes
-        if($root->hasAttributes()) {
-            foreach($root->attributes as $attribute) {
-                $array['_attributes'][$attribute->name] = $attribute->value;
-            }
-        }
-
-        //handle classic node
-        if($root->nodeType == XML_ELEMENT_NODE) {
-            $array['_type'] = $root->nodeName;
-            if($root->hasChildNodes()) {
-                $children = $root->childNodes;
-                for($i = 0; $i < $children->length; $i++) {
-                    $child = Dom2Array( $children->item($i) );
-
-                    //don't keep textnode with only spaces and newline
-                    if(!empty($child)) {
-                        $array['_children'][] = $child;
-                    }
-                }
-            }
-
-            //handle text node
-        } elseif($root->nodeType == XML_TEXT_NODE || $root->nodeType == XML_CDATA_SECTION_NODE) {
-            $value = $root->nodeValue;
-            if(!empty($value)) {
-                $array['_type'] = '_text';
-                $array['_content'] = $value;
-            }
-        }
-
-        return $array;
-    }
-
-    /**
-     * @param $array
-     * @param null $doc
-     * @return \DOMDocument
-     */
-    public static function Array2Dom($array, $doc = null) {
-        if($doc == null) {
-            $doc = new \DOMDocument();
-            $doc->formatOutput = true;
-            $currentNode = $doc;
-        } else {
-            if($array['_type'] == '_text')
-                $currentNode = $doc->createTextNode($array['_content']);
-            else
-                $currentNode = $doc->createElement($array['_type']);
-        }
-
-        if($array['_type'] != '_text') {
-            if(isset($array['_attributes'])) {
-                foreach ($array['_attributes'] as $name => $value) {
-                    $currentNode->setAttribute($name, $value);
-                }
-            }
-
-            if(isset($array['_children'])) {
-                foreach($array['_children'] as $child) {
-                    $childNode = self::Array2Dom($child, $doc);
-                    $childNode = $currentNode->appendChild($childNode);
-                }
-            }
-        }
-
-        return $currentNode;
-    }
-
-    public static function SecondsToHours($seconds)
+    public static function SecondsToHours($seconds) : string
     {
         //return floor($seconds / 3600) . gmdate(":i:s", $seconds % 3600);
         $f = ":";
@@ -215,7 +112,7 @@ class V
     }
 
 
-    public static function MinutesToHours($time, $format = '%02d:%02d')
+    public static function MinutesToHours($time, $format = '%02d:%02d') : string
     {
         if ($time < 1) {
             return "00:00:00";
@@ -247,19 +144,6 @@ class V
             list($width, $height) = getimagesize($source);
             $width;
             $height;
-
-            //Now detect the file extension
-            //if the file extension is 'jpg', 'jpeg', 'JPG' or 'JPEG'
-            /*if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'JPG' || $extension == 'JPEG') {
-                //then return the image as a jpeg image for the next step
-                $img = imagecreatefromjpeg($source);
-            } elseif ($extension == 'png' || $extension == 'PNG') {
-                //then return the image as a png image for the next step
-                $img = imagecreatefrompng($source);
-            } else {
-                //show an error message if the file extension is not available
-                throw new \Exception("Resim türü desteklenmiyor, jpg veya png. -".$extension."-, ".$source.">".$destination);
-            }*/
 
             $image_data = file_get_contents($source);
             $img = imagecreatefromstring($image_data);

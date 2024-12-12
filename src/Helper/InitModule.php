@@ -12,7 +12,6 @@ class InitModule
 {
     /**
      * @param \K5\Entity\Request\Setup $setup
-     * @param array $fields
      * @param string $route_class
      * @param string $dom_class
      * @param string $css_class

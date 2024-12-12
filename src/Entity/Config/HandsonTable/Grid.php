@@ -11,18 +11,19 @@ namespace K5\Entity\Config\HandsonTable;
 
 class Grid
 {
-    public $DomDestination = 'layout_content';
-    public $ExportPrefix = 'Export';
+    public string $DomDestination = 'layout_content';
+    public string $ExportPrefix = 'Export';
     public $HotObject;
     public $HotDomSelector;
     public $Fields;
     public $Routes;
     public $DomElements;
-    public $width='100%';
-    public $height='100%';
+    public string $width='100%';
+    public string $height='100%';
     public $Disable;
-    public $licensekey='non-commercial-and-evaluation';
+    public string $licensekey='non-commercial-and-evaluation';
     public $RequestAppend;
     public $Components;
     public $Employer;
+    public array $Labels = [];
 }

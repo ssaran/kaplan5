@@ -15,10 +15,10 @@ class PreRouter
     private static $requestedDomainConfig;
     private static $requestMethod;
     private static string $domain;
-    private static ?string $subDomain = null;
+    private static ?string $subDomain;
     private static string $app  = "front";
     private static string $module = "index";
-    private static ?string $deep = null;
+    private static ?string $deep;
     private static string $controller = "index";
     private static string $action = "index";
     private static string $_module;
@@ -60,7 +60,7 @@ class PreRouter
 
                 if(isset(self::$requestedDomainConfig->hasCms) && self::$requestedDomainConfig->hasCms) {
                     self::$_route->hasCms = self::$requestedDomainConfig->hasCms;
-                    if(isset(self::$requestedDomainConfig->cmsForceDomain) && !is_null(self::$requestedDomainConfig->cmsForceDomain) && !empty(self::$requestedDomainConfig->cmsForceDomain)) {
+                    if(isset(self::$requestedDomainConfig->cmsForceDomain) && !empty(self::$requestedDomainConfig->cmsForceDomain)) {
                         self::$_route->cmsDomain = self::$requestedDomainConfig->cmsForceDomain;
                     } else {
                         self::$_route->cmsDomain = self::$_route->sessionDomain;
@@ -205,7 +205,7 @@ class PreRouter
         self::$tmp['aParsedUrl'] = explode("/",trim(self::$tmp['parsedUrl']['path'],"/"));
         self::$_route->tmp = self::$tmp;
         $tmp = self::$tmp['aParsedUrl'];
-        if(sizeof($tmp) < 1) {
+        if(count($tmp) <= 0) {
             return;
         }
 
