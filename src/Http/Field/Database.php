@@ -6,13 +6,13 @@ namespace K5\Http\Field;
 
 class Database
 {
-    public $cell_name;
-    public $column_type;
-    public $table_name;
-    public $is_primary = false;
-    public $emptiable = false;
-    public $nullable = false;
-    public $default = false;
-    public $on_create = false;
-    public $on_update = false;
+    public string $cell_name;
+    public string $column_type;
+    public ?string $table_name = null;
+    public bool $is_primary = false;
+    public bool $emptiable = false;
+    public bool $nullable = false;
+    public ?string $default = null;
+    public ?string $on_create = null;
+    public ?string $on_update = null;
 }

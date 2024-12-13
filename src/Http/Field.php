@@ -20,10 +20,10 @@ class Field
     const FILTER_TRIM       = "trim";
     const FILTER_UPPER      = "upper";
 
-    public $key;
-    public $filter;
-    /** @var \K5\Http\Field\Database */
-    public $database;
+    public string $key;
+    public ?array $filter = null;
+
+    public ?\K5\Http\Field\Database $database;
     public $validation;
 
     public \K5\Http\Field\FormElement $form_element;

@@ -30,7 +30,7 @@ class FormElementCommonAttributes
     public ?string $readonly = null;
     public ?int $size = null;
     public ?int $tabindex = null;
-    public ?float $step = null;
+    public ?string $step = null;
 
     public ?string $oninput = null;
     public ?string $onclick = null;

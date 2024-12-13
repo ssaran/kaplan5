@@ -26,19 +26,20 @@ class FormElement
 
     public string $type;
     public string $name;
-    public string $label;
-    public $defaultValue;
+    public ?string $label;
+    public $defaultValue = null;
 
-    /** @var \K5\Http\Field\FormElementCommonAttributes */
-    public \K5\Http\Field\FormElementCommonAttributes $attributes;
-    public $options;
-    public $filters;
-    public $validators = [];
-    public $messages;
-    public $append;
+    public ?\K5\Http\Field\FormElementCommonAttributes $attributes;
+    public ?array $options = null;
+    public ?array $filters = null;
+    public ?array $validators = null;
+    public ?array $messages = null;
+    public ?array $append = null;
 
 
-    public function __construct($type,$name,$label,$attributes,$append,$options,$filters,$validators,$messages,$defaultValue=false,?float $step=null)
+    public function __construct(string $type,string $name,?string $label,?\K5\Http\Field\FormElementCommonAttributes $attributes,
+                                ?array $append=null,?array $options=null,?array $filters=null,?array $validators=null,
+                                ?array $messages=null,$defaultValue=null,?string $step=null)
     {
         $this->type = $type;
         $this->name = $name;

@@ -12,36 +12,30 @@ class Generator
      * @param bool $isNullable
      * @return \K5\Http\Field
      */
-    public static function GetUUID(string $name,bool $isPrimary=false,bool $isNullable=false) :  \K5\Http\Field
+    public static function GetUUID(string $name,bool $isPrimary=false,bool $isNullable=false,?string $class='form-control') :  \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = false;
+        $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_STRING;
         $field->filter[] = \K5\Http\Field::FILTER_STRIPTAGS;
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->database->is_primary = $isPrimary;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
             $field->database->cell_name,
             null,
             new \K5\Http\Field\FormElementCommonAttributes(),
-            null,
-            null,
-            null,
-            null,
-            null
         );
 
-        $field->form_element->attributes->id = $field->database->cell_name;
         $field->form_element->attributes->maxlength = 36;
         $field->form_element->attributes->minlength = 36;
 
         $field->form_element->attributes->id = $field->database->cell_name;
-        $field->form_element->attributes->class = 'form-control';
+        $field->form_element->attributes->class = $class;
         $field->form_element->attributes->placeholder = \la::ng(\la::$keys->company_account_id_placeholder);
 
         if(!$isNullable) {
@@ -60,23 +54,18 @@ class Generator
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = false;
+        $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->database->is_primary = $isPrimary;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
             $field->database->cell_name,
             null,
             new \K5\Http\Field\FormElementCommonAttributes(),
-            null,
-            null,
-            null,
-            null,
-            null
         );
         $field->form_element->attributes->id = $field->database->cell_name;
 
@@ -93,7 +82,7 @@ class Generator
         return self::dGetTinyInt($name,$default,$isUnsigned);
     }
 
-    public static function dGetTinyInt(string $name,int $default=0,bool $isUnsigned=false) : \K5\Http\Field
+    public static function dGetTinyInt(string $name,$default=0,bool $isUnsigned=false) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
@@ -102,7 +91,7 @@ class Generator
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->database->is_primary = false;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
@@ -142,18 +131,13 @@ class Generator
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->database->is_primary = false;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
             $field->database->cell_name,
             null,
-            new \K5\Http\Field\FormElementCommonAttributes(),
-            null,
-            null,
-            null,
-            null,
-            null
+            new \K5\Http\Field\FormElementCommonAttributes()
         );
         $field->form_element->attributes->id = $field->database->cell_name;
         if($isUnsigned) {
@@ -181,18 +165,13 @@ class Generator
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->database->is_primary = false;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
             $field->database->cell_name,
             null,
-            new \K5\Http\Field\FormElementCommonAttributes(),
-            null,
-            null,
-            null,
-            null,
-            null
+            new \K5\Http\Field\FormElementCommonAttributes()
         );
         $field->form_element->attributes->id = $field->database->cell_name;
         if($isUnsigned) {
@@ -212,7 +191,7 @@ class Generator
      * @param bool $isUnsigned
      * @return \K5\Http\Field
      */
-    public static function dGetInteger(string $name,int $default=0,bool $isUnsigned=false) : \K5\Http\Field
+    public static function dGetInteger(string $name,$default=0,bool $isUnsigned=false) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
@@ -221,7 +200,7 @@ class Generator
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->database->is_primary = false;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
@@ -254,26 +233,27 @@ class Generator
      * @param string $class
      * @return \K5\Http\Field
      */
-    public static function GetPlainNumeric(string $name,string $label,string $placeholder,string $class="form-control") : \K5\Http\Field
+    public static function GetPlainNumeric(string $name,string $label,string $placeholder,string $class="form-control",$defaultValue=null) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = false;
+        $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_NUMERIC,
             $field->database->cell_name,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes(),
-            '',
-            '',
-            '',
-            [],
-            ''
+            null,
+            null,
+            null,
+            null,
+            null,
+            $defaultValue
         );
         $field->form_element->attributes->id = $field->database->cell_name;
         $field->form_element->attributes->class = $class;
@@ -282,26 +262,21 @@ class Generator
         return $field;
     }
 
-    public static function GetIntDate($name,$label='',$placeholder='',$class="form-control")
+    public static function GetIntDate(string $name,string $label='',?string $placeholder=null,string $class="form-control") : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = false;
+        $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_DATE,
             $field->database->cell_name,
             $label,
-            new \K5\Http\Field\FormElementCommonAttributes(),
-            null,
-            null,
-            null,
-            null,
-            null
+            new \K5\Http\Field\FormElementCommonAttributes()
         );
         $field->form_element->attributes->id = $field->database->cell_name;
         $field->form_element->attributes->class = $class;
@@ -310,27 +285,27 @@ class Generator
         return $field;
     }
 
-    public static function GetFloat($name,$label,$placeholder,$hasPresence=False,$step="0.01",$class="form-control")
+    public static function GetFloat(?string $name,?string $label,?string $placeholder,bool $hasPresence=False,$step="0.01",string $class="form-control",$default=null) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = false;
+        $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_FLOAT;
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_DOUBLE;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_NUMERIC,
             $field->database->cell_name,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes(),
-            '',
-            '',
-            '',
-            [],
-            '',
-            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            $default,
             $step
         );
         $field->form_element->attributes->id = $field->database->cell_name;
@@ -344,7 +319,7 @@ class Generator
         return $field;
     }
 
-    public static function GetPlainText($name,$label,$placeholder,$class="form-control",$default=false)
+    public static function GetPlainText(string $name,?string $label,?string $placeholder,string $class="form-control",$default=null) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
@@ -353,17 +328,17 @@ class Generator
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_TEXT,
             $field->database->cell_name,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes(),
-            '',
-            '',
-            '',
-            [],
-            '',
+            null,
+            null,
+            null,
+            null,
+            null,
             $default
         );
         $field->form_element->attributes->id = $field->database->cell_name;
@@ -373,26 +348,21 @@ class Generator
         return $field;
     }
 
-    public static function GetEmail($name,$label,$placeholder,$class="form-control")
+    public static function GetEmail(string $name,string $label,?string $placeholder,?string $class="form-control") : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = false;
+        $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_STRING;
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_TEXT,
             $field->database->cell_name,
             $label,
-            new \K5\Http\Field\FormElementCommonAttributes(),
-            '',
-            '',
-            '',
-            [],
-            ''
+            new \K5\Http\Field\FormElementCommonAttributes()
         );
         $field->form_element->attributes->id = $field->database->cell_name;
         $field->form_element->attributes->class = $class;
@@ -402,26 +372,23 @@ class Generator
         return $field;
     }
 
-    public static function GetPlainSelect($name,$label,$placeholder,$options=[],$class="form-control")
+    public static function GetPlainSelect(string $name,string $label,string $placeholder,?array $options=null,string $class="form-control") : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = false;
+        $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_STRING;
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_SELECT,
             $field->database->cell_name,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes(),
-            '',
+            null,
             $options,
-            '',
-            [],
-            ''
         );
         $field->form_element->attributes->id = $field->database->cell_name;
         $field->form_element->attributes->class = $class;
@@ -440,24 +407,19 @@ class Generator
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = false;
+        $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_STRING;
         $field->filter[] = \K5\Http\Field::FILTER_STRIPTAGS;
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->database->is_primary = false;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
             $field->database->cell_name,
             null,
             new \K5\Http\Field\FormElementCommonAttributes(),
-            null,
-            null,
-            null,
-            null,
-            null
         );
         $field->form_element->attributes->id = $field->database->cell_name;
         if(!is_null($minLength)) {
@@ -474,31 +436,26 @@ class Generator
      * @param string $name
      * @return \K5\Http\Field
      */
-    public static function GetNationalId(string $name) : \K5\Http\Field
+    public static function GetNationalId(string $name,string $class = 'form-control') : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = false;
+        $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_TEXT,
             $field->database->cell_name,
             \la::ng(\la::$keys->national_id),
-            new \K5\Http\Field\FormElementCommonAttributes(),
-            '',
-            '',
-            '',
-            [],
-            ''
+            new \K5\Http\Field\FormElementCommonAttributes()
         );
         $field->form_element->attributes->id = $field->database->cell_name;
         $field->form_element->attributes->maxlength = 11;
         $field->form_element->attributes->minlength = 11;
-        $field->form_element->attributes->class = 'form-control';
+        $field->form_element->attributes->class = $class;
         $field->form_element->attributes->oninput = "this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');";
         $field->form_element->attributes->required = "required";
         $field->form_element->attributes->pattern = ".{11,}";
@@ -509,32 +466,29 @@ class Generator
         return $field;
     }
 
-    public static function GetPhoneNumber($name,$label,$placeholder,$options=[],$class="form-control")
+    public static function GetPhoneNumber(string $name,string $label,?string $placeholder,?array $options=null,?string $class="form-control")  : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = false;
+        $field->default_value = null;
 
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_NUMERIC,
             $field->database->cell_name,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes(),
-            '',
-            '',
-            '',
-            [],
-            ''
+            null,
+            $options,
         );
         $field->form_element->attributes->id = $field->database->cell_name;
         $field->form_element->attributes->maxlength = 10;
         $field->form_element->attributes->minlength = 10;
-        $field->form_element->attributes->class = 'form-control';
+        $field->form_element->attributes->class = $class;
         $field->form_element->attributes->oninput = "this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');";
         $field->form_element->attributes->required = "required";
         $field->form_element->attributes->pattern = ".{10,10}";
@@ -554,34 +508,31 @@ class Generator
         return $field;
     }
 
-    public static function GetCountryCode($name,$label,$placeholder,$options=[],$class="form-control")
+    public static function GetCountryCode(string $name,string $label,string $placeholder,?array $options=null,string $class="form-control",?string $defaultValue="90") : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = false;
+        $field->default_value = null;
 
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
         $field->database = new \K5\Http\Field\Database();
         $field->database->cell_name = $name;
         $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = [];
+        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_NUMERIC,
             $field->database->cell_name,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes(),
-            '',
-            '',
-            '',
-            [],
-            ''
+            null,
+            $options
         );
         $field->form_element->attributes->id = $field->database->cell_name;
         $field->form_element->attributes->maxlength = 6;
         $field->form_element->attributes->minlength = 1;
-        $field->form_element->attributes->class = 'form-control';
-        $field->form_element->attributes->placeholder = \la::ng(\la::$keys->country_code);
-        $field->form_element->defaultValue = "90";
+        $field->form_element->attributes->class = $class;
+        $field->form_element->attributes->placeholder = $placeholder;
+        $field->form_element->defaultValue = $defaultValue;
 
         $field->form_element->validators[\K5\Http\Field\FormValidator::TYPE_DIGIT] = new \K5\Http\Field\FormValidator(\K5\Http\Field\FormValidator::TYPE_DIGIT,\la::ng(\la::$keys->must_be_numeric));
 
