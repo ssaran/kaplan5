@@ -5,13 +5,16 @@ namespace K5\Entity\Request;
 
 class Headers
 {
-    public ?string $ApiPrefix;
-    public ?string $Employer;
-    public ?string $DomDestination;
-    public ?string $ActiveTabId;
-    public ?string $IsModal;
-    public ?string $IsIframe;
-    public ?string $IsData;
-    public ?string $IsCommon;
-    public ?string $IsComponent;
+    public ?string $ApiPrefix = null;
+    public ?string $IssuerPrefix = null;
+    public ?string $Employer = null;
+    public ?string $DomDestination = 'layout_content';
+    public ?string $IsAjax = null;
+    public ?string $IsApi = null;
+    public ?string $IsModal = null;
+    public ?string $IsIframe = null;
+    public ?string $IsData = null;
+    public ?string $IsCommon = null;
+    public ?string $IsComponent = null;
+    public ?string $ActiveTabId = null;
 }

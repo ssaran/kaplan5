@@ -8,11 +8,6 @@ class Setup
     public \Phalcon\Config\Config $Config;
     public ?string $BaseUrl = null;
     public ?string $SessionDomain = null;
-    public ?string $IssuerKey = null;
-    public ?string $TabKey = null;
-    public ?string $IframeKey = null;
-    public bool $IsAjax = false;
-    public bool $IsApi = false;
     public int $Page = 1;
 
     public ?\K5\Entity\Request\Headers $Headers;
