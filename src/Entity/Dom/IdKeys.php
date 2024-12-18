@@ -6,6 +6,10 @@ namespace K5\Entity\Dom;
 
 class IdKeys
 {
+    public string $MainTab = '';
+    public string $MainTabTrigger = '';
+    public string $ContentTab = '';
+    public string $ContentTrigger = '';
     public string $Employer = '';
     public string $BaseCover = '';
     public string $BaseJs = '';
