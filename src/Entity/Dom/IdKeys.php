@@ -6,6 +6,8 @@ namespace K5\Entity\Dom;
 
 class IdKeys
 {
+    public string $TabLinkContainer = '';
+    public string $TabContentContainer = '';
     public string $MainTab = '';
     public string $MainTabTrigger = '';
     public string $ContentTab = '';
