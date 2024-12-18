@@ -10,22 +10,13 @@ namespace K5;
 
 class PreRouter
 {
-    private static $config;
-    private static $appConfig;
-    private static $requestedDomainConfig;
-    private static $requestMethod;
-    private static string $domain;
-    private static ?string $subDomain;
-    private static string $app  = "front";
-    private static string $module = "index";
-    private static ?string $deep;
-    private static string $controller = "index";
-    private static string $action = "index";
+    private static \Phalcon\Config\Config $config;
+    private static \Phalcon\Config\Config $appConfig;
+    private static \Phalcon\Config\Config $requestedDomainConfig;
+    private static ?string $requestMethod = null;
     private static string $_module;
-    private static ?string $_deep = null;
     private static string $_controller;
     private static string $_action;
-    private static ?string $namespace = null;
     private static array $params = [];
     private static array $tmp = [];
     private static string $i18n = "tr";
@@ -38,7 +29,6 @@ class PreRouter
 
     public static function SetInstance($config,$server) : bool
     {
-        self::$subDomain = null;
         if(is_null(self::$_server)){
             self::$_route = new \K5\Entity\Request\Route();
             self::$_server = $server;
@@ -168,7 +158,6 @@ class PreRouter
 
     private static function parseDomain() : void
     {
-        self::$subDomain = null;
         self::$_route->subDomain = null;
         if(isset(self::$_server['HTTP_X_ORIGINAL_HOST'])) {
             self::$_route->domain = self::$_server['HTTP_X_ORIGINAL_HOST'];
@@ -258,7 +247,6 @@ class PreRouter
         if(self::$appConfig['route'] === 'deep') {
             if(sizeof($tmp) > 0) {
                 self::$_route->deep = array_shift($tmp);
-                self::$deep = self::$_route->deep;
             }
         }
         /** Check forced index */
