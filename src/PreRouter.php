@@ -151,9 +151,12 @@ class PreRouter
         return str_replace(".","_",self::GetSessionDomain());
     }
 
-    public static function CreateIssuerKey(int $offset = 3) : string
+    public static function CreateIssuerKey(int $offset = 3, bool $trim = true) : string
     {
         $_arr = explode("\\",strtolower(\K5\PreRouter::GetNameSpace()));
+        if($trim) {
+            array_pop($_arr);
+        }
         return implode("_",array_slice($_arr,$offset));
     }
 
