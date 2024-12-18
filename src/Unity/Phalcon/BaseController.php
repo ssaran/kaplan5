@@ -17,12 +17,6 @@ error_reporting(E_ALL);
 
 class BaseController extends \Phalcon\Mvc\Controller
 {
-    public string $issuer_key = '';
-    public string $SessionDomain = '';
-    public ?string $SubDomain;
-    public string $App;
-    public string $Module;
-
     public function initialize()
     {
 
