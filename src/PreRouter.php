@@ -222,7 +222,7 @@ class PreRouter
         self::$_route->isApi = false;
         self::$_route->isService = false;
 
-        if($current !== 'services') {
+        if($current !== '_services') {
             $cConfig = self::checkAppConfig($current);
             if($cConfig) {
                 self::$appConfig = $cConfig;
