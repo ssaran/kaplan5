@@ -392,18 +392,21 @@ class PreRouter
         return (isset(self::$requestedDomainConfig->services->{$app})) ? self::$requestedDomainConfig->services->{$app} : null;
     }
 
-    public static function ParseDefault($routes,string $prefix=null,bool $hasLeadUnderscore=false)
+    public static function ParseDefault($routes,string $prefix=null)
     {
         $obj = new $routes();
         $vars = get_object_vars($obj);
 
         $_prefix = (!is_null($prefix)) ? $prefix.'/' : '/';
-        if($hasLeadUnderscore) {
-            $_prefix = $_prefix.'_';
-        }
+
         foreach($vars as $key => $v) {
-            $arr = ($hasLeadUnderscore) ? explode("_",substr($key, 1)) : explode("_",$key);
-            $val = $_prefix;
+            if(substr($key, 1) === '_') {
+                $arr = explode("_",substr($key, 1));
+                $val = $_prefix.'_';
+            } else {
+                $arr = explode("_",$key);
+                $val = $_prefix;
+            }
 
             foreach ($arr as $path) {
                 $val.= mb_strtolower(self::FromCamelCase($path,"-"))."/";
