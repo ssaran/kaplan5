@@ -109,7 +109,7 @@ class Ui
             return $ret;
         }
 
-        $parsed = self::_parseForHTTP($ret,$isAjax);
+        $parsed = self::_parseForHTTP($ret);
         //$layout = is_object(self::$_layout) ? new self::$_layout() : new \K5\Helper\BaseLayout();
 
         return [
@@ -381,7 +381,7 @@ class Ui
             'ajax_call_'.U::randomChars(8,true),'add','','documentReady');
     }
 
-    private static function _parseForHTTP($_output,$isAjax=false) : array
+    private static function _parseForHTTP(iterable $_output) : array
     {
         $r = [];
         $r['css'] = [];
