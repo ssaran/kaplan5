@@ -400,8 +400,8 @@ class PreRouter
         $_prefix = (!is_null($prefix)) ? $prefix.'/' : '/';
 
         foreach($vars as $key => $v) {
-            if(substr($key, 1) === '_') {
-                $arr = explode("_",substr($key, 1));
+            if($key[0] === '_') {
+                $arr = explode("_", ltrim($key, '_'));
                 $val = $_prefix.'_';
             } else {
                 $arr = explode("_",$key);
