@@ -10,6 +10,7 @@ class Headers
     public ?string $Employer = null;
     public ?string $DomDestination = 'layout_content';
     public bool $IsAjax = false;
+    public bool $IsTab = false;
     public ?string $IsApi = null;
     public ?string $IsModal = null;
     public ?string $IsIframe = null;

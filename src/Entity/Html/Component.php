@@ -17,4 +17,5 @@ class Component
     public string $K5Type = 'lib';
     public ?string $Content;
     public bool $Refresh = false;
+    public ?string $ApiPrefix = null;
 }

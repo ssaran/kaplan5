@@ -256,17 +256,23 @@ class Ui
     }
 
     /**
-     * @param $title
-     * @param $tabId
-     * @return \K5\Entity\Html\Component
+     * @param string $apiPrefix
+     * @param string $tabKey
+     * @param string $body
+     * @param string|null $title
+     * @param string $mode
+     * @return Entity\Html\Component
      */
-    public static function GetTabTitlePacket($title,$tabId='main') : \K5\Entity\Html\Component
+    public static function GetBs5Tab(string $apiPrefix, string $tabKey,string $body,?string $title=null,string $mode='add') : \K5\Entity\Html\Component
     {
-        $html = new \K5\Entity\Html\Component();
-        $html->Content = $title;
-        $html->DomID = $tabId;
-        $html->Type = 'tab_title';
-        return $html;
+        $_bs5Tab = new \K5\Entity\Html\Bs5Tab();
+        $_bs5Tab->ApiPrefix = $apiPrefix;
+        $_bs5Tab->TabKey = $tabKey;
+        $_bs5Tab->Body = $body;
+        $_bs5Tab->Title = $title;
+        $_bs5Tab->DomID = $apiPrefix.'_fake_dom';
+        $_bs5Tab->Mode = $mode;
+        return $_bs5Tab;
     }
 
     /**
