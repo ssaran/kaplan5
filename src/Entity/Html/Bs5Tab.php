@@ -14,6 +14,7 @@ class Bs5Tab extends Component
     public string $TabKey;
     public ?string $Title = null;
     public string $Body = '';
+    public string $K5Type = 'tab';
     public ?\K5\Entity\Config\BsModal5 $Config = null;
 
 }
