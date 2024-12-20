@@ -18,4 +18,5 @@ class Component
     public ?string $Content;
     public bool $Refresh = false;
     public ?string $ApiPrefix = null;
+    public ?string $Employer = null;
 }

@@ -99,9 +99,10 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $e;
     }
 
-    public function GetBs5Tab(string $apiPrefix, string $tabKey,string $body,?string $title=null,string $mode='add') : \K5\Entity\Html\Component
+    public function GetBs5Tab(string $employer,string $apiPrefix, string $tabKey,string $body,?string $title=null,string $mode='add') : \K5\Entity\Html\Component
     {
         $_bs5Tab = new \K5\Entity\Html\Bs5Tab();
+        $_bs5Tab->Employer = $employer;
         $_bs5Tab->ApiPrefix = $apiPrefix;
         $_bs5Tab->TabKey = $tabKey;
         $_bs5Tab->Body = $body;
