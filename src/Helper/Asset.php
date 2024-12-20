@@ -82,6 +82,13 @@ class Asset
         $js->Defer = true;
         $collection->Append($js);
 
+        $js = new \K5\Entity\Html\Resource\JavascriptLib();
+        $js->Content = $prefix."/k5/js/tabs.js";
+        $js->DomID = "JsLib_k5_bs5tab";
+        $js->Refresh = $refreshJs;
+        $js->Defer = true;
+        $collection->Append($js);
+
         return $collection;
     }
 }

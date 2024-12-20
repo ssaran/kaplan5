@@ -107,7 +107,7 @@ class BaseController extends \Phalcon\Mvc\Controller
         $_bs5Tab->TabKey = $tabKey;
         $_bs5Tab->Body = $body;
         $_bs5Tab->Title = $title;
-        $_bs5Tab->DomID = $apiPrefix.'_fake_dom';
+        $_bs5Tab->DomID = $apiPrefix.$tabKey;
         $_bs5Tab->Mode = $mode;
         return $_bs5Tab;
     }
