@@ -1236,14 +1236,14 @@ class U
      * @param string|null $node
      * @return string
      */
-    public static function GetIMUuid(string $suffix,?string $hi=null,?string $clock=null,?string $node=null) : string
+    public static function GetIMUuid(string $suffix,?string $hi=null,?string $clock=null,?string $node=null,string $filler="0") : string
     {
         $uuid = \UUID\UUID::uuid7();
         $arr = explode("-",$uuid);
-        $arr[2] = (!is_null($hi)) ? self::FitStr($hi,4,"0") : $arr[2];
-        $arr[3] = (!is_null($clock)) ? self::FitStr($clock,4,"0") : $arr[3];
-        $arr[4] = (!is_null($node)) ? self::FitStr($node,12,"0") : $arr[4];
-        $arr[5] =  self::FitStr($suffix,13,"0");
+        $arr[2] = (!is_null($hi)) ? self::FitStr($hi,4,$filler) : $arr[2];
+        $arr[3] = (!is_null($clock)) ? self::FitStr($clock,4,$filler) : $arr[3];
+        $arr[4] = (!is_null($node)) ? self::FitStr($node,12,$filler) : $arr[4];
+        $arr[5] =  self::FitStr($suffix,13,$filler);
 
         return implode("-",$arr);
     }
@@ -1296,14 +1296,15 @@ class U
      */
     public static function FitStr(string $str, int $max, string $filler="0") : string
     {
-        if(strlen($str) >= $max) {
+        $_len = (int)strlen($str);
+        if($_len >= $max) {
             return substr($str, 0, $max);
         }
         if($filler === "random") {
             return $str.strtolower(self::randomChars($max - strlen($str)));
         }
 
-        return $str.strtolower(str_pad($str,$max - strlen($str),$filler,STR_PAD_RIGHT));
+        return strtolower(str_pad($str,$max - strlen($str),$filler,STR_PAD_RIGHT));
     }
 
     /**
