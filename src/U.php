@@ -1304,7 +1304,7 @@ class U
             return $str.strtolower(self::randomChars($max - strlen($str)));
         }
 
-        return strtolower(str_pad($str,$max - strlen($str),$filler,STR_PAD_RIGHT));
+        return strtolower(str_pad($str,$max,$filler,STR_PAD_LEFT));
     }
 
     /**
