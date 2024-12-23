@@ -8,10 +8,9 @@
 
 namespace K5\Unity\Phalcon\Task;
 
-
 use K5\U as u;
 
-class TaskBase extends \Phalcon\Cli\Task
+class Base extends \Phalcon\Cli\Task
 {
     const KEY_CONN = "conn_";
     const KEY_TIMER = "timer_";
@@ -19,9 +18,15 @@ class TaskBase extends \Phalcon\Cli\Task
 
     /** @var \K5\Entity\Request\Setup */
     protected \K5\Entity\Request\Setup $setup;
+    protected ?array $params = null;
 
     public function initialize()
     {
 
+    }
+
+    public function AddParams(string $param) : void
+    {
+        $this->params[] = $param;
     }
 }
