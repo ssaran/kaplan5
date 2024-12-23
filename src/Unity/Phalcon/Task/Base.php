@@ -51,4 +51,9 @@ class Base extends \Phalcon\Cli\Task
     {
         $this->params[] = $param;
     }
+
+    public function Exec() : void
+    {
+        echo "K5 Base Task \n";
+    }
 }
