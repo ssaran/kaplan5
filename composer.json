@@ -17,7 +17,10 @@
     "require": {
         "php": "^8.1",
         "oittaa/uuid": "dev-master",
-        "guzzlehttp/guzzle": "^7.0"
+        "guzzlehttp/guzzle": "^7.0",
+        "nikic/php-parser": "^5.4",
+        "ext-redis": "*",
+      "ext-pdo": "*"
     },
     "require-dev": {
         "phalcon/ide-stubs": "*",

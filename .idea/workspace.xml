@@ -50,17 +50,22 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "Q:/ssaran/kaplan5/src/Entity/Websocket",
+    "last_opened_file_path": "Q:/ssaran/kaplan5/src/Helper/Locale",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mariadb"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="Q:\ssaran\kaplan5\src\Helper\Locale" />
+      <recent name="Q:\ssaran\kaplan5\src\Helper" />
+      <recent name="Q:\ssaran\kaplan5\src" />
       <recent name="Q:\ssaran\kaplan5\src\Entity\Websocket" />
       <recent name="Q:\ssaran\kaplan5\src\Helper\Websocket" />
-      <recent name="Q:\ssaran\kaplan5\src\Entity\Html" />
-      <recent name="Q:\ssaran\kaplan5\src\Entity\Response\Asset" />
-      <recent name="Q:\ssaran\kaplan5\src\Entity\View" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -171,7 +176,7 @@
       <workItem from="1734427361392" duration="1513000" />
       <workItem from="1734502720764" duration="10569000" />
       <workItem from="1734589109168" duration="15897000" />
-      <workItem from="1735799782005" duration="622000" />
+      <workItem from="1735799782005" duration="17670000" />
     </task>
     <servers />
   </component>

@@ -22,6 +22,7 @@ class ComposerStaticInita2c3fd11c92cab9ffc5ab5cdc7c249e6
         array (
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
+            'PhpParser\\' => 10,
         ),
         'K' => 
         array (
@@ -48,6 +49,10 @@ class ComposerStaticInita2c3fd11c92cab9ffc5ab5cdc7c249e6
         'Psr\\Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
+        ),
+        'PhpParser\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
         'K5\\' => 
         array (
