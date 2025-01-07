@@ -38,6 +38,7 @@
       <path value="$PROJECT_DIR$/vendor/phpstan/phpstan" />
       <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
     </include_path>
   </component>
   <component name="ProjectId" id="2Oxs2mhPIKhs1LSxAjrBmoNqznO" />
@@ -176,7 +177,7 @@
       <workItem from="1734427361392" duration="1513000" />
       <workItem from="1734502720764" duration="10569000" />
       <workItem from="1734589109168" duration="15897000" />
-      <workItem from="1735799782005" duration="18486000" />
+      <workItem from="1735799782005" duration="19352000" />
     </task>
     <servers />
   </component>

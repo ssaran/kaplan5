@@ -1,6 +1,6 @@
 <?php
 
-namespace K5\Entity\Translate;
+namespace K5\Entity\Locale;
 
 class Keys
 {

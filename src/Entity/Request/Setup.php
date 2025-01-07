@@ -16,11 +16,7 @@ class Setup
     public ?\K5\Entity\Dom\ClassKeys $Css;
     public ?\K5\Component\Route $Routes;
     public ?\K5\Component\RequestFields $Fields;
-    public ?\K5\Entity\Translate\Keys $Keys;
-    public ?array $Translate;
-
-    public string $Locale = 'tr_TR';
-    public string $i18n = 'tr';
+    public ?\K5\Entity\Locale\Locale $Locale;
 
     public ?array $Decoded = [];
     public ?array $RequestParams = [];
