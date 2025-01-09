@@ -4,5 +4,5 @@ namespace K5\Entity\Locale;
 
 class Keys
 {
-    public static string $login = 'login';
+    public string $login = 'login';
 }

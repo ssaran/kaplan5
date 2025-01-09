@@ -57,6 +57,10 @@ class View
         }
     }
 
+    protected function translate(string $key) : string
+    {
+         return $this->setup->Locale->Translate[$key] ?? $key;
+    }
 
     protected function renderHtml($vars) : void
     {
