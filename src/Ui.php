@@ -374,7 +374,7 @@ class Ui
     {
         $key = U::randomChars(8,true);
         $content = '
-                Ui.xhrCallFromDomElement("'.$modalID.'");
+                k5.xhr.callFromDomElement("'.$modalID.'");
 ';
         self::PrepareJavascriptContent($content, 'js_JSRealodFromDomID_'.$key,'add','','documentReady');
     }
@@ -383,7 +383,7 @@ class Ui
     {
         $_data = is_null($data) ? '{}' : json_encode($data);
         $_headers = (count($headers) < 1) ?  '{}' : '{'.implode(",",$headers).'}';
-        Ui::PrepareJavascriptContent("\nMain.xjCall('".$url."','".$type."',".$_data.",".$_headers.");\n",
+        Ui::PrepareJavascriptContent("\nk5.xhr.call('".$url."','".$type."',".$_data.",".$_headers.");\n",
             'ajax_call_'.U::randomChars(8,true),'add','','documentReady');
     }
 

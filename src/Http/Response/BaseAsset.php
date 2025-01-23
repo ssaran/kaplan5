@@ -66,9 +66,11 @@ class BaseAsset
             if (file_exists($_file)) {
                 $content = file_get_contents($_file);
                 if($item->Type == 'css') {
-                    $this->packed['css'] .= $this->MinifyCSS($content) . "\n";
+                    //$this->packed['css'] .= $this->MinifyCSS($content) . "\n";
+                    $this->packed['css'] .= $content."\n";
                 } else {
-                    $this->packed['js_lib'] .= $this->MinifyJavascript($content) . "\n";
+                    //$this->packed['js_lib'] .= $this->MinifyJavascript($content) . "\n";
+                    $this->packed['js_lib'] .= $content."\n";
                 }
             } else {
                 \K5\U::linfo('Minify component '.$_file.' not exist \n');
