@@ -41,9 +41,6 @@ var Export = function () {
             },1000)
         },
         Xls: function (data,filename,domPrefix) {
-            console.log("Export XLS");
-            console.log(filename,domPrefix,data);
-
             var w = window.open(glb.env.loc.origin+"/xlsx");
             var data = data;
             data = data+'<a id="'+filename+'-xlsx" onclick="DownloadXlsX(\''+filename+'\',\''+domPrefix+'\')" href="javascript:void(0);" class="btn btn-default xls-data"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Excel</a>\n';

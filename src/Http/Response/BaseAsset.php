@@ -77,7 +77,6 @@ class BaseAsset
         return $this->packed;
     }
 
-
     public function MinifyJavascript(string $code) : string
     {
         // Remove comments

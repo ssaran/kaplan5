@@ -33,12 +33,12 @@ function HandsonTableHelper() {
                 glb.env.tmpHeaders['employer'] = this.config.Employer;
             }
             let _options = {
-                'nohistory':'yes'
+                'reqhistory':'yes'
             }
             if(this.config.hasOwnProperty('callback') && this.config.callback.hasOwnProperty('Load') && typeof this.config.callback.Load === "function") {
                 _options['callback'] = this.config.callback.Load;
             }
-            Main.xjCall(this.config.Routes.Load, 'post',  data, _options);
+            k5.xhr.call(this.config.Routes.Load, 'post',  data, _options);
         },
         InitHtml: function() {
             this.config.dropdownClass = Util.slugify(this.config.DomElements.HotObject);
@@ -310,7 +310,7 @@ function HandsonTableHelper() {
                         }
 
                         let btnAppend = JSON.stringify(_append);
-                        _buttons[key] = '<button type="button" class="'+config.Class+'" data-url="'+config.Uri+'" data-type="post"  data-nohistory="yes" data-scrolltotop="yes" title="'+config.Title+'" data-append='+btnAppend+' '+_data+' ><i class="'+config.Icon+'" aria-hidden="true"></i> &nbsp; '+config.Label+'</button>';
+                        _buttons[key] = '<button type="button" class="'+config.Class+'" data-url="'+config.Uri+'" data-type="post"  data-reqhistory="yes" data-scrolltotop="yes" title="'+config.Title+'" data-append='+btnAppend+' '+_data+' ><i class="'+config.Icon+'" aria-hidden="true"></i> &nbsp; '+config.Label+'</button>';
                     }
                 }
             }
@@ -367,7 +367,7 @@ function HandsonTableHelper() {
                 '<header class="navbar navbar-expand-md d-print-none">'+
                 '    <div class="container-fluid">'+
                 '        <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">'+
-                '           <a class="navbar-brand '+_reloadClass+'" href="'+_reloadUrl+'" data-nohistory="yes" data-type="post">' +
+                '           <a class="navbar-brand '+_reloadClass+'" href="'+_reloadUrl+'" data-reqhistory="yes" data-type="post">' +
                 '               <i class="fa fa-circle fa-fw navbar-ajax-indicator"></i>'+
                 '               <span class="sr-only">Loading...</span> ' + _navbarLabel +
                 '           </a>' +
@@ -477,8 +477,8 @@ function HandsonTableHelper() {
                 glb.env.tmpHeaders['employer'] = this.config.Employer;
             }
 
-            Main.xjCall(this.config.Routes.Search, 'post',  data,{
-                'nohistory':'yes',
+            k5.xhr.call(this.config.Routes.Search, 'post',  data,{
+                'reqhistory':'yes',
                 'callback': function (resp) {
                     Export.Print(resp.data);
                 }
@@ -496,8 +496,8 @@ function HandsonTableHelper() {
                 glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders);
                 glb.env.tmpHeaders['employer'] = that.config.Employer;
             }
-            Main.xjCall(this.config.Routes.Search, 'post',data,{
-                'nohistory':'yes',
+            k5.xhr.call(this.config.Routes.Search, 'post',data,{
+                'reqhistory':'yes',
                 'callback':function (resp) {
                     Export.Pdf(resp.data,that.config.ExportPrefix);
                 }
@@ -515,8 +515,8 @@ function HandsonTableHelper() {
                 glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders);
                 glb.env.tmpHeaders['employer'] = that.config.Employer;
             }
-            Main.xjCall(this.config.Routes.Search, 'post', data,{
-                'nohistory':'yes',
+            k5.xhr.call(this.config.Routes.Search, 'post', data,{
+                'reqhistory':'yes',
                 'callback':function (resp) {
                     $("#"+that.config.DomElements.HotSelector+"_export_container").html(resp.data).promise().done(that.DownloadXLSX(_e));
                 }
@@ -540,8 +540,8 @@ function HandsonTableHelper() {
                 glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders);
                 glb.env.tmpHeaders['employer'] = that.config.Employer;
             }
-            Main.xjCall(this.config.Routes.Search, 'post',data,{
-                'nohistory':'yes',
+            k5.xhr.call(this.config.Routes.Search, 'post',data,{
+                'reqhistory':'yes',
                 'callback':function (resp) {
                     Export.Cvs(resp.data,that.config.ExportPrefix,that.config.DomElements.HotSelector);
                 }
@@ -563,12 +563,12 @@ function HandsonTableHelper() {
                     glb.env.tmpHeaders['employer'] = this.config.Employer;
                 }
                 let _options = {
-                    'nohistory':'yes'
+                    'reqhistory':'yes'
                 }
                 if(this.config.hasOwnProperty('callback') && this.config.callback.hasOwnProperty('Load') && typeof this.config.callback.Search === "function") {
                     _options['callback'] = this.config.callback.Search;
                 }
-                Main.xjCall(this.config.Routes.Search, 'post', data,_options);
+                k5.xhr.call(this.config.Routes.Search, 'post', data,_options);
             }
         },
         RendererDefaultAction: function (instance, td, row, col, prop, value, cellProperties) {
@@ -687,7 +687,7 @@ var HandsonTableFunctions = function () {
                 glb.env.tmpHeaders = Util.CloneObj(glb.env.xHeaders);
                 glb.env.tmpHeaders['employer'] = that.config.Employer;
             }
-            Main.xjCall(that.config.Routes.CellUpdate, 'post', data,{'nohistory':'yes'});
+            k5.xhr.call(that.config.Routes.CellUpdate, 'post', data,{'reqhistory':'yes'});
         }
     }
 }();

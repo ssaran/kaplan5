@@ -306,7 +306,7 @@ class Ui
     {
         $key = U::randomChars(8,true);
         $content = "
-                Main.resetForm('".$idForm."');
+                k5.form.reset('".$idForm."');
 ";
         self::PrepareJavascriptContent($content, 'reset_form_'.$key,'add','','documentReady');
     }
@@ -317,7 +317,7 @@ class Ui
         $title = str_replace( "\n", '<br>', $title);
         $key = U::randomChars(8,true);
         $content = '     
-                Modal5.Alert("'.$message.'","'.$title.'");
+                k5.tpl.modal.alert("'.$message.'","'.$title.'");
 ';
         self::PrepareJavascriptContent($content, 'js_alert_'.$key,'add','','documentReady');
     }
@@ -328,7 +328,7 @@ class Ui
         $title = str_replace( "\n", '<br>', $title);
         $key = U::randomChars(8,true);
         $content = '
-            Modal5.Error("'.$message.'","'.$title.'","'.$size.'");
+            k5.tpl.modal.error("'.$message.'","'.$title.'","'.$size.'");
 ';
         self::PrepareJavascriptContent($content, 'js_alert_'.$key,'add','','documentReady');
     }
@@ -338,7 +338,7 @@ class Ui
         $message = addslashes(str_replace( "\n", '<br>', $message));
         $key = U::randomChars(8,true);
         $content = '
-                Util.JSNotify("'.$message.'","'.$type.'")
+            k5.screen.notify("'.$message.'","'.$type.'")
 ';
         self::PrepareJavascriptContent($content, 'js_notify_'.$key,'add','','documentReady');
     }
