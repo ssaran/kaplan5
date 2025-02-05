@@ -10,7 +10,7 @@ class Route
     public string $app;
     public string $module;
     public ?string $deep;
-    public ?string $extension = null;
+    public ?string $extended;
     public string $controller;
     public string $action;
     public string $namespace;

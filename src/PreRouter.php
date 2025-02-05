@@ -43,6 +43,7 @@ class PreRouter
                 self::$_route->app = self::$requestedDomainConfig->default->app;
                 self::$_route->module = self::$requestedDomainConfig->default->module;
                 self::$_route->deep = null;
+                self::$_route->extended = null;
                 self::$_route->controller = self::$requestedDomainConfig->default->controller;
                 self::$_route->action = self::$requestedDomainConfig->default->action;
                 self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
@@ -62,6 +63,7 @@ class PreRouter
                 self::$_route->app = self::$requestedDomainConfig->default->app;
                 self::$_route->module = self::$requestedDomainConfig->default->module;
                 self::$_route->deep = null;
+                self::$_route->extended = null;
                 self::$_route->controller = self::$requestedDomainConfig->default->controller;
                 self::$_route->action = self::$requestedDomainConfig->default->action;
                 self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
@@ -173,7 +175,7 @@ class PreRouter
             self::$_route->sessionDomain = self::$_route->domain;
         } else {
             $host = explode(".",self::$_server['HTTP_HOST']);
-            if(sizeof($host) < 3) {
+            if(count($host) < 3) {
                 self::$_route->domain = self::$_server['HTTP_HOST'];
                 self::$_route->sessionDomain = self::$_route->domain;
             } else {
@@ -229,7 +231,7 @@ class PreRouter
                 $current = null;
             }
         } else {
-            if(sizeof($tmp) > 0) {
+            if(count($tmp) > 0) {
                 $current = array_shift($tmp);
                 $cConfig = self::checkServicesConfig($current);
                 if($cConfig) {
@@ -242,7 +244,7 @@ class PreRouter
         if($current != '') {
             self::$_route->module = $current;
         } else {
-            if(sizeof($tmp) > 0) {
+            if(count($tmp) > 0) {
                 self::$_route->module = array_shift($tmp);
             }
         }
@@ -253,27 +255,29 @@ class PreRouter
         }
         self::$_module = self::$_route->module;
 
-        if(self::$appConfig['route'] === 'deep') {
-            if(sizeof($tmp) > 0) {
-                self::$_route->deep = array_shift($tmp);
+        if(self::$appConfig['route'] === 'deep' && (count($tmp) > 0)) {
+            self::$_route->deep = array_shift($tmp); // Set deep route
+            if(isset(self::$appConfig['isExtended']) && self::$appConfig['isExtended'] === true && count($tmp) > 0) {
+                self::$_route->extended = array_shift($tmp);
             }
         }
+
         /** Check forced index */
         $_fController = null;
         if(isset(self::$appConfig['forceModuleController']) && isset(self::$appConfig['forceModuleController'][self::$_route->module])) {
             $_fController = self::$appConfig['forceModuleController'][self::$_route->module];
         }
 
-        if(sizeof($tmp) > 0) {
+        if(count($tmp) > 0) {
             self::$_route->controller = array_shift($tmp);
         }
 
-        if(sizeof($tmp) > 0) {
+        if(count($tmp) > 0) {
             self::$_route->action = array_shift($tmp);
         }
         self::$_action = self::$_route->action;
 
-        if(sizeof($tmp) > 0) {
+        if(count($tmp) > 0) {
             foreach($tmp as $tk => $tv) {
                 self::$_route->params[$tk] = $tv;
             }
@@ -319,7 +323,11 @@ class PreRouter
         self::$_controller = self::$_route->controller;
         self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module);
         if(!is_null(self::$_route->deep)) {
-            self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module). '\\' . ucfirst(self::$_route->deep);
+            if(is_null(self::$_route->extended)) {
+                self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module). '\\' . ucfirst(self::$_route->deep);
+            } else {
+                self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module). '\\' . ucfirst(self::$_route->deep). '\\' . ucfirst(self::$_route->extended);
+            }
         }
 
         return true;
@@ -346,7 +354,7 @@ class PreRouter
 
         self::$_module = self::$_route->module;
         self::$versionApi = array_shift($tmp);
-        if(sizeof($tmp) > 0) {
+        if(count($tmp) > 0) {
             self::$_route->controller = array_shift($tmp);
         }
 
@@ -355,12 +363,12 @@ class PreRouter
             self::$_route->controller = str_replace(" ","",ucwords(str_replace("-"," ",self::$_route->controller)));
         }
 
-        if(sizeof($tmp) > 0) {
+        if(count($tmp) > 0) {
             self::$_route->action = array_shift($tmp);
         }
         self::$_action = self::$_route->action;
 
-        if(sizeof($tmp) > 0) {
+        if(count($tmp) > 0) {
             foreach($tmp as $tk => $tv) {
                 self::$_route->params[$tk] = $tv;
             }
