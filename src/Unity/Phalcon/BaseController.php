@@ -22,7 +22,7 @@ class BaseController extends \Phalcon\Mvc\Controller
 
     }
 
-    public function GetHtmlPacket($content,$domId,$mode='content-add',$domDestination='layout_content',$k5Destination='layout_content') : \K5\Entity\Html\Resource\Html
+    public function GetHtmlPacket(string $content,string $domId,string $mode='content-add',string $domDestination='layout_content',string $k5Destination='layout_content') : \K5\Entity\Html\Resource\Html
     {
         $html = new \K5\Entity\Html\Resource\Html();
         $html->Content = $content;
@@ -33,7 +33,7 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $html;
     }
 
-    public function GetKatmerPacket($content,$domDestination='layout_content',$mode='content-add') : \K5\Entity\Html\Resource\Html
+    public function GetKatmerPacket(string $content,string $domDestination='layout_content',string $mode='content-add') : \K5\Entity\Html\Resource\Html
     {
         $html = new \K5\Entity\Html\Resource\Html();
         $html->Content = $content;
@@ -44,18 +44,18 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $html;
     }
 
-    public function GetJavascriptPacket($content,$domId,$refresh=false,$mode='add',$k5Type='documentReady') : \K5\Entity\Html\Resource\Javascript
+    public function GetJavascriptPacket(string $content, string $domId, bool $refresh=true,string $mode='add',string $k5Type='documentReady') : \K5\Entity\Html\Resource\Javascript
     {
         $js = new \K5\Entity\Html\Resource\Javascript();
         $js->Content = $content;
         $js->DomID = $domId;
         $js->K5Type = $k5Type;
-        $js->Refresh = ($refresh) ? $refresh : false;
+        $js->Refresh = ($refresh) ? $refresh : true;
         $js->Mode = ($mode) ? $mode : '';
         return $js;
     }
 
-    public function GetJavascriptModule($content,$refresh=false) : \K5\Entity\Html\Resource\JavascriptModule
+    public function GetJavascriptModule(string $content,bool $refresh=false) : \K5\Entity\Html\Resource\JavascriptModule
     {
         $js = new \K5\Entity\Html\Resource\JavascriptModule();
         $js->Content = $content;
@@ -64,7 +64,7 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $js;
     }
 
-    public function GetJavascriptLibPacket($content,$domId,$refresh=false) : \K5\Entity\Html\Resource\JavascriptLib
+    public function GetJavascriptLibPacket(string $content,string $domId,bool $refresh=false) : \K5\Entity\Html\Resource\JavascriptLib
     {
         $js = new \K5\Entity\Html\Resource\JavascriptLib();
         $js->Content = $content;
@@ -74,12 +74,13 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $js;
     }
 
-    public function GetCssPacket($content,$domId,$refresh=false,$mode=false) : \K5\Entity\Html\Resource\Css
+    public function GetCssPacket(string $content,string $domId,bool $refresh=false,bool$defer=false) : \K5\Entity\Html\Resource\Css
     {
         $css = new \K5\Entity\Html\Resource\Css();
         $css->Content = $content;
         $css->DomID = $domId;
         $css->Refresh = ($refresh) ? $refresh : false;
+        $css->Defer = ($refresh) ? $refresh : false;
         return $css;
     }
 
