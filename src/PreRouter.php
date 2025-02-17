@@ -56,14 +56,6 @@ class PreRouter
                 }
 
                 self::parseRoute();
-            } else {
-                self::$_route->module = self::$requestedDomainConfig->default->module;
-                self::$_route->deep = null;
-                self::$_route->extended = null;
-                self::$_route->controller = self::$requestedDomainConfig->default->controller;
-                self::$_route->action = self::$requestedDomainConfig->default->action;
-                self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
-                self::$_route->i18n = self::$requestedDomainConfig->default->i18n;
             }
         }
         return true;
