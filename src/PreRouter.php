@@ -219,7 +219,7 @@ class PreRouter
         $rState = ($current !== 'api') ? self::routeWeb($tmp,$current) : self::routeApi($tmp);
     }
 
-    private static function routeWeb($tmp,$current) : bool
+    private static function routeWeb(array $tmp,?string $current) : bool
     {
         self::$_route->isApi = false;
         self::$_route->isService = false;
@@ -241,7 +241,7 @@ class PreRouter
             }
         }
 
-        if($current != '') {
+        if(!is_null($current)) {
             self::$_route->module = $current;
         } else {
             if(count($tmp) > 0) {
@@ -283,7 +283,7 @@ class PreRouter
             }
         }
 
-        self::$_route->app = self::$appConfig['directory'];
+        self::$_route->app = strtolower(self::$appConfig['directory']);
 
         if(self::$_route->app == 'front') {
             if(isset(self::$config->translate->public->{self::$_route->module})) {
