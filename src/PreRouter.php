@@ -29,8 +29,6 @@ class PreRouter
 
     public static function SetInstance($config,$server) : bool
     {
-        self::$_route->isApi = false;
-        self::$_route->isService = false;
         if(is_null(self::$_server)){
             self::$_route = new \K5\Entity\Request\Route();
             self::$_server = $server;
