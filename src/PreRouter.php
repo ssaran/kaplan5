@@ -167,6 +167,11 @@ class PreRouter
         return self::$requestedDomainConfig;
     }
 
+    public static function GetTmp() : array
+    {
+        return self::$tmp;
+    }
+
     private static function parseDomain() : void
     {
         self::$_route->subDomain = null;
