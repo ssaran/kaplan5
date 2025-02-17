@@ -11,7 +11,7 @@ namespace K5;
 class PreRouter
 {
     private static \Phalcon\Config\Config $config;
-    private static \Phalcon\Config\Config $appConfig;
+    private static ?\Phalcon\Config\Config $appConfig;
     private static \Phalcon\Config\Config $requestedDomainConfig;
     private static ?string $requestMethod = null;
     private static string $_module;
@@ -29,25 +29,24 @@ class PreRouter
 
     public static function SetInstance($config,$server) : bool
     {
+        self::$_route->isApi = false;
+        self::$_route->isService = false;
         if(is_null(self::$_server)){
             self::$_route = new \K5\Entity\Request\Route();
             self::$_server = $server;
             self::$config = $config;
             self::$requestedDomainConfig = self::$config->routes;
+            self::$_route->app = self::$requestedDomainConfig->default->app;
+            /* Default app conf for config detection */
+            self::$appConfig = self::checkAppConfig(self::$_route->app);
+            if(is_null(self::$appConfig)) {
+                self::log("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI'],'error');
+                die();
+            }
 
             if(!isset(self::$_server['SHELL'])) {
                 self::$requestMethod = self::$_server['REQUEST_METHOD'];
                 self::parseDomain();
-
-
-                self::$_route->app = self::$requestedDomainConfig->default->app;
-                self::$_route->module = self::$requestedDomainConfig->default->module;
-                self::$_route->deep = null;
-                self::$_route->extended = null;
-                self::$_route->controller = self::$requestedDomainConfig->default->controller;
-                self::$_route->action = self::$requestedDomainConfig->default->action;
-                self::$_route->namespace = self::$requestedDomainConfig->default->namespace;
-                self::$_route->i18n = self::$requestedDomainConfig->default->i18n;
 
                 if(isset(self::$requestedDomainConfig->hasCms) && self::$requestedDomainConfig->hasCms) {
                     self::$_route->hasCms = self::$requestedDomainConfig->hasCms;
@@ -60,7 +59,6 @@ class PreRouter
 
                 self::parseRoute();
             } else {
-                self::$_route->app = self::$requestedDomainConfig->default->app;
                 self::$_route->module = self::$requestedDomainConfig->default->module;
                 self::$_route->deep = null;
                 self::$_route->extended = null;
@@ -73,17 +71,17 @@ class PreRouter
         return true;
     }
 
-    public static function GetDomain()
+    public static function GetDomain() : string
     {
         return self::$_route->domain;
     }
 
-    public static function GetSubDomain()
+    public static function GetSubDomain() : string
     {
         return self::$_route->subDomain;
     }
 
-    public static function GetSessionDomain()
+    public static function GetSessionDomain() : string
     {
         return self::$_route->sessionDomain;
     }
@@ -199,13 +197,6 @@ class PreRouter
 
     private static function parseRoute() : void
     {
-        /* Default app conf for config detection */
-        self::$appConfig = self::checkAppConfig(self::$_route->app);
-        if(!self::$appConfig) {
-            self::log("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI'],'error');
-            die();
-        }
-
         self::$tmp['parsedUrl'] = parse_url(str_replace("//","/",self::$_server['REQUEST_URI']));
         self::$tmp['aParsedUrl'] = explode("/",trim(self::$tmp['parsedUrl']['path'],"/"));
         self::$_route->tmp = self::$tmp;
@@ -221,29 +212,27 @@ class PreRouter
             $current = array_shift($tmp);
         }
 
-        $rState = ($current !== 'api') ? self::routeWeb($tmp,$current) : self::routeApi($tmp);
+        self::routeWeb($tmp,$current);
     }
 
     private static function routeWeb(array $tmp,?string $current) : bool
     {
-        self::$_route->isApi = false;
-        self::$_route->isService = false;
-
         if($current !== '_services') {
-            $cConfig = self::checkAppConfig($current);
-            if($cConfig) {
-                self::$appConfig = $cConfig;
-                $current = null;
-            }
+            self::$appConfig = self::checkAppConfig($current); // Current is App Name
         } else {
             if(count($tmp) > 0) {
                 $current = array_shift($tmp);
-                $cConfig = self::checkServicesConfig($current);
-                if($cConfig) {
-                    self::$appConfig = $cConfig;
-                    $current = null;
-                }
+                self::$appConfig = self::checkServicesConfig($current);
+                $current = null;
+            } else {
+                self::$appConfig = null;
             }
+        }
+
+        // Second app config check
+        if(is_null(self::$appConfig)) {
+            self::log("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI'],'error');
+            die();
         }
 
         if(!is_null($current)) {
@@ -334,55 +323,6 @@ class PreRouter
                 self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module). '\\' . ucfirst(self::$_route->deep). '\\' . ucfirst(self::$_route->extended);
             }
         }
-
-        return true;
-    }
-
-    private static function routeApi($tmp) : bool
-    {
-        self::$isApi = true;
-        self::$_route->isApi = true;
-
-        $current = array_shift($tmp);
-        $cConfig = self::checkAppConfig($current);
-        if($cConfig) {
-            self::$appConfig = $cConfig;
-            self::$_route->module = $current;
-            $current = null;
-        }
-
-        if($current !== null) {
-            self::log("Api module Not Found ",'error');
-            self::log($tmp,'error');
-            return false;
-        }
-
-        self::$_module = self::$_route->module;
-        self::$versionApi = array_shift($tmp);
-        if(count($tmp) > 0) {
-            self::$_route->controller = array_shift($tmp);
-        }
-
-        self::$_controller = self::$_route->controller;
-        if(strpos(self::$_route->controller,"-")) {
-            self::$_route->controller = str_replace(" ","",ucwords(str_replace("-"," ",self::$_route->controller)));
-        }
-
-        if(count($tmp) > 0) {
-            self::$_route->action = array_shift($tmp);
-        }
-        self::$_action = self::$_route->action;
-
-        if(count($tmp) > 0) {
-            foreach($tmp as $tk => $tv) {
-                self::$_route->params[$tk] = $tv;
-            }
-        }
-
-        self::$_route->app = self::$appConfig['directory'];
-
-        self::$_route->module = str_replace("-","",ucwords(self::$_route->module, "-"));
-        self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$versionApi);
 
         return true;
     }
