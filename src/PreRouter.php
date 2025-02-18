@@ -360,11 +360,12 @@ class PreRouter
 
     protected static function log($message,$type='debug') : void
     {
-        openlog('k5_preroute', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
         if($type == 'error') {
-            syslog(LOG_ERR, 'PreRouter -'.$type.'- '.print_r($message,true));
+            openlog('k5_error', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
+            syslog(LOG_WARNING, "ERR:".print_r($message,true));
         } else {
-            syslog(LOG_INFO, 'PreRouter -'.$type.'- '.print_r($message,true));
+            openlog('k5_info', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
+            syslog(LOG_WARNING,"WAR:".print_r($message,true));
         }
         closelog();
     }
