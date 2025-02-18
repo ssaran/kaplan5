@@ -261,6 +261,8 @@ class PreRouter
         self::$tmp['aParsedUrl'] = explode("/",trim(self::$tmp['parsedUrl']['path'],"/"));
         self::$_route->tmp = self::$tmp;
         if(count(self::$tmp['aParsedUrl']) <= 0) {
+            self::$_route->controller = str_replace("-","",ucwords('index', "-"));
+            self::$_route->namespace = self::$appConfig['namespace'];
             return;
         }
         $tmp = self::$tmp['aParsedUrl'];
@@ -336,7 +338,6 @@ class PreRouter
 
         self::$_route->controller = $controller;
         self::$_route->namespace = self::$appConfig['namespace'] . '\\' . implode("\\",$nameSpace);
-
         return true;
     }
 
