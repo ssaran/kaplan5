@@ -11,55 +11,13 @@ namespace K5;
 class PreRouter
 {
     private static \Phalcon\Config\Config $config;
+    private static ?\Phalcon\Config\Config $services;
     private static ?\Phalcon\Config\Config $appConfig;
-    private static \Phalcon\Config\Config $requestedDomainConfig;
+    private static \Phalcon\Config\Config $routeConfig;
     private static ?string $requestMethod = null;
-    private static string $_module;
-    private static string $_controller;
-    private static string $_action;
-    private static array $params = [];
     private static array $tmp = [];
-    private static string $i18n = "tr";
-    private static bool $isApi = false;
-    private static bool $isService = false;
-    private static ?int $versionApi = null;
-
     private static ?array $_server = null;
     private static \K5\Entity\Request\Route $_route;
-
-    public static function SetInstance($config,$server) : bool
-    {
-        if(is_null(self::$_server)){
-            self::$_route = new \K5\Entity\Request\Route();
-            self::$_server = $server;
-            self::$config = $config;
-            self::$requestedDomainConfig = self::$config->routes;
-            self::$_route->app = self::$requestedDomainConfig->default->app;
-            /* Default app conf for config detection */
-            self::$appConfig = self::checkAppConfig(self::$_route->app);
-            if(is_null(self::$appConfig)) {
-                self::log("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI'],'error');
-                die();
-            }
-
-            if(!isset(self::$_server['SHELL'])) {
-                self::$requestMethod = self::$_server['REQUEST_METHOD'];
-                self::parseDomain();
-
-                if(isset(self::$requestedDomainConfig->hasCms) && self::$requestedDomainConfig->hasCms) {
-                    self::$_route->hasCms = self::$requestedDomainConfig->hasCms;
-                    if(isset(self::$requestedDomainConfig->cmsForceDomain) && !empty(self::$requestedDomainConfig->cmsForceDomain)) {
-                        self::$_route->cmsDomain = self::$requestedDomainConfig->cmsForceDomain;
-                    } else {
-                        self::$_route->cmsDomain = self::$_route->sessionDomain;
-                    }
-                }
-
-                self::parseRoute();
-            }
-        }
-        return true;
-    }
 
     public static function GetDomain() : string
     {
@@ -78,7 +36,7 @@ class PreRouter
 
     public static function GetCmsDomain() : ?string
     {
-        return (self::$_route->hasCms) ? self::$_route->cmsDomain : 'nada';
+        return (self::$_route->hasCms) ? self::$_route->cmsDomain : null;
     }
 
     public static function GetNameSpace() : string
@@ -86,49 +44,44 @@ class PreRouter
         return self::$_route->namespace;
     }
 
-    public static function GetApp()
+    public static function GetApp() : string
     {
         return self::$_route->app;
     }
 
-    public static function GetModule($real=false)
+    public static function GetController($real=false) : string
     {
-        return (!$real) ? self::$_route->module : self::$_module;
+        return self::$_route->controller;
     }
 
-    public static function GetController($real=false)
+    public static function GetAction() : string
     {
-        return (!$real) ? self::$_route->controller : self::$_controller;
+        return self::$_route->action;
     }
 
-    public static function GetAction($real=false)
-    {
-        return (!$real) ? self::$_route->action : self::$_action;
-    }
-
-    public static function GetParams()
+    public static function GetParams() : array
     {
         return self::$_route->params;
     }
 
-    public static function GetI18n()
+    public static function GetI18n() : string
     {
         return self::$_route->i18n;
     }
 
-    public static function GetRequestMethod()
+    public static function GetRequestMethod() : ? string
     {
         return self::$requestMethod;
     }
 
-    public static function GetAppConfig()
+    public static function GetAppConfig() : ?\Phalcon\Config\Config
     {
         return self::$appConfig;
     }
 
     public static function IsApi() : bool
     {
-        return self::$isApi;
+        return self::$_route->isApi;
     }
 
     public static function GetRouteObject() : \K5\Entity\Request\Route
@@ -150,14 +103,131 @@ class PreRouter
         return implode("_",array_slice($_arr,$offset));
     }
 
-    public static function GetRequestedDomainConfig()
+    public static function GetrouteConfig() : ?\Phalcon\Config\Config
     {
-        return self::$requestedDomainConfig;
+        return self::$routeConfig;
     }
 
     public static function GetTmp() : array
     {
         return self::$tmp;
+    }
+
+    public static function FromCamelCase($camelCaseString,string $seperator=" ") : string
+    {
+        $re = '/(?<=[a-z])(?=[A-Z])/x';
+        $a = preg_split($re, $camelCaseString);
+        return join($seperator, $a );
+    }
+
+    public static function ToCamelCase(string $str,string $seperator="-") : string
+    {
+        return str_replace($seperator, '', ucwords($str, $seperator));
+    }
+
+    /**
+     * @param string $namespace
+     * @param string $controller
+     * @param string $action
+     * @param array $params
+     * @return void
+     */
+    public static function ForceRoute(string $app, string $module, string $namespace,string $controller,string $action = 'index',?array $params = []):void
+    {
+        self::$_route->app = $app;
+        self::$_route->module = $module;
+        self::$_route->namespace = $namespace;
+        self::$_route->controller = $controller;
+        self::$_route->action = $action;
+        if(!is_null($params)) {
+            self::$_route->params = $params;
+        }
+    }
+
+    public static function GetInfo() : array
+    {
+        return [
+            'SESSION_DOMAIN'=>self::$_route->sessionDomain,
+            'SUBDOMAIN'=>!is_null(self::$_route->subDomain) ? self::$_route->subDomain : '',
+            'LANG'=>self::$_route->i18n,
+            'APP'=>self::$_route->app,
+            'CONTROLLER'=>self::$_route->controller,
+            'ACTION'=>self::$_route->action,
+            'PARAMS'=>self::$_route->params,
+            'NAMESPACE'=>self::$_route->namespace,
+            'APP-CONFIG'=>self::$appConfig,
+            'TMP'=>self::$tmp
+        ];
+    }
+
+    public static function Ldbg($is_error = false) : void
+    {
+        $_msg = self::GetInfo();
+        (!$is_error) ? self::log($_msg) : self::log($_msg,'error');
+    }
+
+    public static function Lerr() : void
+    {
+        self::Ldbg(true);
+    }
+
+    public static function ParseDefault($routes,string $prefix=null) : iterable
+    {
+        $obj = new $routes();
+        $vars = get_object_vars($obj);
+
+        $_prefix = (!is_null($prefix)) ? $prefix.'/' : '/';
+
+        foreach($vars as $key => $v) {
+            if($key[0] === '_') {
+                $arr = explode("_", ltrim($key, '_'));
+                $val = $_prefix.'_';
+            } else {
+                $arr = explode("_",$key);
+                $val = $_prefix;
+            }
+
+            foreach ($arr as $path) {
+                $val.= mb_strtolower(self::FromCamelCase($path,"-"))."/";
+            }
+            $obj->{$key} = $val;
+        }
+        return $obj;
+    }
+
+    public static function SetInstance(array $server,\Phalcon\Config\Config $config, ?\Phalcon\Config\Config $services) : bool
+    {
+        self::$config = $config;
+        self::$services = $services;
+        if(is_null(self::$_server)){
+            self::$_route = new \K5\Entity\Request\Route();
+            self::$_server = $server;
+            self::$routeConfig = self::$config->routes;
+            self::$_route->app = self::$routeConfig->default->app;
+            /* Default app conf for config detection */
+            self::$appConfig = self::checkAppConfig(self::$_route->app);
+            if(is_null(self::$appConfig)) {
+                self::log("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI'],'error');
+                die();
+            }
+
+            if(!isset(self::$_server['SHELL'])) {
+                self::$requestMethod = self::$_server['REQUEST_METHOD'];
+                self::parseDomain();
+
+                if(isset(self::$routeConfig->hasCms) && self::$routeConfig->hasCms) {
+                    self::$_route->hasCms = self::$routeConfig->hasCms;
+                    if(isset(self::$routeConfig->cmsForceDomain) && !empty(self::$routeConfig->cmsForceDomain)) {
+                        self::$_route->cmsDomain = self::$routeConfig->cmsForceDomain;
+                    } else {
+                        self::$_route->cmsDomain = self::$_route->sessionDomain;
+                    }
+                }
+
+                self::parseRoute();
+            }
+        }
+        return true;
     }
 
     private static function parseDomain() : void
@@ -190,76 +260,73 @@ class PreRouter
         self::$tmp['parsedUrl'] = parse_url(str_replace("//","/",self::$_server['REQUEST_URI']));
         self::$tmp['aParsedUrl'] = explode("/",trim(self::$tmp['parsedUrl']['path'],"/"));
         self::$_route->tmp = self::$tmp;
-        $tmp = self::$tmp['aParsedUrl'];
-        if(count($tmp) <= 0) {
+        if(count(self::$tmp['aParsedUrl']) <= 0) {
             return;
         }
-
-        $current = array_shift($tmp);
+        $tmp = self::$tmp['aParsedUrl'];
+        $current = $tmp[0] ?? null;
         $cLang = self::checkLanguageConfig($current);
         if(!is_null($cLang)) {
             self::$_route->i18n = $cLang;
+            array_shift($tmp);
+        }
+        $current = array_shift($tmp);
+        if(is_null($current)) {
+            return;
+        }
+
+        if($current === '_services') {
+            self::$_route->isService = true;
             $current = array_shift($tmp);
-        }
-
-        self::routeWeb($tmp,$current);
-    }
-
-    private static function routeWeb(array $tmp,?string $current) : bool
-    {
-        if($current !== '_services') {
-            self::$appConfig = self::checkAppConfig($current); // Current is App Name
+            self::$appConfig = self::checkServicesConfig($current);
         } else {
-            if(count($tmp) > 0) {
-                $current = array_shift($tmp);
-                self::$appConfig = self::checkServicesConfig($current);
-                $current = null;
-            } else {
-                self::$appConfig = null;
-            }
+            self::$appConfig = self::checkAppConfig($current); // Current is App Name
         }
-
         // Second app config check
         if(is_null(self::$appConfig)) {
-            self::log("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI'],'error');
+            self::log("Default app conf not found. Check Config : -".self::$_route->isService."- ".$current." - ".self::$_server['REQUEST_URI'],'error');
             die();
         }
+        self::routeWeb($tmp);
+    }
 
-        if(!is_null($current)) {
-            self::$_route->module = $current;
-        } else {
-            if(count($tmp) > 0) {
-                self::$_route->module = array_shift($tmp);
-            }
+    private static function routeWeb(array $tmp) : bool
+    {
+        $nameSpace = [];  // Default empty namespace
+        $controller = 'index'; // Default controller
+        switch (self::$appConfig->routeType) {
+            case 'simplex':
+                $controller = array_shift($tmp) ?? 'index';
+                $controller = str_replace("-","",ucwords($controller, "-"));
+                break;
+            case 'complex':
+                // Complex: First element = namespace, second = controller
+                $tNs = array_shift($tmp) ?? 'index';
+                $nameSpace[] = str_replace("-","",ucwords($tNs, "-"));
+                $controller = array_shift($tmp) ?? 'index';
+                $controller = str_replace("-","",ucwords($controller, "-"));
+                break;
+            case 'deep':
+                // Complex: First element = namespace, second = controller
+                $tNs = array_shift($tmp) ?? 'index';
+                $nameSpace[] = str_replace("-","",ucwords($tNs, "-"));
+                $tNs = array_shift($tmp) ?? 'index';
+                $nameSpace[] = str_replace("-","",ucwords($tNs, "-"));
+                $controller = array_shift($tmp) ?? 'index';
+                $controller = str_replace("-","",ucwords($controller, "-"));
+                break;
+            case 'extended':
+                // Complex: First element = namespace, second = controller
+                $tNs = array_shift($tmp) ?? 'index';
+                $nameSpace[] = str_replace("-","",ucwords($tNs, "-"));
+                $tNs = array_shift($tmp) ?? 'index';
+                $nameSpace[] = str_replace("-","",ucwords($tNs, "-"));
+                $tNs = array_shift($tmp) ?? 'index';
+                $nameSpace[] = str_replace("-","",ucwords($tNs, "-"));
+                $controller = array_shift($tmp) ?? 'index';
+                $controller = str_replace("-","",ucwords($controller, "-"));
+                break;
         }
-
-        $_fixedModule = null;
-        if(isset(self::$appConfig['fixedModule']) && isset(self::$appConfig['fixedModule'][self::$_route->module])) {
-            $_fixedModule = self::$appConfig['fixedModule'][self::$_route->module];
-        }
-        self::$_module = self::$_route->module;
-
-        if(self::$appConfig['route'] === 'deep' && (count($tmp) > 0)) {
-            self::$_route->deep = array_shift($tmp); // Set deep route
-            if(isset(self::$appConfig['isExtended']) && self::$appConfig['isExtended'] === true && count($tmp) > 0) {
-                self::$_route->extended = array_shift($tmp);
-            }
-        }
-
-        /** Check forced index */
-        $_fController = null;
-        if(isset(self::$appConfig['forceModuleController']) && isset(self::$appConfig['forceModuleController'][self::$_route->module])) {
-            $_fController = self::$appConfig['forceModuleController'][self::$_route->module];
-        }
-
-        if(count($tmp) > 0) {
-            self::$_route->controller = array_shift($tmp);
-        }
-
-        if(count($tmp) > 0) {
-            self::$_route->action = array_shift($tmp);
-        }
-        self::$_action = self::$_route->action;
 
         if(count($tmp) > 0) {
             foreach($tmp as $tk => $tv) {
@@ -267,53 +334,9 @@ class PreRouter
             }
         }
 
-        self::$_route->app = strtolower(self::$appConfig['directory']);
-
-        if(self::$_route->app == 'front') {
-            if(isset(self::$config->translate->public->{self::$_route->module})) {
-                self::log('die public dir as module','error');
-                die();
-            }
-        }
-
-        self::$_route->module = str_replace("-","",ucwords(self::$_route->module, "-"));
-
-        //---- Refit Fixed Module (route selected modules to single module)
-        if(!is_null($_fixedModule)) {
-            self::$_route->params['fixed_module'] = self::$_route->module;
-            self::$_route->module = $_fixedModule['module'];
-            self::$_module = self::$_route->module;
-            if(isset($_fixedModule['staticController'])) {
-                if(!is_null($_fController)) {
-                    self::$_route->params['forced_controller'] = $_fController;
-                    $_fController = null;
-                } else {
-                    self::$_route->params['forced_controller'] = self::$_route->controller;
-                }
-                self::$_route->controller = $_fixedModule['staticController'];
-            }
-            if(isset($_fixedModule['actionAsParam'])) {
-                self::$_route->params['action'] = self::$_route->action;
-                self::$_route->action = 'index';
-                self::$_action = self::$_route->action;
-            }
-        }
-
-        //--- Refit Forced controller to structure.
-        if(!is_null($_fController)) {
-            self::$_route->params['forced_controller'] = self::$_route->controller;
-            self::$_route->controller = $_fController;
-        }
-        self::$_controller = self::$_route->controller;
-        self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module);
-        if(!is_null(self::$_route->deep)) {
-            if(is_null(self::$_route->extended)) {
-                self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module). '\\' . ucfirst(self::$_route->deep);
-            } else {
-                self::$_route->namespace = self::$appConfig['namespace'] . '\\' . ucfirst(self::$_route->module). '\\' . ucfirst(self::$_route->deep). '\\' . ucfirst(self::$_route->extended);
-            }
-        }
-
+        self::$_route->controller = $controller;
+        self::$_route->namespace = self::$appConfig['namespace'] . '\\' . implode("\\",$nameSpace);
+        
         return true;
     }
 
@@ -327,36 +350,12 @@ class PreRouter
 
     private static function checkAppConfig($app)
     {
-        return (isset(self::$requestedDomainConfig->app->{$app})) ? self::$requestedDomainConfig->app->{$app} : null;
+        return (isset(self::$routeConfig->app->{$app})) ? self::$routeConfig->app->{$app} : null;
     }
 
     private static function checkServicesConfig($app)
     {
-        return (isset(self::$requestedDomainConfig->services->{$app})) ? self::$requestedDomainConfig->services->{$app} : null;
-    }
-
-    public static function ParseDefault($routes,string $prefix=null)
-    {
-        $obj = new $routes();
-        $vars = get_object_vars($obj);
-
-        $_prefix = (!is_null($prefix)) ? $prefix.'/' : '/';
-
-        foreach($vars as $key => $v) {
-            if($key[0] === '_') {
-                $arr = explode("_", ltrim($key, '_'));
-                $val = $_prefix.'_';
-            } else {
-                $arr = explode("_",$key);
-                $val = $_prefix;
-            }
-
-            foreach ($arr as $path) {
-                $val.= mb_strtolower(self::FromCamelCase($path,"-"))."/";
-            }
-            $obj->{$key} = $val;
-        }
-        return $obj;
+        return (isset(self::$services->{$app})) ? self::$services->{$app} : null;
     }
 
     protected static function log($message,$type='debug') : void
@@ -370,62 +369,4 @@ class PreRouter
         closelog();
     }
 
-    public static function FromCamelCase($camelCaseString,string $seperator=" ")
-    {
-        $re = '/(?<=[a-z])(?=[A-Z])/x';
-        $a = preg_split($re, $camelCaseString);
-        return join($seperator, $a );
-    }
-
-    public static function ToCamelCase(string $str,string $seperator="-")
-    {
-        return str_replace($seperator, '', ucwords($str, $seperator));
-    }
-
-    /**
-     * @param string $namespace
-     * @param string $controller
-     * @param string $action
-     * @param array $params
-     * @return void
-     */
-    public static function ForceRoute(string $app, string $module, string $namespace,string $controller,string $action = 'index',?array $params = []):void
-    {
-        self::$_route->app = $app;
-        self::$_route->module = $module;
-        self::$_route->namespace = $namespace;
-        self::$_route->controller = $controller;
-        self::$_route->action = $action;
-        if(!is_null($params)) {
-            self::$_route->params = $params;
-        }
-    }
-
-    public static function Ldbg($is_error = false) : void
-    {
-        $_msg = self::GetInfo();
-        (!$is_error) ? self::log($_msg) : self::log($_msg,'error');
-    }
-
-    public static function Lerr() : void
-    {
-        self::Ldbg(true);
-    }
-
-    public static function GetInfo()
-    {
-        return [
-            'SESSION_DOMAIN'=>self::$_route->sessionDomain,
-            'SUBDOMAIN'=>!is_null(self::$_route->subDomain) ? self::$_route->subDomain : '',
-            'LANG'=>self::$_route->i18n,
-            'APP'=>self::$_route->app,
-            'MODULE'=>self::$_route->module,
-            'CONTROLLER'=>self::$_route->controller,
-            'ACTION'=>self::$_route->action,
-            'PARAMS'=>self::$_route->params,
-            'NAMESPACE'=>self::$_route->namespace,
-            'APP-CONFIG'=>self::$appConfig,
-            'TMP'=>self::$tmp
-        ];
-    }
 }
