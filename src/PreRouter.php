@@ -257,15 +257,23 @@ class PreRouter
 
     private static function parseRoute() : void
     {
+        // Set Defaults
+        self::$_route->controller = str_replace("-","",ucwords('index', "-"));
+        self::$_route->namespace = self::$appConfig['namespace'];
+
         self::$tmp['parsedUrl'] = parse_url(str_replace("//","/",self::$_server['REQUEST_URI']));
         self::$tmp['aParsedUrl'] = explode("/",trim(self::$tmp['parsedUrl']['path'],"/"));
         self::$_route->tmp = self::$tmp;
-        if(count(self::$tmp['aParsedUrl']) <= 0) {
-            self::$_route->controller = str_replace("-","",ucwords('index', "-"));
-            self::$_route->namespace = self::$appConfig['namespace'];
+
+        // Filter all empty or null elements of the url array
+        $tmp = array_filter(self::$tmp['aParsedUrl'], function($value) {
+            return !is_null($value) && $value !== '';
+        });
+
+        if(count($tmp) <= 0) {
             return;
         }
-        $tmp = self::$tmp['aParsedUrl'];
+
         $current = $tmp[0] ?? null;
         $cLang = self::checkLanguageConfig($current);
         if(!is_null($cLang)) {
@@ -291,7 +299,6 @@ class PreRouter
         }
         self::routeWeb($tmp);
     }
-
     private static function routeWeb(array $tmp) : bool
     {
         $nameSpace = [];  // Default empty namespace
