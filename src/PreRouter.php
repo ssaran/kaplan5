@@ -19,6 +19,20 @@ class PreRouter
     private static ?array $_server = null;
     private static \K5\Entity\Request\Route $_route;
 
+    public static function CreateEmployer() : string
+    {
+        return str_replace(".","_",self::GetSessionDomain());
+    }
+
+    public static function CreateIssuerKey(int $offset = 3, bool $trim = true) : string
+    {
+        $_arr = explode("\\",strtolower(\K5\PreRouter::GetNameSpace()));
+        if($trim) {
+            array_pop($_arr);
+        }
+        return implode("_",array_slice($_arr,$offset));
+    }
+
     public static function GetDomain() : string
     {
         return self::$_route->domain;
@@ -79,31 +93,12 @@ class PreRouter
         return self::$appConfig;
     }
 
-    public static function IsApi() : bool
-    {
-        return self::$_route->isApi;
-    }
-
     public static function GetRouteObject() : \K5\Entity\Request\Route
     {
         return self::$_route;
     }
 
-    public static function CreateEmployer() : string
-    {
-        return str_replace(".","_",self::GetSessionDomain());
-    }
-
-    public static function CreateIssuerKey(int $offset = 3, bool $trim = true) : string
-    {
-        $_arr = explode("\\",strtolower(\K5\PreRouter::GetNameSpace()));
-        if($trim) {
-            array_pop($_arr);
-        }
-        return implode("_",array_slice($_arr,$offset));
-    }
-
-    public static function GetrouteConfig() : ?\Phalcon\Config\Config
+    public static function GetRouteConfig() : ?\Phalcon\Config\Config
     {
         return self::$routeConfig;
     }
@@ -118,6 +113,11 @@ class PreRouter
         $re = '/(?<=[a-z])(?=[A-Z])/x';
         $a = preg_split($re, $camelCaseString);
         return join($seperator, $a );
+    }
+
+    public static function IsApi() : bool
+    {
+        return self::$_route->isApi;
     }
 
     public static function ToCamelCase(string $str,string $seperator="-") : string
@@ -171,7 +171,7 @@ class PreRouter
         self::Ldbg(true);
     }
 
-    public static function ParseDefault($routes,string $prefix=null) : iterable
+    public static function ParseDefault($routes,string $prefix=null) : object
     {
         $obj = new $routes();
         $vars = get_object_vars($obj);
@@ -336,7 +336,7 @@ class PreRouter
 
         self::$_route->controller = $controller;
         self::$_route->namespace = self::$appConfig['namespace'] . '\\' . implode("\\",$nameSpace);
-        
+
         return true;
     }
 
