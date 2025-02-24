@@ -287,35 +287,45 @@ class PreRouter
             return;
         }
 
-        $current = $tmp[0] ?? null;
-        $cLang = self::checkLanguageConfig($current);
-        if(!is_null($cLang)) {
-            self::$_route->i18n = $cLang;
-            array_shift($tmp);
-        }
-        $current = array_shift($tmp);
-        if(is_null($current)) {
-            return;
-        }
-
-        if($current === '_services') {
-            self::$_route->isService = true;
-            $current = array_shift($tmp);
-            self::$appConfig = self::checkServicesConfig($current);
-        } elseif($current === 'api') {
+        if(self::$_route->subDomain === 'api') { // If this is an api request.
             self::$_route->isApi = true;
             self::$_route->apiVersion = array_shift($tmp);
             $current = array_shift($tmp);
             self::$appConfig = self::checkApiConfig(strtolower(self::$_route->apiVersion),$current); // Current is App Name
+
+            // Second app config check
+            if(is_null(self::$appConfig)) {
+                self::log("Default API app conf not found. Check Config : -".self::$_route->apiVersion."- ".$current." - ".self::$_server['REQUEST_URI'],'error');
+                die();
+            }
+            self::routeWeb($tmp);
         } else {
-            self::$appConfig = self::checkAppConfig($current); // Current is App Name
+            $current = $tmp[0] ?? null;
+            $cLang = self::checkLanguageConfig($current);
+            if(!is_null($cLang)) {
+                self::$_route->i18n = $cLang;
+                array_shift($tmp);
+            }
+            $current = array_shift($tmp);
+            if(is_null($current)) {
+                return;
+            }
+
+            if($current === '_services') {
+                self::$_route->isService = true;
+                $current = array_shift($tmp);
+                self::$appConfig = self::checkServicesConfig($current);
+            } else {
+                self::$appConfig = self::checkAppConfig($current); // Current is App Name
+            }
+            // Second app config check
+            if(is_null(self::$appConfig)) {
+                self::log("Default app conf not found. Check Config : -".self::$_route->isService."- ".$current." - ".self::$_server['REQUEST_URI'],'error');
+                die();
+            }
+            self::routeWeb($tmp);
         }
-        // Second app config check
-        if(is_null(self::$appConfig)) {
-            self::log("Default app conf not found. Check Config : -".self::$_route->isService."- ".$current." - ".self::$_server['REQUEST_URI'],'error');
-            die();
-        }
-        self::routeWeb($tmp);
+
     }
     private static function routeWeb(array $tmp) : bool
     {
