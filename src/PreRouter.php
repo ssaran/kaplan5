@@ -217,7 +217,7 @@ class PreRouter
                     die();
                 }
             } else {
-                self::$appConfig = self::checkApiConfig(self::$config->default_api_version,self::$_route->app);
+                self::$appConfig = self::checkApiConfig(strtolower(self::$config->default_api_version),self::$_route->app);
                 if(is_null(self::$appConfig)) {
                     self::log("Default api conf not found. Check Config. Version: ".self::$config->default_api_version." App :".self::$_route->app." - ".self::$_server['REQUEST_URI'],'error');
                     die();
@@ -298,7 +298,6 @@ class PreRouter
             return;
         }
 
-
         if($current === '_services') {
             self::$_route->isService = true;
             $current = array_shift($tmp);
@@ -307,7 +306,7 @@ class PreRouter
             self::$_route->isApi = true;
             self::$_route->apiVersion = array_shift($tmp);
             $current = array_shift($tmp);
-            self::$appConfig = self::checkApiConfig(self::$_route->apiVersion,$current); // Current is App Name
+            self::$appConfig = self::checkApiConfig(strtolower(self::$_route->apiVersion),$current); // Current is App Name
         } else {
             self::$appConfig = self::checkAppConfig($current); // Current is App Name
         }
