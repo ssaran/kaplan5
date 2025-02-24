@@ -13,6 +13,7 @@ class Route
     public string $routeType = 'simplex';
     public string $namespace;
     public ?string $i18n = null;
+    public ?string $apiVersion = null;
     public bool $isApi = false;
     public bool $isService = false;
     public array $params = [];

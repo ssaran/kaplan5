@@ -103,6 +103,11 @@ class PreRouter
         return self::$routeConfig;
     }
 
+    public static function GetApiVersion() : ?string
+    {
+        return self::$_route->apiVersion;
+    }
+
     public static function GetTmp() : array
     {
         return self::$tmp;
@@ -285,10 +290,16 @@ class PreRouter
             return;
         }
 
+
         if($current === '_services') {
             self::$_route->isService = true;
             $current = array_shift($tmp);
             self::$appConfig = self::checkServicesConfig($current);
+        } elseif($current === 'api') {
+            self::$_route->isApi = true;
+            self::$_route->apiVersion = array_shift($tmp);
+            $current = array_shift($tmp);
+            self::$appConfig = self::checkApiConfig(self::$_route->apiVersion,$current); // Current is App Name
         } else {
             self::$appConfig = self::checkAppConfig($current); // Current is App Name
         }
@@ -364,6 +375,15 @@ class PreRouter
     private static function checkServicesConfig($app)
     {
         return (isset(self::$services->{$app})) ? self::$services->{$app} : null;
+    }
+
+    private static function checkApiConfig($version,$app)
+    {
+        $version = (isset(self::$routeConfig->app->{$version})) ? self::$routeConfig->app->{$version} : null;
+        if(!is_null($version) && isset($version->{$app})) {
+            return $version->{$app};
+        }
+        return null;
     }
 
     protected static function log($message,$type='debug') : void
