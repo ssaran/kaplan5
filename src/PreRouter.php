@@ -210,10 +210,18 @@ class PreRouter
             self::$routeConfig = self::$config->routes;
             self::$_route->app = self::$routeConfig->default->app;
             /* Default app conf for config detection */
-            self::$appConfig = self::checkAppConfig(self::$_route->app);
-            if(is_null(self::$appConfig)) {
-                self::log("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI'],'error');
-                die();
+            if(!isset(self::$config->default_api_version) || is_null(self::$config->default_api_version)) {
+                self::$appConfig = self::checkAppConfig(self::$_route->app);
+                if(is_null(self::$appConfig)) {
+                    self::log("Default app conf not found. Check Config : ".self::$_route->app." - ".self::$_server['REQUEST_URI'],'error');
+                    die();
+                }
+            } else {
+                self::$appConfig = self::checkApiConfig(self::$config->default_api_version,self::$_route->app);
+                if(is_null(self::$appConfig)) {
+                    self::log("Default api conf not found. Check Config. Version: ".self::$config->default_api_version." App :".self::$_route->app." - ".self::$_server['REQUEST_URI'],'error');
+                    die();
+                }
             }
 
             if(!isset(self::$_server['SHELL'])) {
