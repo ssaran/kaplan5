@@ -407,10 +407,10 @@ class PreRouter
     {
         if($type == 'error') {
             openlog('k5_error', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
-            syslog(LOG_WARNING, "ERR:".print_r($message,true));
+            syslog(LOG_WARNING, "prERR : ".print_r($message,true));
         } else {
             openlog('k5_info', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
-            syslog(LOG_WARNING,"WAR:".print_r($message,true));
+            syslog(LOG_WARNING,"prWAR : ".print_r($message,true));
         }
         closelog();
     }

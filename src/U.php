@@ -135,7 +135,7 @@ class U
     public static function lerr($message,$type='debug')
     {
         openlog('k5_error', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
-        syslog(LOG_WARNING, "ERR:".print_r($message,true));
+        syslog(LOG_WARNING, "LERR : ".print_r($message,true));
         closelog();
     }
 
