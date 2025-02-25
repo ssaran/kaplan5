@@ -145,10 +145,8 @@ class U
      */
     public static function linfo($message,$type='debug')
     {
-        //syslog(LOG_WARNING,print_r($message,true));
-        //file_put_contents(R_DIR.'log.txt', print_r($message,true)."\n", FILE_APPEND);
         openlog('k5_info', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
-        syslog(LOG_WARNING,"WAR:".print_r($message,true));
+        syslog(LOG_WARNING,"linfo:".print_r($message,true));
         closelog();
     }
 
