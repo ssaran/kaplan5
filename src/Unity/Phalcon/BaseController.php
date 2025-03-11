@@ -282,16 +282,6 @@ class BaseController extends \Phalcon\Mvc\Controller
      */
     public function SendResponse($content,$httpCode)
     {
-        /*
-        $trace = debug_backtrace();
-        $caller = $trace[1];
-
-        \K5\U::linfo($this->request->getHeaders());
-        \K5\U::linfo("Called by {$caller['function']}");
-        if (isset($caller['class'])) {
-            \K5\U::linfo(" in {$caller['class']}");
-        }*/
-
         $httpStatus = '501';
         switch ($httpCode) {
             case "200": $httpStatus = 'OK'; break;
