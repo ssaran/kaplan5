@@ -8,19 +8,17 @@
 
 class la
 {
-
     public static object $keys;
-    public static object $values;
-
+    public static array $values;
     private static string $lang;
 
     /**
      * @param object $keys
-     * @param stdClass $values
+     * @param array $values
      * @param string $lang
      * @return void
      */
-    public static function Setup(object $keys,stdClass $values,string$lang='Tr') : void
+    public static function Setup(object $keys,array $values,string $lang = 'tr') : void
     {
         self::$keys = $keys;
         self::$values = $values;
@@ -37,23 +35,14 @@ class la
         if(!property_exists(self::$keys,$key)) {
             return "?".$key;
         }
-        if(!property_exists(self::$values,$key)) {
+        if(!isset(self::$values[$key])) {
             return "!".$key;
         }
-        /*if(!isset(self::$keys->{$key})) {
-            return "?".$key;
-        }
-
-        if(!isset(self::$values->{$key})) {
-            return "!".$key;
-        }
-        */
-        if(empty(self::$values->{$key})) {
+        if(empty(self::$values[$key])) {
             return ":".$key;
         }
-        return self::$values->{$key};
+        return self::$values[$key];
     }
-
     public static function ToJs() : array
     {
         $r = [];
