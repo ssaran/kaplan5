@@ -117,7 +117,7 @@ class Render
             }
 
             // Label and column width logic
-            if (isset($attr['no-label']) || (!is_null(self::$_formSetup['view']['is_naked']))) {
+            if (isset($attr['no-label']) || (self::$_formSetup['view']['is_naked'])) {
                 $label = '';
                 $col = $template['full_width'];
             } else {
@@ -163,7 +163,7 @@ class Render
 
     public static function GetSubmit($naked=false) : string
     {
-        if(self::$_formSetup->SubmitIsDisabled()) {
+        if(self::$_formSetup['view']['is_submit_disabled']) {
             return '';
         }
 
