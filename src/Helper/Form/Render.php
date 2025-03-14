@@ -117,7 +117,7 @@ class Render
             }
 
             // Label and column width logic
-            if (isset($attr['no-label']) || (self::$_formSetup->FormIsNaked())) {
+            if (isset($attr['no-label']) || (!is_null(self::$_formSetup['view']['is_naked']))) {
                 $label = '';
                 $col = $template['full_width'];
             } else {

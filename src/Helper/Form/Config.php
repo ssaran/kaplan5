@@ -20,6 +20,10 @@ final class Config
         'Icon' => '<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" /><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M14 4l0 4l-6 0l0 -4" /></svg>',
     ];
 
+    private static array $defaultViewParams = [
+        'is_naked' => null,
+    ];
+
     /**
      * Prevent instantiation of utility class
      */
@@ -33,11 +37,12 @@ final class Config
      * @return array{form: array, submit: array}
      * @throws \InvalidArgumentException
      */
-    public static function create(array $formParams, array $submitParams): array
+    public static function create(array $formParams, array $submitParams,?array $viewParams): array
     {
         return [
             'form' => self::prepareFormParams($formParams),
-            'submit' => self::prepareSubmitParams($submitParams)
+            'submit' => self::prepareSubmitParams($submitParams),
+            'view' => self::prepareViewParams($viewParams),
         ];
     }
 
@@ -91,6 +96,17 @@ final class Config
     }
 
     /**
+     * Prepares submit button parameters
+     *
+     * @param array $params
+     * @return array
+     */
+    public static function prepareViewParams(array $params): array
+    {
+        return array_merge(self::$defaultViewParams, $params);
+    }
+
+    /**
      * Checks if form should be rendered without styling
      *
      * @param array $formParams
@@ -98,7 +114,7 @@ final class Config
      */
     public static function isFormNaked(array $formParams): bool
     {
-        return !empty($formParams['IsNaked']);
+        return !empty($formParams['Is-Naked']);
     }
 
     /**
