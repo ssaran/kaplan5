@@ -20,7 +20,8 @@
         "guzzlehttp/guzzle": "^7.0",
         "nikic/php-parser": "^5.4",
         "ext-redis": "*",
-      "ext-pdo": "*"
+      "ext-pdo": "*",
+      "ext-dom": "*"
     },
     "require-dev": {
         "phalcon/ide-stubs": "*",

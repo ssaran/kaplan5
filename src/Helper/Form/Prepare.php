@@ -1,79 +1,57 @@
 <?php
 
-
 namespace K5\Helper\Form;
-
 
 class Prepare
 {
-    protected $raw;
-    protected $apiPrefix;
-    protected $formData;
+    protected static \K5\Entity\Request\Setup $setup;
+    protected static array $raw;
 
-    public function __construct($raw,$apiPrefix='')
-    {
-        $this->apiPrefix = $apiPrefix;
-        $this->raw = $raw;
-    }
 
     /**
-     * @param $entity
-     * @return \Phalcon\Forms\Form
-     * @throws \Exception
+     * @return mixed
      */
-    public function generate($entity=null) : \Phalcon\Forms\Form
+    public static function Exec(\K5\Entity\Request\Setup $setup,array $raw) : \Phalcon\Forms\Form
     {
-        if(!is_countable($this->formData)) {
-            \K5\U::ldbg("Form Data Not countable");
-            throw new \Exception("Form data not prepared");
-        }
-
-        $form = new \Phalcon\Forms\Form($entity);
-        foreach($this->formData as $k => $v) {
-            $form->add($v);
-        }
-        return $form;
-    }
-
-    public function parse()
-    {
-        foreach($this->raw as $k => $elm) {
+        self::$setup = $setup;
+        $_formData = [];
+        foreach($raw as $k => $elm) {
             if(!isset($elm->type)) {
                 continue;
             }
 
             switch ($elm->type) {
                 case \K5\Http\Field\FormElement::TYPE_TEXT:
-                    $this->formData[$elm->name] = $this->getFormValidators($elm,$this->textElement($elm));
+                    $_formData[$elm->name] = self::getFormValidators($elm,self::textElement($elm));
                     break;
 
                 case \K5\Http\Field\FormElement::TYPE_NUMERIC:
-                    $this->formData[$elm->name] = $this->getFormValidators($elm,$this->numericElement($elm));
+                    $_formData[$elm->name] = self::getFormValidators($elm,self::numericElement($elm));
                     break;
 
                 case \K5\Http\Field\FormElement::TYPE_DATE:
-                    $this->formData[$elm->name] = $this->getFormValidators($elm,$this->dateElement($elm));
+                    $_formData[$elm->name] = self::getFormValidators($elm,self::dateElement($elm));
                     break;
 
                 case \K5\Http\Field\FormElement::TYPE_HIDDEN:
-                    $this->formData[$elm->name] = $this->getFormValidators($elm,$this->hiddenElement($elm));
+                    $_formData[$elm->name] = self::getFormValidators($elm,self::hiddenElement($elm));
                     break;
 
                 case \K5\Http\Field\FormElement::TYPE_SELECT:
-                    $this->formData[$elm->name] = $this->getFormValidators($elm,$this->selectElement($elm));
+                    $_formData[$elm->name] = self::getFormValidators($elm,self::selectElement($elm));
                     break;
                 case \K5\Http\Field\FormElement::TYPE_PASSWORD:
-                    $this->formData[$elm->name] = $this->getFormValidators($elm,$this->passwordElement($elm));
+                    $_formData[$elm->name] = self::getFormValidators($elm,self::passwordElement($elm));
                     break;
                 case \K5\Http\Field\FormElement::TYPE_TELEPHONE:
-                    $this->formData[$elm->name] = $this->getFormValidators($elm,$this->telephpneElement($elm));
+                    $_formData[$elm->name] = self::getFormValidators($elm,self::telephpneElement($elm));
                     break;
                 case \K5\Http\Field\FormElement::TYPE_EMAIL:
-                    $this->formData[$elm->name] = $this->getFormValidators($elm,$this->emailElement($elm));
+                    $_formData[$elm->name] = self::getFormValidators($elm,self::emailElement($elm));
                     break;
             }
         }
-        return $this->formData;
+        return $_formData;
     }
 
     /**
@@ -81,12 +59,12 @@ class Prepare
      * @param $r
      * @return mixed
      */
-    protected function getFormValidators(\K5\Http\Field\FormElement $elm,$r)
+    protected static function getFormValidators(\K5\Http\Field\FormElement $elm,$r)
     {
 
         if(is_countable($elm->validators) && sizeof($elm->validators) > 0) {
             foreach ($elm->validators as $vk => $validator) {
-                $vAttr = $this->parseValidationAttributes($validator,$elm);
+                $vAttr = self::parseValidationAttributes($validator,$elm);
                 switch ($validator->type) {
                     case \K5\Http\Field\FormValidator::TYPE_PRESENCE:
                         $r->addValidator(new \Phalcon\Filter\Validation\Validator\PresenceOf($vAttr));
@@ -107,9 +85,10 @@ class Prepare
      * @param \K5\Http\Field\FormElement $elm
      * @return \Phalcon\Forms\Element\Text
      */
-    protected function textElement(\K5\Http\Field\FormElement $elm) {
-        $attr = $this->parseAttributes($elm->attributes);
-        $attr['id'] = $this->apiPrefix.$elm->attributes->id;
+    protected static function textElement(\K5\Http\Field\FormElement $elm) : \Phalcon\Forms\Element\Text
+    {
+        $attr = self::parseAttributes($elm->attributes);
+        $attr['id'] = self::$setup->Headers->ApiPrefix.$elm->attributes->id;
         $r = new \Phalcon\Forms\Element\Text($elm->name,$attr);
         if($elm->label != null) {
             $r->setLabel($elm->label);
@@ -125,9 +104,9 @@ class Prepare
      * @param \K5\Http\Field\FormElement $elm
      * @return \Phalcon\Forms\Element\Email
      */
-    protected function emailElement(\K5\Http\Field\FormElement $elm) {
-        $attr = $this->parseAttributes($elm->attributes);
-        $attr['id'] = $this->apiPrefix.$elm->attributes->id;
+    protected static function emailElement(\K5\Http\Field\FormElement $elm) {
+        $attr = self::parseAttributes($elm->attributes);
+        $attr['id'] = self::$setup->Headers->ApiPrefix.$elm->attributes->id;
         $r = new \Phalcon\Forms\Element\Email($elm->name,$attr);
         if($elm->label != null) {
             $r->setLabel($elm->label);
@@ -143,9 +122,9 @@ class Prepare
      * @param \K5\Http\Field\FormElement $elm
      * @return \Phalcon\Forms\Element\Text
      */
-    protected function telephpneElement(\K5\Http\Field\FormElement $elm) {
-        $attr = $this->parseAttributes($elm->attributes);
-        $attr['id'] = $this->apiPrefix.$elm->attributes->id;
+    protected static function telephpneElement(\K5\Http\Field\FormElement $elm) {
+        $attr = self::parseAttributes($elm->attributes);
+        $attr['id'] = self::$setup->Headers->ApiPrefix.$elm->attributes->id;
         $r = new \Phalcon\Forms\Element\Text($elm->name,$attr);
         if($elm->label != null) {
             $r->setLabel($elm->label);
@@ -162,10 +141,10 @@ class Prepare
      * @param \K5\Http\Field\FormElement $elm
      * @return \Phalcon\Forms\Element\Password
      */
-    protected function passwordElement(\K5\Http\Field\FormElement $elm) : \Phalcon\Forms\Element\Password
+    protected static function passwordElement(\K5\Http\Field\FormElement $elm) : \Phalcon\Forms\Element\Password
     {
-        $attr = $this->parseAttributes($elm->attributes);
-        $attr['id'] = $this->apiPrefix.$elm->attributes->id;
+        $attr = self::parseAttributes($elm->attributes);
+        $attr['id'] = self::$setup->Headers->ApiPrefix.$elm->attributes->id;
         $r = new \Phalcon\Forms\Element\Password($elm->name,$attr);
         if($elm->label != null) {
             $r->setLabel($elm->label);
@@ -180,10 +159,10 @@ class Prepare
      * @param \K5\Http\Field\FormElement $elm
      * @return \Phalcon\Forms\Element\Numeric
      */
-    protected function numericElement(\K5\Http\Field\FormElement $elm)
+    protected static function numericElement(\K5\Http\Field\FormElement $elm)
     {
-        $attr = $this->parseAttributes($elm->attributes);
-        $attr['id'] = $this->apiPrefix.$elm->attributes->id;
+        $attr = self::parseAttributes($elm->attributes);
+        $attr['id'] = self::$setup->Headers->ApiPrefix.$elm->attributes->id;
         $r = new \Phalcon\Forms\Element\Numeric($elm->name,$attr);
         if($elm->label != null) {
             $r->setLabel($elm->label);
@@ -199,10 +178,10 @@ class Prepare
      * @param \K5\Http\Field\FormElement $elm
      * @return \Phalcon\Forms\Element\Date
      */
-    protected function dateElement(\K5\Http\Field\FormElement $elm)
+    protected static function dateElement(\K5\Http\Field\FormElement $elm)
     {
-        $attr = $this->parseAttributes($elm->attributes);
-        $attr['id'] = $this->apiPrefix.$elm->attributes->id;
+        $attr = self::parseAttributes($elm->attributes);
+        $attr['id'] = self::$setup->Headers->ApiPrefix.$elm->attributes->id;
         $r = new \Phalcon\Forms\Element\Date($elm->name,$attr);
         if($elm->label != null) {
             $r->setLabel($elm->label);
@@ -218,10 +197,10 @@ class Prepare
      * @param \K5\Http\Field\FormElement $elm
      * @return \Phalcon\Forms\Element\Hidden
      */
-    protected function hiddenElement(\K5\Http\Field\FormElement $elm)
+    protected static function hiddenElement(\K5\Http\Field\FormElement $elm)
     {
-        $attr = $this->parseAttributes($elm->attributes);
-        $attr['id'] = $this->apiPrefix.$elm->attributes->id;
+        $attr = self::parseAttributes($elm->attributes);
+        $attr['id'] = self::$setup->Headers->ApiPrefix.$elm->attributes->id;
         $r = new \Phalcon\Forms\Element\Hidden($elm->name,$attr);
 
         return $r;
@@ -231,10 +210,10 @@ class Prepare
      * @param \K5\Http\Field\FormElement $elm
      * @return \Phalcon\Forms\Element\Select
      */
-    protected function selectElement(\K5\Http\Field\FormElement $elm) : \Phalcon\Forms\Element\Select
+    protected static function selectElement(\K5\Http\Field\FormElement $elm) : \Phalcon\Forms\Element\Select
     {
-        $attr = $this->parseAttributes($elm->attributes);
-        $attr['id'] = $this->apiPrefix.$elm->attributes->id;
+        $attr = self::parseAttributes($elm->attributes);
+        $attr['id'] = self::$setup->Headers->ApiPrefix.$elm->attributes->id;
         $r = new \Phalcon\Forms\Element\Select($elm->name,$elm->options,$attr);
         if($elm->label != null) {
             $r->setLabel($elm->label);
@@ -247,7 +226,7 @@ class Prepare
      * @param \K5\Http\Field\FormElementCommonAttributes $attr
      * @return array
      */
-    protected function parseAttributes(\K5\Http\Field\FormElementCommonAttributes $attr) : array
+    protected static function parseAttributes(\K5\Http\Field\FormElementCommonAttributes $attr) : array
     {
         $r = [];
         $properties = get_object_vars($attr);
@@ -264,7 +243,7 @@ class Prepare
      * @param \K5\Http\Field\FormElement $elm
      * @return array
      */
-    protected function parseValidationAttributes(\K5\Http\Field\FormValidator $attr,\K5\Http\Field\FormElement $elm) : array
+    protected static function parseValidationAttributes(\K5\Http\Field\FormValidator $attr,\K5\Http\Field\FormElement $elm) : array
     {
         $r = [];
         $properties = get_object_vars($attr);

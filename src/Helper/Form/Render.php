@@ -12,79 +12,94 @@
 
 namespace K5\Helper\Form;
 
-use \K5\U as u;
-
 class Render
 {
+    private static array $_elements = [];
+    private static array $_out = [];
+    private static \K5\Entity\Request\Setup $_setup;
+    private static \Phalcon\Forms\Form $_form;
+    private static \K5\Entity\Form\Setup $_formSetup;
+    private static array $_hidden = [];
+    private static array $_content = [];
+    private static array $_rawKeys = [];
+    private static ?array $_template = [];
 
-    public $Out = [];
-    public $DomPrefix;
-    public $elements = [];
-    private $_form;
-    /** @var \K5\Entity\Form\Setup  */
-    private $_setup;
-
-    private $_hidden = [];
-    private $_content = [];
-
-    public function __construct(\Phalcon\Forms\Form $form, \K5\Entity\Form\Setup $setup,$domPrefix)
+    public static function Render(\K5\Entity\Request\Setup $setup,\Phalcon\Forms\Form $form, \K5\Entity\Form\Setup $formSetup,?array $template=null) : void
     {
-        $this->DomPrefix = $domPrefix;
-        $this->_form = $form;
-        $this->_setup = $setup;
-        $this->Out['html'] = '';
-        $this->Out['js'] = '';
-    }
 
-    public function Render($append='',$prepend='',$params=[])
-    {
-        $this->parseContent();
-        $this->Out['html'] =
-                $this->GetFormStart($params).'
-                '.$prepend.'
-                '.implode("\n",$this->_content).'
-                '.$append.'
-                '.$this->GetSubmit().'					
-                '.implode("\n",$this->_hidden).'
-                '.$this->GetFormEnd().'
+        self::$_setup = $setup;
+        self::$_form = $form;
+        self::$_formSetup = $formSetup;
+        self::$_out['html'] = '';
+        self::$_out['js'] = '';
+        if(!is_null($template)){
+            self::$_template = $template;
+        } else {
+            self::$_template = [
+                'group' => '<div class="mb-3" id="{id}_form_group_cover">{label}{html}</div>',
+                'label' => '<label for="{name}" id="{id}_form_label" class="form-label">{label_text}</label>',
+                'hidden' => '{html}' . "\n",
+                'full_width' => 'col-12',
+                'with_label' => 'col-9'
+            ];
+        }
+
+        self::parseContent();
+        self::$_out['html'] =
+                self::GetFormStart($params).'
+                '.implode("\n",self::$_content).'
+                '.self::GetSubmit().'					
+                '.implode("\n",self::$_hidden).'
+                '.self::GetFormEnd().'
 ';
-        $this->Out['js'] = '';
+        self::$_out['js'] = '';
 
     }
 
-    public function GetFormStart($params = [])
+    public static function GetFormStart($params = []) : string
     {
-        return '<form '.\K5\Helper\Dom\ElementParameters::Prepare($this->_setup->FormGetParams($params)).'>';
+        return '<form '.\K5\Helper\Dom\ElementParameters::Prepare(self::$_formSetup->FormGetParams($params)).'>';
     }
 
-    public function GetFormEnd()
+    public static function GetFormEnd() : string
     {
         return '</form>';
     }
 
-    public function GetElementKeys()
+    public static function GetElementKeys(bool $isRaw=false) : array
     {
-        return array_keys($this->_content);
-    }
-
-    public function GetElementById($id)
-    {
-        if(isset($this->_content[$id])) {
-            return $this->_content[$id];
+        if(!$isRaw) {
+            return array_keys(self::$_content);
         }
-        return '-';
+        return array_keys(self::$_rawKeys);
     }
 
-    public function GetHidden()
+    public static function GetElementById(string $id,bool $isRaw=true) : string
     {
-        return  implode("\n",$this->_hidden);
+        $_r = '-';
+        $_myId = $id;
+        if(!$isRaw && isset(self::$_rawKeys[$id]) ) {
+            $_myId = self::$_rawKeys[$id];
+        }
+        if(isset(self::$_content[$_myId])) {
+            $_r = self::$_content[$_myId];
+        }
+        return $_r;
     }
 
-    public function parseContent()
+    public static function GetHidden() : string
     {
-        $this->_content = [];
-        foreach ($this->_form as $f) {
+        return  implode("\n",self::$_hidden);
+    }
 
+    public static function parseContent($customTemplate = null) : bool
+    {
+        self::$_content = [];
+
+        // Merge custom template with default
+        $template = $customTemplate ? array_merge(self::$_template, $customTemplate) : self::$_template;
+
+        foreach (self::$_form as $f) {
             $className = get_class($f);
             $nameElement = $f->getName();
             $labelElement = $f->getLabel();
@@ -93,23 +108,33 @@ class Render
             $html = $f->render();
             $id = $f->getAttribute('id');
 
-            $this->elements[$id] = $nameElement;
+            self::$_elements[$id] = $nameElement;
 
+            // Handle hidden elements
             if ($className == "Phalcon\Forms\Element\Hidden") {
-                $this->_hidden[] = $html . "\n";
+                self::$_hidden[] = str_replace('{html}', $html, $template['hidden']);
                 continue;
             }
 
-            if (isset($attr['no-label']) || ($this->_setup->FormIsNaked())) {
+            // Label and column width logic
+            if (isset($attr['no-label']) || (self::$_formSetup->FormIsNaked())) {
                 $label = '';
-                $col = 'col-sm-12';
+                $col = $template['full_width'];
             } else {
-                $label = '<label for="' . $nameElement . '" id="'.$id.'_form_label">' . $labelElement . '</label>';
-                $col = 'col-sm-9';
+                $label = str_replace(
+                    ['{name}', '{id}', '{label_text}'],
+                    [$nameElement, $id, $labelElement],
+                    $template['label']
+                );
+                $col = $template['with_label'];
             }
+
+            // Add HTML message if specified
             if (isset($attr['html-msg'])) {
-                $html = $html . "&nbsp; " . $attr['html-msg'];
+                $html .= " " . $attr['html-msg'];
             }
+
+            // Handle replace functionality
             if (isset($attr['replace'])) {
                 $findRepl = explode("-", $attr['replace']);
                 if (sizeof($findRepl) == 2) {
@@ -118,27 +143,39 @@ class Render
                     \K5\U::ldbg($findRepl);
                 }
             }
-            $this->_content[$id] = "<div class=\"form-group\" id=\"".$id."_form_group_cover\">" . $label . "" . $html . "</div>";
 
+            // Apply Bootstrap 5 column class if specified
+            if ($col) {
+                $html = "<div class=\"$col\">$html</div>";
+            }
+
+            // Build final output using template
+            $finalHtml = str_replace(
+                ['{id}', '{label}', '{html}'],
+                [$id, $label, $html],
+                $template['group']
+            );
+
+            self::$_content[$id] = $finalHtml;
         }
         return true;
     }
 
-    public function GetSubmit($naked=false)
+    public static function GetSubmit($naked=false) : string
     {
-        if($this->_setup->SubmitIsDisabled()) {
+        if(self::$_formSetup->SubmitIsDisabled()) {
             return '';
         }
 
-        $submitParams = $this->_setup->SubmitGetParams();
-        if($this->_setup->SubmitIsHidden()) {
+        $submitParams = self::$_formSetup->SubmitGetParams();
+        if(self::$_formSetup->SubmitIsHidden()) {
             $submitParams['class'][] = 'd-hide';
         }
 
         $_params = \K5\Helper\Dom\ElementParameters::Prepare($submitParams);
 
         $btn = '
-                    <button '.$_params.'">'.$this->_setup->SubmitGetIcon(). ' ' .$this->_setup->SubmitGetLabel().'</button>
+                    <button '.$_params.'">'.self::$_formSetup->SubmitGetIcon(). ' ' .self::$_formSetup->SubmitGetLabel().'</button>
         ';
         if(!$naked) {
             return '
