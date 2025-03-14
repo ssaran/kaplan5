@@ -175,7 +175,7 @@ class Render
         $_params = \K5\Helper\Dom\ElementParameters::Prepare($submitParams);
 
         $btn = '
-                    <button '.$_params.'">'.self::$_formSetup->SubmitGetIcon(). ' ' .self::$_formSetup->SubmitGetLabel().'</button>
+                    <button '.$_params.'">'.self::$_formSetup['submit']['Icon']. ' ' .self::$_formSetup['submit']['Label'].'</button>
         ';
         if(!$naked) {
             return '
