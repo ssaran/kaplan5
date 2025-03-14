@@ -167,8 +167,8 @@ class Render
             return '';
         }
 
-        $submitParams = self::$_formSetup->SubmitGetParams();
-        if(self::$_formSetup->SubmitIsHidden()) {
+        $submitParams = self::$_formSetup['submit'];
+        if(self::$_formSetup['view']['is_submit_hidden']) {
             $submitParams['class'][] = 'd-hide';
         }
 

@@ -23,6 +23,7 @@ final class Config
     private static array $defaultViewParams = [
         'is_naked' => false,
         'is_submit_disabled' => false,
+        'is_submit_hidden' => false,
     ];
 
     /**
