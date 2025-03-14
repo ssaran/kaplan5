@@ -4,9 +4,15 @@ namespace K5\Helper\Form;
 
 class Generate
 {
-    public static function Exec($formData,$entity=null)
+    /**
+     * @param array $formData
+     * @param $entity
+     * @return \Phalcon\Forms\Form
+     * @throws \Exception
+     */
+    public static function Exec(array $formData,$entity=null) : \Phalcon\Forms\Form
     {
-        if(!is_countable($formData)) {
+        if(!is_array($formData)) {
             \K5\U::lerr("Form Data Not countable");
             throw new \Exception("Form data not prepared");
         }
