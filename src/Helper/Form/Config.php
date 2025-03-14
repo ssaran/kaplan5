@@ -37,7 +37,7 @@ final class Config
      * @return array{form: array, submit: array}
      * @throws \InvalidArgumentException
      */
-    public static function create(array $formParams, array $submitParams,?array $viewParams=null): array
+    public static function create(array $formParams, array $submitParams,array $viewParams=[]): array
     {
         return [
             'form' => self::prepareFormParams($formParams),
@@ -101,7 +101,7 @@ final class Config
      * @param array $params
      * @return array
      */
-    public static function prepareViewParams(array $params): array
+    public static function prepareViewParams(array $params=[]): array
     {
         return array_merge(self::$defaultViewParams, $params);
     }
