@@ -37,7 +37,7 @@ final class Config
      * @return array{form: array, submit: array}
      * @throws \InvalidArgumentException
      */
-    public static function create(array $formParams, array $submitParams,?array $viewParams): array
+    public static function create(array $formParams, array $submitParams,?array $viewParams=null): array
     {
         return [
             'form' => self::prepareFormParams($formParams),
