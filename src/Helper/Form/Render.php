@@ -26,7 +26,6 @@ class Render
 
     public static function Exec(\K5\Entity\Request\Setup $setup,\Phalcon\Forms\Form $form, array $formSetup,?array $template=null) : void
     {
-
         self::$_setup = $setup;
         self::$_form = $form;
         self::$_formSetup = $formSetup;
@@ -46,7 +45,7 @@ class Render
 
         self::parseContent();
         self::$_out['html'] =
-                self::GetFormStart($params).'
+                self::GetFormStart(self::$_formSetup['form']).'
                 '.implode("\n",self::$_content).'
                 '.self::GetSubmit().'					
                 '.implode("\n",self::$_hidden).'
@@ -56,9 +55,10 @@ class Render
 
     }
 
-    public static function GetFormStart($params = []) : string
+    public static function GetFormStart(?array $params = []) : string
     {
-        return '<form '.\K5\Helper\Dom\ElementParameters::Prepare(self::$_formSetup->FormGetParams($params)).'>';
+        $_params = is_null($params) ? self::$_formSetup['form'] : $params;
+        return '<form '.\K5\Helper\Dom\ElementParameters::Prepare($_params).'>';
     }
 
     public static function GetFormEnd() : string
