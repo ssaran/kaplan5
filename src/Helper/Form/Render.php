@@ -107,8 +107,9 @@ class Render
             $vals = $f->getValidators();
             $html = $f->render();
             $id = $f->getAttribute('id');
-
+            $rawKey = str_replace(self::$_setup->Headers->ApiPrefix, '', $id);
             self::$_elements[$id] = $nameElement;
+            self::$_rawKeys[$rawKey] = $id;
 
             // Handle hidden elements
             if ($className == "Phalcon\Forms\Element\Hidden") {
