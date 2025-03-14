@@ -11,7 +11,7 @@ class Prepare
     /**
      * @return mixed
      */
-    public static function Exec(\K5\Entity\Request\Setup $setup,array $formFields) : \Phalcon\Forms\Form
+    public static function Exec(\K5\Entity\Request\Setup $setup,array $formFields) : array
     {
         self::$setup = $setup;
         $_formData = [];
