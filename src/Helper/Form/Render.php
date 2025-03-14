@@ -171,9 +171,10 @@ class Render
         if(self::$_formSetup['view']['is_submit_hidden']) {
             $submitParams['class'][] = 'd-hide';
         }
+        unset($submitParams['Icon']);
+        unset($submitParams['Label']);
 
         $_params = \K5\Helper\Dom\ElementParameters::Prepare($submitParams);
-
         $btn = '
                     <button '.$_params.'">'.self::$_formSetup['submit']['Icon']. ' ' .self::$_formSetup['submit']['Label'].'</button>
         ';

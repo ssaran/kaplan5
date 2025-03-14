@@ -92,7 +92,7 @@ final class Config
         $result['title'] = $result['title'] ?? $result['Label'];
 
         // Remove processing flags
-        unset($result['Label'], $result['Icon'], $result['IsHidden'], $result['IsDisabled']);
+        //unset($result['Label'], $result['Icon'], $result['IsHidden'], $result['IsDisabled']);
 
         return $result;
     }
