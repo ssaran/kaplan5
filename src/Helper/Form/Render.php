@@ -78,7 +78,7 @@ class Render
     {
         $_r = '-';
         $_myId = $id;
-        if(!$isRaw && isset(self::$_rawKeys[$id]) ) {
+        if($isRaw && isset(self::$_rawKeys[$id]) ) {
             $_myId = self::$_rawKeys[$id];
         }
         if(isset(self::$_content[$_myId])) {
