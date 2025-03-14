@@ -71,7 +71,7 @@ class Render
         if(!$isRaw) {
             return array_keys(self::$_content);
         }
-        return array_keys(self::$_rawKeys);
+        return self::$_rawKeys;
     }
 
     public static function GetElementById(string $id,bool $isRaw=true) : string
