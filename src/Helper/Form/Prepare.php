@@ -5,17 +5,17 @@ namespace K5\Helper\Form;
 class Prepare
 {
     protected static \K5\Entity\Request\Setup $setup;
-    protected static array $raw;
+    protected static array $formFields;
 
 
     /**
      * @return mixed
      */
-    public static function Exec(\K5\Entity\Request\Setup $setup,array $raw) : \Phalcon\Forms\Form
+    public static function Exec(\K5\Entity\Request\Setup $setup,array $formFields) : \Phalcon\Forms\Form
     {
         self::$setup = $setup;
         $_formData = [];
-        foreach($raw as $k => $elm) {
+        foreach($formFields as $k => $elm) {
             if(!isset($elm->type)) {
                 continue;
             }

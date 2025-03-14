@@ -18,13 +18,13 @@ class Render
     private static array $_out = [];
     private static \K5\Entity\Request\Setup $_setup;
     private static \Phalcon\Forms\Form $_form;
-    private static \K5\Entity\Form\Setup $_formSetup;
+    private static array $_formSetup = [];
     private static array $_hidden = [];
     private static array $_content = [];
     private static array $_rawKeys = [];
     private static ?array $_template = [];
 
-    public static function Render(\K5\Entity\Request\Setup $setup,\Phalcon\Forms\Form $form, \K5\Entity\Form\Setup $formSetup,?array $template=null) : void
+    public static function Exec(\K5\Entity\Request\Setup $setup,\Phalcon\Forms\Form $form, array $formSetup,?array $template=null) : void
     {
 
         self::$_setup = $setup;
