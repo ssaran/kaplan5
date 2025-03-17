@@ -181,10 +181,12 @@ class Render
         ';
         if(!$naked) {
             return '
-            <div class="row align-items-center">
-                <div class="col">'.$info.'</div>
-                <div class="col-auto">
-                    '.$btn.'
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col">'.$info.'</div>
+                    <div class="col-auto">
+                        '.$btn.'
+                    </div>
                 </div>
             </div>
 ';
