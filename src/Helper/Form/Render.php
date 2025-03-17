@@ -162,7 +162,7 @@ class Render
         return true;
     }
 
-    public static function GetSubmit($naked=false) : string
+    public static function GetSubmit(bool $naked=false,?string $info=null) : string
     {
         if(self::$_formSetup['view']['is_submit_disabled']) {
             return '';
@@ -177,13 +177,13 @@ class Render
 
         $_params = \K5\Helper\Dom\ElementParameters::Prepare($submitParams);
         $btn = '
-                    <button '.$_params.'">'.self::$_formSetup['submit']['Icon']. ' ' .self::$_formSetup['submit']['Label'].'</button>
+                    <button '.$_params.'>'.self::$_formSetup['submit']['Icon']. ' ' .self::$_formSetup['submit']['Label'].'</button>
         ';
         if(!$naked) {
             return '
-            <div class="form-group hidden-sm hidden-xs">&nbsp;</div>
-            <div class="form-group">
-                <div class="col-sm-12 form-element-cover">
+            <div class="row align-items-center">
+                <div class="col">'.$info.'</div>
+                <div class="col-auto">
                     '.$btn.'
                 </div>
             </div>
