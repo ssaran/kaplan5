@@ -26,7 +26,7 @@ class Setup
             if(!$field->form_element->formEnabled[$form_key]) {
                 continue;
             }
-            $_r[$field->key] = $field->form_element;
+            $_r[$field->key] = $field;
         }
         return $_r;
     }
