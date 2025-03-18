@@ -35,6 +35,8 @@ class FormElement
     public ?array $validators = null;
     public ?array $messages = null;
     public ?array $append = null;
+    public ?array $formEnabled = null;
+    public ?array $formDisabled = null;
 
 
     public function __construct(string $type,string $name,?string $label,?\K5\Http\Field\FormElementCommonAttributes $attributes,

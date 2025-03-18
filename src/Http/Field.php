@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Created by PhpStorm.
+ * User: Sancar Saran
+ * Date: 7.01.2020
+ * Time: 11:08
+ */
 
 namespace K5\Http;
 
@@ -21,14 +26,11 @@ class Field
     const FILTER_UPPER      = "upper";
 
     public string $key;
+    public $default_value;
     public ?array $filter = null;
-
-    public ?\K5\Http\Field\Database $database;
-    public $validation;
+    public bool $on_database = true;
+    public bool $on_request = true;
 
     public \K5\Http\Field\FormElement $form_element;
-    public $default_value;
-
-
 
 }
