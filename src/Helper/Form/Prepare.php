@@ -15,39 +15,39 @@ class Prepare
     {
         self::$setup = $setup;
         $_formData = [];
-        foreach($formFields as $k => $elm) {
-            if(!isset($elm->type)) {
-                continue;
-            }
-
-            switch ($elm->type) {
+        /**
+         * @var string $k
+         * @var \K5\Http\Field $field
+         */
+        foreach($formFields as $k => $field) {
+            switch ($field->form_element->type) {
                 case \K5\Http\Field\FormElement::TYPE_TEXT:
-                    $_formData[$elm->name] = self::getFormValidators($elm,self::textElement($elm));
+                    $_formData[$field->key] = self::getFormValidators($field->form_element,self::textElement($field->form_element));
                     break;
 
                 case \K5\Http\Field\FormElement::TYPE_NUMERIC:
-                    $_formData[$elm->name] = self::getFormValidators($elm,self::numericElement($elm));
+                    $_formData[$field->key] = self::getFormValidators($field->form_element,self::numericElement($field->form_element));
                     break;
 
                 case \K5\Http\Field\FormElement::TYPE_DATE:
-                    $_formData[$elm->name] = self::getFormValidators($elm,self::dateElement($elm));
+                    $_formData[$field->key] = self::getFormValidators($field->form_element,self::dateElement($field->form_element));
                     break;
 
                 case \K5\Http\Field\FormElement::TYPE_HIDDEN:
-                    $_formData[$elm->name] = self::getFormValidators($elm,self::hiddenElement($elm));
+                    $_formData[$field->key] = self::getFormValidators($field->form_element,self::hiddenElement($field->form_element));
                     break;
 
                 case \K5\Http\Field\FormElement::TYPE_SELECT:
-                    $_formData[$elm->name] = self::getFormValidators($elm,self::selectElement($elm));
+                    $_formData[$field->key] = self::getFormValidators($field->form_element,self::selectElement($field->form_element));
                     break;
                 case \K5\Http\Field\FormElement::TYPE_PASSWORD:
-                    $_formData[$elm->name] = self::getFormValidators($elm,self::passwordElement($elm));
+                    $_formData[$field->key] = self::getFormValidators($field->form_element,self::passwordElement($field->form_element));
                     break;
                 case \K5\Http\Field\FormElement::TYPE_TELEPHONE:
-                    $_formData[$elm->name] = self::getFormValidators($elm,self::telephpneElement($elm));
+                    $_formData[$field->key] = self::getFormValidators($field->form_element,self::telephpneElement($field->form_element));
                     break;
                 case \K5\Http\Field\FormElement::TYPE_EMAIL:
-                    $_formData[$elm->name] = self::getFormValidators($elm,self::emailElement($elm));
+                    $_formData[$field->key] = self::getFormValidators($field->form_element,self::emailElement($field->form_element));
                     break;
             }
         }
