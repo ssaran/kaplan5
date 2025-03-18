@@ -17,17 +17,11 @@ class Generator
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_STRING;
         $field->filter[] = \K5\Http\Field::FILTER_STRIPTAGS;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = null;
-        $field->database->is_primary = $isPrimary;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
-            $field->database->cell_name,
+            $field->key,
             null,
             new \K5\Http\Field\FormElementCommonAttributes(),
         );
@@ -35,7 +29,7 @@ class Generator
         $field->form_element->attributes->maxlength = 36;
         $field->form_element->attributes->minlength = 36;
 
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->class = $class;
         $field->form_element->attributes->placeholder = \la::ng(\la::$keys->company_account_id_placeholder);
 
@@ -65,14 +59,9 @@ class Generator
         $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_STRING;
         $field->filter[] = \K5\Http\Field::FILTER_STRIPTAGS;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = null;
-        $field->database->is_primary = $isPrimary;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
-            $field->database->cell_name,
+            $field->key,
             null,
             new \K5\Http\Field\FormElementCommonAttributes(),
         );
@@ -81,7 +70,7 @@ class Generator
         $field->form_element->attributes->maxlength = 50;
         $field->form_element->attributes->minlength = 36;
 
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->class = $class;
         $field->form_element->attributes->placeholder = \la::ng(\la::$keys->company_account_id_placeholder);
 
@@ -106,20 +95,13 @@ class Generator
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = null;
-        $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = null;
-        $field->database->is_primary = $isPrimary;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
-            $field->database->cell_name,
+            $field->key,
             null,
             new \K5\Http\Field\FormElementCommonAttributes(),
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
 
         return $field;
     }
@@ -146,14 +128,9 @@ class Generator
         $field->key = $name;
         $field->default_value = $default;
         $field->filter[] = \K5\Http\Field::FILTER_INT;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = null;
-        $field->database->is_primary = false;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
-            $field->database->cell_name,
+            $field->key,
             null,
             new \K5\Http\Field\FormElementCommonAttributes(),
             null,
@@ -163,7 +140,7 @@ class Generator
             null,
             $default
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         if($isUnsigned) {
             $field->form_element->attributes->max = 127;
             $field->form_element->attributes->min = -128;
@@ -184,20 +161,15 @@ class Generator
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
-        $field->default_value = 0;
+        $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = null;
-        $field->database->is_primary = false;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
-            $field->database->cell_name,
+            $field->key,
             null,
             new \K5\Http\Field\FormElementCommonAttributes()
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         if($isUnsigned) {
             $field->form_element->attributes->max = 8388607;
             $field->form_element->attributes->min = -8388608;
@@ -220,18 +192,13 @@ class Generator
         $field->key = $name;
         $field->default_value = 0;
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = null;
-        $field->database->is_primary = false;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
-            $field->database->cell_name,
+            $field->key,
             null,
             new \K5\Http\Field\FormElementCommonAttributes()
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         if($isUnsigned) {
             $field->form_element->attributes->max = 2147483647;
             $field->form_element->attributes->min = -2147483648;
@@ -249,20 +216,15 @@ class Generator
      * @param bool $isUnsigned
      * @return \K5\Http\Field
      */
-    public static function dGetInteger(string $name,$default=0,bool $isUnsigned=false) : \K5\Http\Field
+    public static function dGetInteger(string $name,$default=null,bool $isUnsigned=false) : \K5\Http\Field
     {
         $field = new \K5\Http\Field();
         $field->key = $name;
         $field->default_value = $default;
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = null;
-        $field->database->is_primary = false;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
-            $field->database->cell_name,
+            $field->key,
             null,
             new \K5\Http\Field\FormElementCommonAttributes(),
             null,
@@ -272,7 +234,7 @@ class Generator
             null,
             $default
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         if($isUnsigned) {
             $field->form_element->attributes->max = 2147483647;
             $field->form_element->attributes->min = -2147483648;
@@ -297,13 +259,9 @@ class Generator
         $field->key = $name;
         $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_NUMERIC,
-            $field->database->cell_name,
+            $field->key,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes(),
             null,
@@ -313,7 +271,7 @@ class Generator
             null,
             $defaultValue
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->class = $class;
         $field->form_element->attributes->placeholder = $placeholder;
 
@@ -333,17 +291,13 @@ class Generator
         $field->key = $name;
         $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_DATE,
-            $field->database->cell_name,
+            $field->key,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes()
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->class = $class;
         $field->form_element->attributes->placeholder = $placeholder;
 
@@ -366,13 +320,9 @@ class Generator
         $field->key = $name;
         $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_FLOAT;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_DOUBLE;
-        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_NUMERIC,
-            $field->database->cell_name,
+            $field->key,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes(),
             null,
@@ -383,7 +333,7 @@ class Generator
             $default,
             $step
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->class = $class;
         $field->form_element->attributes->placeholder = $placeholder;
         if($hasPresence) {
@@ -408,13 +358,9 @@ class Generator
         $field->key = $name;
         $field->default_value = $default;
         $field->filter[] = \K5\Http\Field::FILTER_STRING;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_TEXT,
-            $field->database->cell_name,
+            $field->key,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes(),
             null,
@@ -424,7 +370,7 @@ class Generator
             null,
             $default
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->class = $class;
         $field->form_element->attributes->placeholder = $placeholder;
 
@@ -443,18 +389,13 @@ class Generator
         $field = new \K5\Http\Field();
         $field->key = $name;
         $field->default_value = null;
-        $field->filter[] = \K5\Http\Field::FILTER_STRING;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_TEXT,
-            $field->database->cell_name,
+            $field->key,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes()
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->class = $class;
         $field->form_element->attributes->placeholder = $placeholder;
         $field->form_element->attributes->pattern = "/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/";
@@ -476,19 +417,15 @@ class Generator
         $field->key = $name;
         $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_STRING;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_SELECT,
-            $field->database->cell_name,
+            $field->key,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes(),
             null,
             $options,
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->class = $class;
         $field->form_element->attributes->placeholder = $placeholder;
 
@@ -508,18 +445,13 @@ class Generator
         $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_STRING;
         $field->filter[] = \K5\Http\Field::FILTER_STRIPTAGS;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = null;
-        $field->database->is_primary = false;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_HIDDEN,
-            $field->database->cell_name,
+            $field->key,
             null,
             new \K5\Http\Field\FormElementCommonAttributes(),
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         if(!is_null($minLength)) {
             $field->form_element->attributes->minlength = $minLength;
         }
@@ -541,17 +473,13 @@ class Generator
         $field->key = $name;
         $field->default_value = null;
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_INTEGER;
-        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_TEXT,
-            $field->database->cell_name,
+            $field->key,
             \la::ng(\la::$keys->national_id),
             new \K5\Http\Field\FormElementCommonAttributes()
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->maxlength = 11;
         $field->form_element->attributes->minlength = 11;
         $field->form_element->attributes->class = $class;
@@ -580,19 +508,15 @@ class Generator
         $field->default_value = null;
 
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_NUMERIC,
-            $field->database->cell_name,
+            $field->key,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes(),
             null,
             $options,
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->maxlength = 10;
         $field->form_element->attributes->minlength = 10;
         $field->form_element->attributes->class = $class;
@@ -608,7 +532,7 @@ class Generator
         $field->form_element->validators[\K5\Http\Field\FormValidator::TYPE_STRING_LENGTH]->messageMaximum = "10 ".\la::ng(\la::$keys->cannot_be_more_than_characters);
         $field->form_element->validators[\K5\Http\Field\FormValidator::TYPE_STRING_LENGTH]->messageMinimum = "10 ".\la::ng(\la::$keys->cannot_be_less_than_characters);
 
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->class = $class;
         $field->form_element->attributes->placeholder = $placeholder;
 
@@ -631,19 +555,15 @@ class Generator
         $field->default_value = null;
 
         $field->filter[] = \K5\Http\Field::FILTER_ABSINT;
-        $field->database = new \K5\Http\Field\Database();
-        $field->database->cell_name = $name;
-        $field->database->column_type = Column::TYPE_VARCHAR;
-        $field->database->table_name = null;
         $field->form_element = new \K5\Http\Field\FormElement(
             \K5\Http\Field\FormElement::TYPE_NUMERIC,
-            $field->database->cell_name,
+            $field->key,
             $label,
             new \K5\Http\Field\FormElementCommonAttributes(),
             null,
             $options
         );
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->maxlength = 6;
         $field->form_element->attributes->minlength = 1;
         $field->form_element->attributes->class = $class;
@@ -652,7 +572,7 @@ class Generator
 
         $field->form_element->validators[\K5\Http\Field\FormValidator::TYPE_DIGIT] = new \K5\Http\Field\FormValidator(\K5\Http\Field\FormValidator::TYPE_DIGIT,\la::ng(\la::$keys->must_be_numeric));
 
-        $field->form_element->attributes->id = $field->database->cell_name;
+        $field->form_element->attributes->id = $field->key;
         $field->form_element->attributes->class = $class;
         $field->form_element->attributes->placeholder = $placeholder;
 
