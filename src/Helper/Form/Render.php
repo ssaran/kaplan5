@@ -55,6 +55,10 @@ class Render
 
     }
 
+    public static function GetForm() : array
+    {
+        return self::$_out;
+    }
     public static function GetFormStart(?array $params = []) : string
     {
         $_params = is_null($params) ? self::$_formSetup['form'] : $params;
