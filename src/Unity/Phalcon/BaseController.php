@@ -17,11 +17,26 @@ error_reporting(E_ALL);
 
 class BaseController extends \Phalcon\Mvc\Controller
 {
+
+    public string $Mode = 'add';
+    public string $TabKey;
+    public ?string $Title = null;
+    public string $Body = '';
+    public ?\K5\Entity\Config\BsModal5 $Config = null;
+
     public function initialize()
     {
 
     }
 
+    /**
+     * @param string $content
+     * @param string $domId
+     * @param string $mode
+     * @param string $domDestination
+     * @param string $k5Destination
+     * @return \K5\Entity\Html\Resource\Html
+     */
     public function GetHtmlPacket(string $content,string $domId,string $mode='content-add',string $domDestination='layout_content',string $k5Destination='layout_content') : \K5\Entity\Html\Resource\Html
     {
         $html = new \K5\Entity\Html\Resource\Html();
@@ -33,6 +48,12 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $html;
     }
 
+    /**
+     * @param string $content
+     * @param string $domDestination
+     * @param string $mode
+     * @return \K5\Entity\Html\Resource\Html
+     */
     public function GetKatmerPacket(string $content,string $domDestination='layout_content',string $mode='content-add') : \K5\Entity\Html\Resource\Html
     {
         $html = new \K5\Entity\Html\Resource\Html();
@@ -44,6 +65,14 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $html;
     }
 
+    /**
+     * @param string $content
+     * @param string $domId
+     * @param bool $refresh
+     * @param string $mode
+     * @param string $k5Type
+     * @return \K5\Entity\Html\Resource\Javascript
+     */
     public function GetJavascriptPacket(string $content, string $domId, bool $refresh=true,string $mode='add',string $k5Type='documentReady') : \K5\Entity\Html\Resource\Javascript
     {
         $js = new \K5\Entity\Html\Resource\Javascript();
@@ -55,6 +84,11 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $js;
     }
 
+    /**
+     * @param string $content
+     * @param bool $refresh
+     * @return \K5\Entity\Html\Resource\JavascriptModule
+     */
     public function GetJavascriptModule(string $content,bool $refresh=false) : \K5\Entity\Html\Resource\JavascriptModule
     {
         $js = new \K5\Entity\Html\Resource\JavascriptModule();
@@ -64,6 +98,12 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $js;
     }
 
+    /**
+     * @param string $content
+     * @param string $domId
+     * @param bool $refresh
+     * @return \K5\Entity\Html\Resource\JavascriptLib
+     */
     public function GetJavascriptLibPacket(string $content,string $domId,bool $refresh=false) : \K5\Entity\Html\Resource\JavascriptLib
     {
         $js = new \K5\Entity\Html\Resource\JavascriptLib();
@@ -74,6 +114,13 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $js;
     }
 
+    /**
+     * @param string $content
+     * @param string $domId
+     * @param bool $refresh
+     * @param bool $defer
+     * @return \K5\Entity\Html\Resource\Css
+     */
     public function GetCssPacket(string $content,string $domId,bool $refresh=false,bool$defer=false) : \K5\Entity\Html\Resource\Css
     {
         $css = new \K5\Entity\Html\Resource\Css();
@@ -84,6 +131,16 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $css;
     }
 
+    /**
+     * @param string $content
+     * @param string $domId
+     * @param string|null $title
+     * @param string|null $footer
+     * @param string $size
+     * @param string $close
+     * @param \K5\Entity\Config\BsModal5|null $config
+     * @return \K5\Entity\Html\BsModal5
+     */
     public function GetModalPacket(string $content,string $domId,?string $title=null,?string $footer=null,
     string $size='medium',string $close= 'right', ?\K5\Entity\Config\BsModal5 $config=null) : \K5\Entity\Html\BsModal5
     {
@@ -100,6 +157,15 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $e;
     }
 
+    /**
+     * @param string $employer
+     * @param string $apiPrefix
+     * @param string $tabKey
+     * @param string $body
+     * @param string|null $title
+     * @param string $mode
+     * @return \K5\Entity\Html\Component
+     */
     public function GetBs5Tab(string $employer,string $apiPrefix, string $tabKey,string $body,?string $title=null,string $mode='add') : \K5\Entity\Html\Component
     {
         $_bs5Tab = new \K5\Entity\Html\Bs5Tab();
@@ -113,12 +179,11 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $_bs5Tab;
     }
 
-    public string $Mode = 'add';
-    public string $TabKey;
-    public ?string $Title = null;
-    public string $Body = '';
-    public ?\K5\Entity\Config\BsModal5 $Config = null;
-
+    /**
+     * @param $content
+     * @param $domID
+     * @return \K5\Entity\Html\Component
+     */
     public function GetDataPacket($content,$domID = 'data') : \K5\Entity\Html\Component
     {
         $html = new \K5\Entity\Html\Component();
@@ -162,17 +227,29 @@ class BaseController extends \Phalcon\Mvc\Controller
         return $resp;
     }
 
+    /**
+     * @param \K5\Http\Response $r
+     * @return \K5\Http\Response\Error
+     */
     public function GetErrorResponse(\K5\Http\Response $r)
     {
         return new \K5\Http\Response\Error($r::$Message,$r::$Title,$r::$Footer,$r::$ForwardUri,$r::$Ext,$r::$Method,$r::$Params,$r::$IDForm,$r::$Type,$r::$WsPackage);
     }
 
+    /**
+     * @param \K5\Http\Response $r
+     * @return \K5\Http\Response\Success
+     */
     public function GetSuccessResponse(\K5\Http\Response $r)
     {
         return new \K5\Http\Response\Success($r::$Message,$r::$Title,$r::$Footer,$r::$ForwardUri,$r::$Ext,$r::$Method,$r::$Params,$r::$IDForm,$r::$Data,$r::$IDModal,$r::$IDReload,$r::$WsPackage);
     }
 
-    public function HandleResponse($response)
+    /**
+     * @param $response
+     * @return void
+     */
+    public function HandleResponse($response) : void
     {
         if(is_a($response, '\K5\Http\Response\Success')) {
             $this->__handleSuccess($response);
@@ -187,7 +264,11 @@ class BaseController extends \Phalcon\Mvc\Controller
         }
     }
 
-    private function __handleSuccess(\K5\Http\Response\Success $response)
+    /**
+     * @param \K5\Http\Response\Success $response
+     * @return true
+     */
+    private function __handleSuccess(\K5\Http\Response\Success $response) : bool
     {
         if(!is_null($response->ForwardUri)) {
             Ui::AjaxCall($response->ForwardUri, $response->Method, $response->Params,$response->Headers);
@@ -219,7 +300,11 @@ class BaseController extends \Phalcon\Mvc\Controller
         return true;
     }
 
-    private function __handleError(\K5\Http\Response\Error $response)
+    /**
+     * @param \K5\Http\Response\Error $response
+     * @return bool
+     */
+    private function __handleError(\K5\Http\Response\Error $response) : bool
     {
 
         if (!is_null($response->ForwardUri)) {

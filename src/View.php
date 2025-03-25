@@ -26,7 +26,6 @@ class View
     /**
      * @param Entity\Request\Setup $setup
      * @param $data
-     * @param $skinPath
      */
     public function __construct(\K5\Entity\Request\Setup $setup,$data)
     {
@@ -38,6 +37,10 @@ class View
         $this->Routes = $this->setup->Routes;
     }
 
+    /**
+     * @return void
+     * @throws \Exception
+     */
     public function Render() : void
     {
         try {
@@ -50,10 +53,9 @@ class View
             $this->renderHtml($this->vars);
             $this->renderJs($this->vars);
             $this->renderCss();
-
-
         } catch (\Exception $e) {
-            \K5\U::lerr("View Error",$e->getMessage());
+            \K5\U::lerr("View Error : ".$e->getMessage());
+            throw $e;
         }
     }
 
