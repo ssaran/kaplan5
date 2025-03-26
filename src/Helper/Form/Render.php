@@ -39,7 +39,7 @@ class Render
                 'label' => '<label for="{name}" id="{id}_form_label" class="form-label">{label_text}</label>',
                 'hidden' => '{html}' . "\n",
                 'full_width' => 'col-12',
-                'with_label' => 'col-9'
+                'with_label' => 'col-12'
             ];
         }
 
@@ -145,7 +145,7 @@ class Render
                 if (sizeof($findRepl) == 2) {
                     $html = str_replace($findRepl[0], $findRepl[1], $html);
                 } else {
-                    \K5\U::ldbg($findRepl);
+                    \K5\U::linfo($findRepl);
                 }
             }
 
