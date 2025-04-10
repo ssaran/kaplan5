@@ -17,7 +17,8 @@ class U
      * @param $maxLength
      * @return mixed|string
      */
-    public static function GetExcerpt($str, $startPos=0, $maxLength=100) {
+    public static function GetExcerpt($str, $startPos=0, $maxLength=100) : string
+    {
         if(strlen($str) > $maxLength) {
             $excerpt   = substr($str, $startPos, $maxLength-3);
             $lastSpace = strrpos($excerpt, ' ');
@@ -30,7 +31,7 @@ class U
         return $excerpt;
     }
 
-    public static function EscapeJavaScriptText($string)
+    public static function EscapeJavaScriptText($string) : string
     {
         return str_replace("\n", '\n', str_replace('"', '\"', addcslashes(str_replace("\r", '', (string)$string), "\0..\37'\\")));
     }
@@ -45,7 +46,7 @@ class U
         return $clean;
     }
 
-    public static function slugify($text,$replacement='-')
+    public static function slugify($text,$replacement='-') : string
     {
         $text = preg_replace('~[^\\pL\d]+~u', $replacement, $text);
         $text = trim($text, '-');
@@ -57,20 +58,19 @@ class U
         }
         return $text;
     }
-
-    public static function fileGetContentsUtf8($fn)
+    public static function fileGetContentsUtf8($fn) : string
     {
         $content = file_get_contents($fn);
         return mb_convert_encoding($content, 'UTF-8',mb_detect_encoding($content,
             'UTF-8, ISO-8859-1', true));
     }
 
-    public static function stoAscii($str, $delimiter='-')
+    public static function stoAscii($str, $delimiter='-') : string
     {
         return self::toAscii($str,$delimiter);
     }
 
-    public static function tr2Eng($text)
+    public static function tr2Eng($text) : string
     {
         if(empty($text)) {
             return $text;
@@ -80,7 +80,7 @@ class U
             array('s','S','i','I','g','G','u','U','o','O','C','c'),$text);
     }
 
-    public static function de2Eng($text)
+    public static function de2Eng($text) : string
     {
         if(empty($text)) {
             return $text;
@@ -90,7 +90,7 @@ class U
             array('ae', 'oe', 'ue', 'ss', 'Ae', 'Oe', 'Ue','I','S','G','i','s','g'),$text);
     }
 
-    public static function eng2De($text)
+    public static function eng2De($text) : string
     {
         if(empty($text)) {
             return $text;
@@ -101,7 +101,8 @@ class U
             ,$text);
     }
 
-    public static function spanish2De($text) {
+    public static function spanish2De($text) : string
+    {
         if(empty($text)) {
             return $text;
         }
@@ -110,7 +111,7 @@ class U
             array('a', 'e', 'i', 'n', 'o', 'u', 'A','E','I','N','O','U'),$text);
     }
 
-    public static function mbUcfirst($string, $encoding)
+    public static function mbUcfirst($string, $encoding) : string
     {
         $firstChar = mb_substr($string, 0, 1, $encoding);
         $then = mb_substr($string, 1, null, $encoding);
@@ -121,7 +122,7 @@ class U
      * @param $message
      * @param bool $mark
      */
-    public static function ldbg($message,$mark=false)
+    public static function ldbg($message,$mark=false) : void
     {
         openlog('k5_dbg', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
         syslog(LOG_INFO, print_r($message,true));
@@ -132,7 +133,7 @@ class U
      * @param $message
      * @param string $type
      */
-    public static function lerr($message,$type='debug')
+    public static function lerr($message,$type='debug') : void
     {
         openlog('k5_error', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
         syslog(LOG_WARNING, "LERR : ".print_r($message,true));
@@ -143,7 +144,7 @@ class U
      * @param $message
      * @param string $type
      */
-    public static function linfo($message,$type='debug')
+    public static function linfo($message,$type='debug') : void
     {
         openlog('k5_info', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
         syslog(LOG_WARNING,"linfo:".print_r($message,true));
@@ -154,7 +155,7 @@ class U
      * @param $message
      * @param string $type
      */
-    public static function lrnf($message,$type='debug')
+    public static function lrnf($message,$type='debug') : void
     {
         openlog('k5_route', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
         syslog(LOG_WARNING,"RNF:".print_r($message,true));
@@ -167,7 +168,7 @@ class U
      * Takes into account numerous HTTP proxy headers due to variations
      * in how different ISPs handle IP addresses in headers between hops.
      */
-    public static function getIpAddress()
+    public static function getIpAddress() : string
     {
         // Check for shared internet/ISP IP
         if (!empty($_SERVER['HTTP_CLIENT_IP']) && self::validateIp($_SERVER['HTTP_CLIENT_IP'])) {
@@ -864,32 +865,32 @@ class U
         return $page;
     }
 
-    public static function  ToCents($value)
+    public static function ToCents($value) : int
     {
         return round($value * 100,0);
     }
 
-    public static function FromCents($value)
+    public static function FromCents($value) : int|float
     {
         return round($value / 100,2);
     }
 
-    public static function  ToMl($value)
+    public static function ToMl($value) : int|float
     {
         return round($value * 1000,0);
     }
 
-    public static function FromMl($value)
+    public static function FromMl($value) : int|float
     {
         return round($value / 1000,2);
     }
 
-    public static function  ToMinute($value)
+    public static function ToMinute($value) : int|float
     {
         return round($value * 60,0);
     }
 
-    public static function FromMinute($value)
+    public static function FromMinute($value) : int|float
     {
         return round($value / 60,2);
     }
@@ -897,7 +898,8 @@ class U
     // round_up:
     // rounds up a float to a specified number of decimal places
     // (basically acts like ceil() but allows for decimal places)
-    public static function RoundUp ($value, $places=0) {
+    public static function RoundUp ($value, $places=0) : int|float
+    {
         if ($places < 0) { $places = 0; }
         $mult = pow(10, $places);
         return ceil($value * $mult) / $mult;
@@ -905,24 +907,25 @@ class U
 
     // round_out:
     // rounds a float away from zero to a specified number of decimal places
-    public static function RoundOut ($value, $places=0) {
+    public static function RoundOut ($value, $places=0) : int|float
+    {
         if ($places < 0) { $places = 0; }
         $mult = pow(10, $places);
         return ($value >= 0 ? ceil($value * $mult):floor($value * $mult)) / $mult;
     }
 
-    public static function GetDateFromDay($dayOfYear, $year)
+    public static function GetDateFromDay($dayOfYear, $year) : string
     {
         $date = \DateTime::createFromFormat('z Y', strval($dayOfYear) . ' ' . strval($year));
         return $date;
     }
 
-    public static function IsWeekend($date)
+    public static function IsWeekend($date) : bool
     {
         return (date('N', $date) >= 6);
     }
 
-    public static function Truncate($string,$length=12,$append="&hellip;")
+    public static function Truncate($string,$length=12,$append="&hellip;") : string
     {
         $string = trim($string);
         if(strlen($string) > $length) {
@@ -933,7 +936,8 @@ class U
         return $string;
     }
 
-    public static function DateFormatTr($f, $zt){
+    public static function DateFormatTr($f, $zt) : string
+    {
         $z = date($f, $zt);
         $donustur = array(
             'Monday'    => 'Pazartesi',
@@ -1057,7 +1061,8 @@ class U
         return '';
     }
 
-    public static function Number2Word($sayi, $separator) {
+    public static function Number2Word($sayi, $separator) : string
+    {
         $sayarr = explode($separator,$sayi);
 
         $str = "";
@@ -1116,7 +1121,7 @@ class U
         return $str;
     }
 
-    public static function trimAll( $str , $what = NULL , $with = ' ' )
+    public static function trimAll( $str , $what = NULL , $with = ' ' ) : string
     {
         if( $what === NULL )  {
             //  Character      Decimal      Use
@@ -1133,7 +1138,8 @@ class U
         return trim( preg_replace( "/[".$what."]+/" , $with , $str ) , $what );
     }
 
-    public static function strReplaceLast( $search , $replace , $str ) {
+    public static function strReplaceLast( $search , $replace , $str ) : string
+    {
         if( ( $pos = strrpos( $str , $search ) ) !== false ) {
             $searchLength  = strlen( $search );
             $str = substr_replace( $str , $replace , $pos , $searchLength );
@@ -1141,7 +1147,8 @@ class U
         return $str;
     }
 
-    public static function GetIntOffset($text) {
+    public static function GetIntOffset($text) : int
+    {
         preg_match('/\d/', $text, $m, PREG_OFFSET_CAPTURE);
         if (sizeof($m)) {
             return $m[0][1]; // 24 in your example
@@ -1212,7 +1219,8 @@ class U
      * @param string $seperator
      * @return string
      */
-    public static function FromCamelCase($camelCaseString,string $seperator=" ") {
+    public static function FromCamelCase($camelCaseString,string $seperator=" ") : string
+    {
         $re = '/(?<=[a-z])(?=[A-Z])/x';
         $a = preg_split($re, $camelCaseString);
         return join($seperator, $a );
@@ -1330,4 +1338,14 @@ class U
         $ID = $key.date('Y').str_repeat("0",$left).$num;
         return $ID;
     }
+
+    public static function ToJs(array $values) : string
+    {
+        $r = [];
+        foreach($values as $k => $v) {
+            $r[$k] = '"'.$k.'":"'.$v.'"';
+        }
+        return '{ ' . implode(",", $r) . '}';
+    }
 }
+

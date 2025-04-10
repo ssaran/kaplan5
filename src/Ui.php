@@ -412,21 +412,22 @@ class Ui
         foreach($_output as $o){
 
             if(is_a($o, 'K5\Entity\Html\Resource\Javascript')) {
-                $_defer = ($o->Defer) ? 'defer' : '';
+                $_attributes = ($o->Defer) ? ' defer' : '';
+                $_attributes.= ($o->Async) ? ' async' : '';
                 switch ($o->K5Type) {
                     case "link":
                     case "lib":
-                        $r['js']['link'][] = '<script src="'.$o->Content.'" '.$_defer.'></script>';
+                        $r['js']['link'][] = '<script src="'.$o->Content.'" '.$_attributes.'></script>';
                         if(!$o->Embed) {
-                            $r['js']['forced'][] = '<script src="'.$o->Content.'" '.$_defer.'></script>';
+                            $r['js']['forced'][] = '<script src="'.$o->Content.'" '.$_attributes.'></script>';
                         } else {
                             $r['js']['embed'][] = $o->Content;
                         }
                         break;
                     case "head":
-                        $r['js']['header'][] = '<script src="'.$o->Content.'" '.$_defer.'></script>';
+                        $r['js']['header'][] = '<script src="'.$o->Content.'" '.$_attributes.'></script>';
                         if(!$o->Embed) {
-                            $r['js']['forced_header'][] = '<script src="'.$o->Content.'" '.$_defer.'></script>';
+                            $r['js']['forced_header'][] = '<script src="'.$o->Content.'" '.$_attributes.'></script>';
                         } else {
                             $r['js']['embed_header'][] = $o->Content;
                         }
@@ -443,10 +444,11 @@ class Ui
 
             }
             if(is_a($o, 'K5\Entity\Html\Resource\Css')) {
-                $_defer = ($o->Defer) ? 'defer' : '';
-                $r['css'][] = '<link rel="stylesheet" href="' . $o->Content . '" '.$_defer.'>';
+                $_attributes = ($o->Defer) ? ' defer' : '';
+                $_attributes.= ($o->Async) ? ' async' : '';
+                $r['css'][] = '<link rel="stylesheet" href="' . $o->Content . '" '.$_attributes.'>';
                 if(!$o->Embed) {
-                    $r['css_forced'][] = '<link rel="stylesheet" href="' . $o->Content . '" '.$_defer.'>';
+                    $r['css_forced'][] = '<link rel="stylesheet" href="' . $o->Content . '" '.$_attributes.'>';
                 } else {
                     $r['css_embed'][] = $o->Content;
                 }
@@ -457,17 +459,19 @@ class Ui
             }
 
             if(is_a($o, 'K5\Entity\Html\Resource\JavascriptLib')) {
-                $_defer = ($o->Defer) ? 'defer' : '';
-                $r['js']['link'][] = '<script src="'.$o->Content.'" '.$o->JsType.' '.$_defer.'></script>';
+                $_attributes = ($o->Defer) ? ' defer' : '';
+                $_attributes.= ($o->Async) ? ' async' : '';
+                $r['js']['link'][] = '<script src="'.$o->Content.'" '.$o->JsType.' '.$_attributes.'></script>';
                 if(!$o->Embed) {
-                    $r['js']['forced'][] = '<script src="'.$o->Content.'" '.$o->JsType.' '.$_defer.'></script>';
+                    $r['js']['forced'][] = '<script src="'.$o->Content.'" '.$o->JsType.' '.$_attributes.'></script>';
                 } else {
                     $r['js']['embed'][] = $o->Content;
                 }
             }
             if(is_a($o, 'K5\Entity\Html\Resource\JavascriptModule')) {
-                $_defer = ($o->Defer) ? 'defer' : '';
-                $r['js']['link'][] = '<script type="module" src="'.$o->Content.'" '.$o->JsType.' '.$_defer.'></script>';
+                $_attributes = ($o->Defer) ? ' defer' : '';
+                $_attributes.= ($o->Async) ? ' async' : '';
+                $r['js']['link'][] = '<script type="module" src="'.$o->Content.'" '.$o->JsType.' '.$_attributes.'></script>';
             }
         }
 
