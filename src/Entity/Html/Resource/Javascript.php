@@ -16,5 +16,6 @@ class Javascript extends \K5\Entity\Html\Component
     public bool $IsHashed = false;
     public bool $Embed = true;
     public bool $Defer = false;
+    public bool $Async = false;
 }
 
