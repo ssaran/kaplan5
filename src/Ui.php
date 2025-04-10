@@ -445,7 +445,6 @@ class Ui
             }
             if(is_a($o, 'K5\Entity\Html\Resource\Css')) {
                 $_attributes = ($o->Defer) ? ' defer' : '';
-                $_attributes.= ($o->Async) ? ' async' : '';
                 $r['css'][] = '<link rel="stylesheet" href="' . $o->Content . '" '.$_attributes.'>';
                 if(!$o->Embed) {
                     $r['css_forced'][] = '<link rel="stylesheet" href="' . $o->Content . '" '.$_attributes.'>';
